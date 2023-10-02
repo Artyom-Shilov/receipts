@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/services.dart';
 import 'package:receipts/common/models/recipe.dart';
-
 import 'base_recipe_service.dart';
 
 class RecipeService implements BaseRecipeService {
@@ -11,7 +9,8 @@ class RecipeService implements BaseRecipeService {
   const RecipeService();
 
   @override
-  Future<List<Recipe>> get sampleRecipes async {
+  Future<List<Recipe>> loadRecipes() async {
+    await Future.delayed(const Duration(seconds: 2));
     final recipesString = await rootBundle.loadString(_sampleRecipesFile);
     Map<String, dynamic> recipesJson = jsonDecode(recipesString);
     List<dynamic> jsonList = recipesJson['recipes'] ?? [];

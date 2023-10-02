@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/constants/insets.dart';
-import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/widgets/common_persistent_header.dart';
-import 'package:receipts/recipes_list/services/recipe_service.dart';
+import 'package:receipts/recipes_list/controllers/base_recipes_controller.dart';
 import 'package:receipts/recipes_list/widgets/recipe_sliver_list.dart';
 
-class RecipeTab extends StatefulWidget {
-  const RecipeTab({Key? key}) : super(key: key);
+class RecipesPage extends StatefulWidget {
+  const RecipesPage({Key? key}) : super(key: key);
 
   @override
-  State<RecipeTab> createState() => _RecipeTabState();
+  State<RecipesPage> createState() => _RecipesPageState();
 }
 
-class _RecipeTabState extends State<RecipeTab> {
-  final RecipeService recipeService = const RecipeService();
-  late final Future<List<Recipe>> recipesFuture;
+class _RecipesPageState extends State<RecipesPage> {
 
+  late Future<void> recipesFuture;
 
   @override
   void initState() {
     super.initState();
-    recipesFuture = recipeService.sampleRecipes;
+    recipesFuture = context.read<BaseRecipesController>().initRecipes();
   }
 
   @override
@@ -30,7 +29,7 @@ class _RecipeTabState extends State<RecipeTab> {
         future: recipesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            final recipes = snapshot.data ?? [];
+            final recipes = context.read<BaseRecipesController>().recipesList;
             return SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(

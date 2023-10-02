@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CookingControlButton extends StatelessWidget {
-  const CookingControlButton(
+class ControlButton extends StatelessWidget {
+  const ControlButton(
       {Key? key,
       required this.text,
       required this.backgroundColor,

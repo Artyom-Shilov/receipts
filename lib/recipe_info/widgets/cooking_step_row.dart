@@ -2,12 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/models/cooking_step.dart';
 
-class CookingStepRow extends StatelessWidget {
+class CookingStepRow extends StatefulWidget {
   const CookingStepRow({Key? key, required this.step, required this.index})
       : super(key: key);
 
   final CookingStep step;
   final int index;
+
+  @override
+  State<CookingStepRow> createState() => _CookingStepRowState();
+}
+
+class _CookingStepRowState extends State<CookingStepRow> {
+  late bool _checkBoxValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBoxValue = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +37,7 @@ class CookingStepRow extends StatelessWidget {
             flex: 3,
             child: Center(
                 child: Text(
-              index.toString(),
+              widget.index.toString(),
               style: const TextStyle(
                   color: Color.fromRGBO(194, 194, 194, 1),
                   fontSize: 40,
@@ -34,7 +47,7 @@ class CookingStepRow extends StatelessWidget {
           Expanded(
               flex: 10,
               child: Text(
-                step.description,
+                widget.step.description,
                 style: const TextStyle(
                     color: AppColors.greyFont,
                     fontSize: 12,
@@ -47,12 +60,17 @@ class CookingStepRow extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Checkbox(
+                      activeColor: AppColors.main,
                       side:
                           const BorderSide(width: 2, color: AppColors.greyFont),
-                      value: false,
-                      onChanged: (value) {}),
+                      value: _checkBoxValue,
+                      onChanged: (value) {
+                        setState(() {
+                          _checkBoxValue = value!;
+                        });
+                      }),
                   Text(
-                    step.duration,
+                    widget.step.duration,
                     style: const TextStyle(
                         color: AppColors.greyFont,
                         fontSize: 13,

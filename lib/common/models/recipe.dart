@@ -1,6 +1,8 @@
 import 'package:receipts/common/models/cooking_step.dart';
 import 'package:receipts/common/models/ingredient.dart';
 
+import 'comment.dart';
+
 class Recipe {
   Recipe(
       {required this.id,
@@ -16,6 +18,7 @@ class Recipe {
   String title;
   List<Ingredient> ingredients;
   List<CookingStep> steps;
+  List<Comment>? comments;
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
     List<dynamic> ingredientsJsonList = json['ingredients'] ?? [];

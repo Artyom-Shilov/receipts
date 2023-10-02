@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/models/recipe.dart';
-import 'package:receipts/recipe_info/pages/recipe_screen.dart';
 
 class RecipeCard extends StatelessWidget {
   const RecipeCard({Key? key, required this.recipe}) : super(key: key);
@@ -11,10 +11,8 @@ class RecipeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => RecipePage(recipe: recipe)));
+        context.goNamed('recipe',
+            pathParameters: {'tab': 'recipes', 'recipeId': recipe.id});
       },
       child: Container(
         height: MediaQuery.of(context).size.longestSide * 0.15,
