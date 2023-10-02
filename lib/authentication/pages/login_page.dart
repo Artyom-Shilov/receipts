@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:receipts/authentication/widgets/input_field.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/controllers/base_auth_controller.dart';
+import 'package:receipts/navigation/app_router.dart';
 import 'package:receipts/recipe_info/widgets/widgets.dart';
 
 class LoginPage extends StatefulWidget {
@@ -68,9 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       textController: loginController,
                       validator: (value) {
-                        return value!.isNotEmpty
-                            ? null
-                            : 'Введите логин';
+                        return value!.isNotEmpty ? null : 'Введите логин';
                       },
                     ),
                     const SizedBox(
@@ -85,9 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       textController: passwordController,
                       validator: (value) {
-                        return value!.isNotEmpty
-                            ? null
-                            : 'Введите пароль';
+                        return value!.isNotEmpty ? null : 'Введите пароль';
                       },
                     ),
                     const SizedBox(
@@ -106,10 +103,10 @@ class _LoginPageState extends State<LoginPage> {
                           context.read<BaseAuthController>().loginUser(
                               login: loginController.text,
                               password: passwordController.text);
-                          context.goNamed(
-                            'home',
-                            pathParameters: {'tab' : 'recipes'}
-                          );
+                          context.goNamed(AppRouteNames.home.name,
+                              pathParameters: {
+                                AppPathParameters.tab.name: AppTabs.recipes.name
+                              });
                         }
                       },
                     ),

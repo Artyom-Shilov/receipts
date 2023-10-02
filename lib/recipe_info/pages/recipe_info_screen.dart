@@ -8,7 +8,9 @@ import 'package:receipts/common/controllers/base_auth_controller.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/widgets/common_persistent_header.dart';
 import 'package:receipts/recipe_info/controllers/base_comments_controller.dart';
+import 'package:receipts/recipe_info/controllers/base_cooking_step_controller.dart';
 import 'package:receipts/recipe_info/controllers/base_favourite_status_controller.dart';
+import 'package:receipts/recipe_info/controllers/cooking_step_controller.dart';
 import 'package:receipts/recipe_info/widgets/widgets.dart';
 
 class RecipeInfoScreen extends StatelessWidget {
@@ -47,9 +49,7 @@ class RecipeInfoScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
                 SliverToBoxAdapter(
-                  child: Consumer<BaseFavouriteStatusController>(
-                      builder: (context, controller, _) =>
-                          RecipeTopColumn(recipe: recipe)),
+                  child: RecipeTopColumn(recipe: recipe),
                 ),
                 const SliverToBoxAdapter(
                     child: RecipeInfoSectionTitle(text: 'Ингредиенты')),
@@ -61,10 +61,16 @@ class RecipeInfoScreen extends StatelessWidget {
                 const SliverToBoxAdapter(
                     child: RecipeInfoSectionTitle(text: 'Шаги приготовления')),
                 SliverList.separated(
-                    itemBuilder: (context, index) => CookingStepRow(
-                          step: recipe.steps[index],
-                          index: index + 1,
-                        ),
+                    itemBuilder: (context, index) => ChangeNotifierProvider(
+                      create: (context) {
+                        BaseCookingStepController controller = CookingStepController();
+                        return controller;
+                      },
+                      child: CookingStepRow(
+                            step: recipe.steps[index],
+                            index: index + 1,
+                          ),
+                    ),
                     separatorBuilder: (context, index) => const SizedBox(
                           height: 16,
                         ),

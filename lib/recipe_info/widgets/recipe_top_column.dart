@@ -27,18 +27,21 @@ class RecipeTopColumn extends StatelessWidget {
               recipe.title,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            if(context.read<BaseAuthController>().isLoggedIn)
-              IconButton(
-              icon: const Icon(Icons.favorite),
-              color: context.read<BaseFavouriteStatusController>().isFavourite
-                  ? Colors.red
-                  : Colors.black,
-              onPressed: () {
-                context
-                    .read<BaseFavouriteStatusController>()
-                    .changeFavouriteStatus();
-              },
-            )
+            if (context.read<BaseAuthController>().isLoggedIn)
+              Consumer<BaseFavouriteStatusController>(
+                builder: (context, controller, _) => IconButton(
+                  icon: const Icon(Icons.favorite),
+                  color:
+                      context.read<BaseFavouriteStatusController>().isFavourite
+                          ? Colors.red
+                          : Colors.black,
+                  onPressed: () {
+                    context
+                        .read<BaseFavouriteStatusController>()
+                        .changeFavouriteStatus();
+                  },
+                ),
+              )
           ],
         ),
         const SizedBox(

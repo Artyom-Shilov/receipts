@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/controllers/base_auth_controller.dart';
 import 'package:receipts/common/widgets/control_button.dart';
+import 'package:receipts/navigation/app_router.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -27,7 +28,9 @@ class ProfilePage extends StatelessWidget {
             borderColor: AppColors.main,
             onPressed: () {
               context.read<BaseAuthController>().logout();
-              context.goNamed('home', pathParameters: {'tab': 'recipes'});
+              context.goNamed(AppRouteNames.home.name, pathParameters: {
+                AppPathParameters.tab.name: AppTabs.recipes.name
+              });
             },
           )
         ],

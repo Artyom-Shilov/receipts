@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/models/cooking_step.dart';
+import 'package:receipts/recipe_info/controllers/base_cooking_step_controller.dart';
 
-class CookingStepRow extends StatefulWidget {
+class CookingStepRow extends StatelessWidget {
   const CookingStepRow({Key? key, required this.step, required this.index})
       : super(key: key);
 
   final CookingStep step;
   final int index;
-
-  @override
-  State<CookingStepRow> createState() => _CookingStepRowState();
-}
-
-class _CookingStepRowState extends State<CookingStepRow> {
-  late bool _checkBoxValue;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkBoxValue = false;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +26,7 @@ class _CookingStepRowState extends State<CookingStepRow> {
             flex: 3,
             child: Center(
                 child: Text(
-              widget.index.toString(),
+              index.toString(),
               style: const TextStyle(
                   color: Color.fromRGBO(194, 194, 194, 1),
                   fontSize: 40,
@@ -47,7 +36,7 @@ class _CookingStepRowState extends State<CookingStepRow> {
           Expanded(
               flex: 10,
               child: Text(
-                widget.step.description,
+                step.description,
                 style: const TextStyle(
                     color: AppColors.greyFont,
                     fontSize: 12,
@@ -59,18 +48,18 @@ class _CookingStepRowState extends State<CookingStepRow> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Checkbox(
-                      activeColor: AppColors.main,
-                      side:
-                          const BorderSide(width: 2, color: AppColors.greyFont),
-                      value: _checkBoxValue,
-                      onChanged: (value) {
-                        setState(() {
-                          _checkBoxValue = value!;
-                        });
-                      }),
+                  Consumer<BaseCookingStepController>(
+                    builder: (context, controller, _) => Checkbox(
+                        activeColor: AppColors.main,
+                        side:
+                            const BorderSide(width: 2, color: AppColors.greyFont),
+                        value: context.read<BaseCookingStepController>().isDone,
+                        onChanged: (value) {
+                          context.read<BaseCookingStepController>().changeDoneStatus();
+                        }),
+                  ),
                   Text(
-                    widget.step.duration,
+                    step.duration,
                     style: const TextStyle(
                         color: AppColors.greyFont,
                         fontSize: 13,

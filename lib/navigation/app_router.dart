@@ -62,7 +62,7 @@ class AppRouter {
                     ),
                     ChangeNotifierProvider(
                       create: (context) => favouriteStatusController,
-                    )
+                    ),
                   ],
                   child: RecipeInfoScreen(recipe: recipe),
                 );
