@@ -5,6 +5,6 @@ import 'package:receipts/common/models/recipe.dart';
 abstract interface class BaseCommentsController with ChangeNotifier {
 
   List<Comment> get comments;
-  Future<void> updateCommentsOfRecipe(Recipe recipe);
+  Future<void> fetchCommentsOfRecipe(Recipe recipe);
   Future<void> saveComment({required Recipe recipe, required Comment comment});
 }

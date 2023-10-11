@@ -17,8 +17,7 @@ class RecipeCard extends StatelessWidget {
           AppPathParameters.recipeId.name: recipe.id
         });
       },
-      child: Container(
-        height: MediaQuery.of(context).size.longestSide * 0.15,
+      child: DecoratedBox(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(5.0),
@@ -36,15 +35,15 @@ class RecipeCard extends StatelessWidget {
             Image.asset(
               recipe.image,
               fit: BoxFit.cover,
+              height: MediaQuery.of(context).size.longestSide * 0.15,
             ),
             const Spacer(
               flex: 1,
             ),
-            Flexible(
+            Expanded(
               flex: 10,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
                     recipe.title,
@@ -56,21 +55,27 @@ class RecipeCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.access_time,
-                        size: 16,
-                      ),
-                      Text(
-                        '   ${recipe.cookingTime}',
-                        style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.accent),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          size: 16,
+                        ),
+                        Expanded(
+                          child: Text(
+                            '   ${recipe.cookingTime}',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.accent),
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),

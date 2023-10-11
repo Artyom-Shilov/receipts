@@ -9,14 +9,28 @@ import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/widgets/common_persistent_header.dart';
 import 'package:receipts/recipe_info/controllers/base_comments_controller.dart';
 import 'package:receipts/recipe_info/controllers/base_cooking_step_controller.dart';
-import 'package:receipts/recipe_info/controllers/base_favourite_status_controller.dart';
 import 'package:receipts/recipe_info/controllers/cooking_step_controller.dart';
 import 'package:receipts/recipe_info/widgets/widgets.dart';
 
-class RecipeInfoScreen extends StatelessWidget {
+class RecipeInfoScreen extends StatefulWidget {
   const RecipeInfoScreen({Key? key, required this.recipe}) : super(key: key);
 
   final Recipe recipe;
+
+  @override
+  State<RecipeInfoScreen> createState() => _RecipeInfoScreenState();
+}
+
+class _RecipeInfoScreenState extends State<RecipeInfoScreen> {
+  late Future<void> commentsUpdate;
+
+  @override
+  void initState() {
+    super.initState();
+    commentsUpdate = context
+        .read<BaseCommentsController>()
+        .fetchCommentsOfRecipe(widget.recipe);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,32 +63,33 @@ class RecipeInfoScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
                 SliverToBoxAdapter(
-                  child: RecipeTopColumn(recipe: recipe),
+                  child: RecipeTopColumn(recipe: widget.recipe),
                 ),
                 const SliverToBoxAdapter(
                     child: RecipeInfoSectionTitle(text: 'Ингредиенты')),
                 SliverToBoxAdapter(
                   child: IngredientsCard(
-                    ingredients: recipe.ingredients,
+                    ingredients: widget.recipe.ingredients,
                   ),
                 ),
                 const SliverToBoxAdapter(
                     child: RecipeInfoSectionTitle(text: 'Шаги приготовления')),
                 SliverList.separated(
                     itemBuilder: (context, index) => ChangeNotifierProvider(
-                      create: (context) {
-                        BaseCookingStepController controller = CookingStepController();
-                        return controller;
-                      },
-                      child: CookingStepRow(
-                            step: recipe.steps[index],
+                          create: (context) {
+                            BaseCookingStepController controller =
+                                CookingStepController();
+                            return controller;
+                          },
+                          child: CookingStepRow(
+                            step: widget.recipe.steps[index],
                             index: index + 1,
                           ),
-                    ),
+                        ),
                     separatorBuilder: (context, index) => const SizedBox(
                           height: 16,
                         ),
-                    itemCount: recipe.steps.length),
+                    itemCount: widget.recipe.steps.length),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.only(top: Insets.vertical1),
@@ -107,14 +122,10 @@ class RecipeInfoScreen extends StatelessWidget {
                     ),
                   ),
                   FutureBuilder(
-                      future: context
-                          .read<BaseCommentsController>()
-                          .updateCommentsOfRecipe(recipe),
+                      future: commentsUpdate,
                       builder: (context, snapshot) {
                         return snapshot.connectionState == ConnectionState.done
-                            ? Consumer<BaseCommentsController>(
-                                builder: (context, commentsController, _) =>
-                                    const CommentsList())
+                            ? const CommentsList()
                             : const SliverToBoxAdapter(
                                 child:
                                     Center(child: CircularProgressIndicator()));
@@ -125,7 +136,7 @@ class RecipeInfoScreen extends StatelessWidget {
                     ),
                   ),
                   SliverToBoxAdapter(
-                    child: CommentInputField(recipe: recipe),
+                    child: CommentInputField(recipe: widget.recipe),
                   ),
                 ],
                 CommonPersistentHeader(

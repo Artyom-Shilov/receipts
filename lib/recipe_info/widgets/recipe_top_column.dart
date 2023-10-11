@@ -23,9 +23,12 @@ class RecipeTopColumn extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              recipe.title,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Expanded(
+              child: Text(
+                recipe.title,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
             ),
             if (context.read<BaseAuthController>().isLoggedIn)
               Consumer<BaseFavouriteStatusController>(

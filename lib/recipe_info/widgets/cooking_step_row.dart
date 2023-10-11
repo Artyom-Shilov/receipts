@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:receipts/common/constants/app_colors.dart';
+import 'package:receipts/common/constants/insets.dart';
 import 'package:receipts/common/models/cooking_step.dart';
 import 'package:receipts/recipe_info/controllers/base_cooking_step_controller.dart';
 
@@ -14,7 +15,7 @@ class CookingStepRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.longestSide * 0.13,
+      padding: const EdgeInsets.symmetric(vertical: Insets.vertical1),
       decoration: BoxDecoration(
         color: AppColors.greyBackground,
         borderRadius: BorderRadius.circular(5),

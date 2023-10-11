@@ -8,12 +8,14 @@ class CommentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverList.builder(
-        itemCount: context.read<BaseCommentsController>().comments.length,
-        itemBuilder: (context, index) {
-          return CommentRow(
-            comment: context.read<BaseCommentsController>().comments[index],
-          );
-        });
+    return Consumer<BaseCommentsController>(
+      builder: (context, controller, _) =>  SliverList.builder(
+          itemCount: controller.comments.length,
+          itemBuilder: (context, index) {
+            return CommentRow(
+              comment: controller.comments[index],
+            );
+          }),
+    );
   }
 }

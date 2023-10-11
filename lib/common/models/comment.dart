@@ -14,4 +14,9 @@ class Comment {
       required this.datetime,
       this.user,
       this.recipe});
+
+  @override
+  String toString() {
+    return 'Comment{text: $text, photo: $photo, datetime: $datetime, user: $user, recipe: $recipe}';
+  }
 }

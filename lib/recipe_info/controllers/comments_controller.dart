@@ -14,11 +14,12 @@ class CommentsController with ChangeNotifier implements BaseCommentsController {
   @override
   Future<void> saveComment({required Recipe recipe, required Comment comment}) async {
     _commentsService.addComment(recipe, comment);
+    _comments.add(comment);
     notifyListeners();
   }
 
   @override
-  Future<void> updateCommentsOfRecipe(Recipe recipe) async{
+  Future<void> fetchCommentsOfRecipe(Recipe recipe) async{
     _comments = await _commentsService.getComments(recipe);
     notifyListeners();
 }
