@@ -36,7 +36,7 @@ class _CommentInputFieldState extends State<CommentInputField> {
     return TextField(
       controller: _textController,
       maxLines: 2,
-      textInputAction: TextInputAction.search,
+      textInputAction: TextInputAction.done,
       decoration: const InputDecoration(
         hintText: 'оставить комментарий',
         hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
