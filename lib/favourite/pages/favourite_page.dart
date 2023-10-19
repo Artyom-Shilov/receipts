@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:receipts/common/constants/app_texts.dart';
 
 class FavouritePage extends StatelessWidget {
   const FavouritePage({Key? key}) : super(key: key);
@@ -6,7 +7,7 @@ class FavouritePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('В работе'),
+      child: Text(StabTexts.workInProgress),
     );
   }
 }

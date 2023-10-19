@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:receipts/authentication/pages/login_page.dart';
 import 'package:receipts/authentication/pages/profile_page.dart';
 import 'package:receipts/common/constants/app_colors.dart';
+import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/constants/custom_icons.dart';
 import 'package:receipts/favourite/pages/favourite_page.dart';
 import 'package:receipts/freezer/pages/freezer_page.dart';
@@ -57,19 +58,19 @@ class HomeScreen extends StatelessWidget {
           items: authController.isLoggedIn
               ? [
                   const BottomNavigationBarItem(
-                      icon: Icon(CustomIcons.pizza_slice), label: 'Рецепты'),
+                      icon: Icon(CustomIcons.pizza_slice), label: BottomAppBarTexts.recipes),
                   const BottomNavigationBarItem(
-                      icon: Icon(Icons.favorite), label: 'Избранное'),
+                      icon: Icon(Icons.favorite), label: BottomAppBarTexts.favourite),
                   const BottomNavigationBarItem(
-                      icon: Icon(Icons.kitchen), label: 'Рецепты'),
+                      icon: Icon(Icons.kitchen), label: BottomAppBarTexts.freezer),
                   const BottomNavigationBarItem(
-                      icon: Icon(Icons.person), label: 'Профиль')
+                      icon: Icon(Icons.person), label: BottomAppBarTexts.profile)
                 ]
               : [
                   const BottomNavigationBarItem(
-                      icon: Icon(CustomIcons.pizza_slice), label: 'Рецепты'),
+                      icon: Icon(CustomIcons.pizza_slice), label: BottomAppBarTexts.recipes),
                   const BottomNavigationBarItem(
-                      icon: Icon(Icons.person), label: 'Вход')
+                      icon: Icon(Icons.person), label: BottomAppBarTexts.login)
                 ],
           onTap: (index) {
             context.goNamed(AppRouteNames.home.name, pathParameters: {

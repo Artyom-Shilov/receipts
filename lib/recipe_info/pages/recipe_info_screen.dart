@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:receipts/common/constants/app_colors.dart';
+import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/constants/insets.dart';
 import 'package:receipts/common/controllers/base_auth_controller.dart';
 import 'package:receipts/common/models/recipe.dart';
@@ -43,7 +44,7 @@ class _RecipeInfoScreenState extends State<RecipeInfoScreen> {
                 color: AppColors.main,
                 fontSize: 20,
                 fontWeight: FontWeight.w400),
-            title: const Text('Рецепт'),
+            title: const Text(RecipeInfoTexts.appBarTitle),
             actions: [
               IconButton(
                 icon: const Icon(Icons.campaign),
@@ -66,14 +67,16 @@ class _RecipeInfoScreenState extends State<RecipeInfoScreen> {
                   child: RecipeTopColumn(recipe: widget.recipe),
                 ),
                 const SliverToBoxAdapter(
-                    child: RecipeInfoSectionTitle(text: 'Ингредиенты')),
+                    child: RecipeInfoSectionTitle(
+                        text: RecipeInfoTexts.ingredientsSectionTitle)),
                 SliverToBoxAdapter(
                   child: IngredientsCard(
                     ingredients: widget.recipe.ingredients,
                   ),
                 ),
                 const SliverToBoxAdapter(
-                    child: RecipeInfoSectionTitle(text: 'Шаги приготовления')),
+                    child: RecipeInfoSectionTitle(
+                        text: RecipeInfoTexts.stepsSectionTitle)),
                 SliverList.separated(
                     itemBuilder: (context, index) => ChangeNotifierProvider(
                           create: (context) {
@@ -97,7 +100,7 @@ class _RecipeInfoScreenState extends State<RecipeInfoScreen> {
                       backgroundColor: AppColors.main,
                       borderColor: AppColors.main,
                       text: const Text(
-                        'Начать готовить',
+                        RecipeInfoTexts.startCookingButton,
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,

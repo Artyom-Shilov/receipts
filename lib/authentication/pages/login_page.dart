@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:receipts/authentication/widgets/input_field.dart';
 import 'package:receipts/common/constants/app_colors.dart';
+import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/controllers/base_auth_controller.dart';
 import 'package:receipts/navigation/app_router.dart';
 import 'package:receipts/recipe_info/widgets/widgets.dart';
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 230,
                     ),
                     const Text(
-                      'Otus.Food',
+                      LoginPageTexts.appName,
                       style: TextStyle(fontSize: 30, color: Colors.white),
                     ),
                     const SizedBox(
@@ -62,14 +63,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     InputField(
                       isObscured: false,
-                      hintText: 'логин',
+                      hintText: LoginPageTexts.loginHint,
                       prefixIcon: const Icon(
                         Icons.person,
                         color: Colors.grey,
                       ),
                       textController: loginController,
                       validator: (value) {
-                        return value!.isNotEmpty ? null : 'Введите логин';
+                        return value!.isNotEmpty
+                            ? null
+                            : LoginPageTexts.loginValidatorMessage;
                       },
                     ),
                     const SizedBox(
@@ -77,14 +80,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     InputField(
                       isObscured: true,
-                      hintText: 'пароль',
+                      hintText: LoginPageTexts.passwordHint,
                       prefixIcon: const Icon(
                         Icons.lock,
                         color: Colors.grey,
                       ),
                       textController: passwordController,
                       validator: (value) {
-                        return value!.isNotEmpty ? null : 'Введите пароль';
+                        return value!.isNotEmpty
+                            ? null
+                            : LoginPageTexts.passwordValidatorMessage;
                       },
                     ),
                     const SizedBox(
@@ -92,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     ControlButton(
                       text: const Text(
-                        'Войти',
+                        LoginPageTexts.doLogin,
                         style: TextStyle(color: Colors.white),
                       ),
                       backgroundColor: AppColors.main,
@@ -115,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     MaterialButton(
                       child: const Text(
-                        'Зарегистрироваться',
+                        LoginPageTexts.doRegister,
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w100,
