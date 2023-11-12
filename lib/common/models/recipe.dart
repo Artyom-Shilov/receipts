@@ -10,7 +10,9 @@ class Recipe {
       required this.title,
       required this.cookingTime,
       required this.ingredients,
-      required this.steps});
+      required this.steps,
+      this.comments = const [],
+      });
 
   String id;
   String image;
@@ -18,7 +20,7 @@ class Recipe {
   String title;
   List<Ingredient> ingredients;
   List<CookingStep> steps;
-  List<Comment>? comments;
+  List<Comment> comments;
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
     List<dynamic> ingredientsJsonList = json['ingredients'] ?? [];

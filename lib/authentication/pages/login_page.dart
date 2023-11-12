@@ -108,9 +108,9 @@ class _LoginPageState extends State<LoginPage> {
                           context.read<BaseAuthController>().loginUser(
                               login: loginController.text,
                               password: passwordController.text);
-                          context.goNamed(AppRouteNames.home.name,
+                          context.goNamed('',
                               pathParameters: {
-                                AppPathParameters.tab.name: AppTabs.recipes.name
+                                PathParameters.recipeId.name: AppTabs.recipes.name
                               });
                         }
                       },

@@ -29,8 +29,8 @@ class ProfilePage extends StatelessWidget {
             borderColor: AppColors.main,
             onPressed: () {
               context.read<BaseAuthController>().logout();
-              context.goNamed(AppRouteNames.home.name, pathParameters: {
-                AppPathParameters.tab.name: AppTabs.recipes.name
+              context.goNamed(/*AppRouteNames.home.name*/'', pathParameters: {
+                /*AppPathParameters.tab.name*/'': AppTabs.recipes.name
               });
             },
           )

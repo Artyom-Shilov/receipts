@@ -12,10 +12,8 @@ class RecipeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.goNamed(AppRouteNames.recipe.name, pathParameters: {
-          AppPathParameters.tab.name: AppTabs.recipes.name,
-          AppPathParameters.recipeId.name: recipe.id
-        });
+        GoRouter.of(context).go('/${AppTabs.recipes}/${RecipesRouteNames.recipe}/${recipe.id}');
+        //pathParameters: {'${PathParameters.recipeId}': recipe.id});
       },
       child: DecoratedBox(
         decoration: BoxDecoration(
