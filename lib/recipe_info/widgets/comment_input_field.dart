@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/constants/app_texts.dart';
-import 'package:receipts/common/controllers/base_auth_controller.dart';
 import 'package:receipts/common/models/comment.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/recipe_info/controllers/base_comments_controller.dart';
@@ -54,7 +54,7 @@ class _CommentInputFieldState extends State<CommentInputField> {
             )),
       ),
       onSubmitted: (text) {
-        final user = context.read<BaseAuthController>().currentUser!;
+        final user = BlocProvider.of<BaseAuthCubit>(context).state.user!;
         context.read<BaseCommentsController>().saveComment(
               recipe: widget.recipe,
               comment: Comment(

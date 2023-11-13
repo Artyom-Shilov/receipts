@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:receipts/common/constants/app_colors.dart';
-import 'package:receipts/common/constants/insets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/models/cooking_step.dart';
-import 'package:receipts/recipe_info/controllers/base_cooking_step_controller.dart';
+import 'package:receipts/recipe_info/controllers/controllers.dart';
 
 class CookingStepRow extends StatelessWidget {
   const CookingStepRow({Key? key, required this.step, required this.index})
@@ -14,63 +13,66 @@ class CookingStepRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: Insets.vertical1),
-      decoration: BoxDecoration(
-        color: AppColors.greyBackground,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Flexible(
-            flex: 3,
-            child: Center(
-                child: Text(
-              index.toString(),
-              style: const TextStyle(
-                  color: Color.fromRGBO(194, 194, 194, 1),
-                  fontSize: 40,
-                  fontWeight: FontWeight.w900),
-            )),
-          ),
-          Expanded(
-              flex: 10,
-              child: Text(
-                step.description,
+    return BlocProvider<BaseStepCubit>(
+      create: (context) => StepCubit(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: Insets.vertical1),
+        decoration: BoxDecoration(
+          color: AppColors.greyBackground,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Flexible(
+              flex: 3,
+              child: Center(
+                  child: Text(
+                index.toString(),
                 style: const TextStyle(
-                    color: AppColors.greyFont,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400),
+                    color: Color.fromRGBO(194, 194, 194, 1),
+                    fontSize: 40,
+                    fontWeight: FontWeight.w900),
               )),
-          Flexible(
-            flex: 3,
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Consumer<BaseCookingStepController>(
-                    builder: (context, controller, _) => Checkbox(
-                        activeColor: AppColors.main,
-                        side:
-                            const BorderSide(width: 2, color: AppColors.greyFont),
-                        value: context.read<BaseCookingStepController>().isDone,
-                        onChanged: (value) {
-                          context.read<BaseCookingStepController>().changeDoneStatus();
-                        }),
-                  ),
-                  Text(
-                    step.duration,
-                    style: const TextStyle(
-                        color: AppColors.greyFont,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700),
-                  )
-                ],
+            ),
+            Expanded(
+                flex: 10,
+                child: Text(
+                  step.description,
+                  style: const TextStyle(
+                      color: AppColors.greyFont,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400),
+                )),
+            Flexible(
+              flex: 3,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    BlocBuilder<BaseStepCubit, RecipeStepState>(
+                      builder: (context, state) => Checkbox(
+                          activeColor: AppColors.main,
+                          side:
+                              const BorderSide(width: 2, color: AppColors.greyFont),
+                          value: state.isDone,
+                          onChanged: (value) {
+                            BlocProvider.of<BaseStepCubit>(context).changeStepStatus();
+                          }),
+                    ),
+                    Text(
+                      step.duration,
+                      style: const TextStyle(
+                          color: AppColors.greyFont,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

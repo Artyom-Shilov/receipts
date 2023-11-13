@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/authentication/widgets/input_field.dart';
-import 'package:receipts/common/constants/app_colors.dart';
-import 'package:receipts/common/constants/app_texts.dart';
-import 'package:receipts/common/controllers/base_auth_controller.dart';
+import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/navigation/app_router.dart';
 import 'package:receipts/recipe_info/widgets/widgets.dart';
 
@@ -105,13 +104,12 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         FocusManager.instance.primaryFocus?.unfocus();
                         if (_formKey.currentState!.validate()) {
-                          context.read<BaseAuthController>().loginUser(
+                          BlocProvider.of<BaseAuthCubit>(context).logIn(
                               login: loginController.text,
                               password: passwordController.text);
-                          context.goNamed('',
-                              pathParameters: {
-                                PathParameters.recipeId.name: AppTabs.recipes.name
-                              });
+                          loginController.clear();
+                          passwordController.clear();
+                          GoRouter.of(context).go('/${AppTabs.recipes}');
                         }
                       },
                     ),

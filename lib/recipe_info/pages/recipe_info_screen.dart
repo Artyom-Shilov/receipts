@@ -6,7 +6,7 @@ import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
-import 'package:receipts/recipe_info/widgets/screen_body_success.dart';
+import 'package:receipts/recipe_info/widgets/screen_body_recipe_found.dart';
 import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 
 class RecipeInfoScreen extends StatefulWidget {
@@ -19,7 +19,6 @@ class RecipeInfoScreen extends StatefulWidget {
 }
 
 class _RecipeInfoScreenState extends State<RecipeInfoScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -52,11 +51,13 @@ class _RecipeInfoScreenState extends State<RecipeInfoScreen> {
             body: BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
               builder: (context, state) {
                 return switch (state.searchStatus) {
-                  RecipeSearchStatus.initial =>
-                    const Center(child: CircularProgressIndicator()),
+                  RecipeSearchStatus.initial ||
                   RecipeSearchStatus.inProgress =>
                     const Center(child: CircularProgressIndicator()),
-                  RecipeSearchStatus.found => SuccessScreenBody(recipe: state.recipe!)
+                  RecipeSearchStatus.notFound => const Center(
+                      child: Text('Не удалось найти данные о рецепте')),
+                  RecipeSearchStatus.found =>
+                    ScreenBodyRecipeFound(recipe: state.recipe!)
                 };
               },
             )));

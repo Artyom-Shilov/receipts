@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:receipts/common/constants/app_colors.dart';
-import 'package:receipts/common/constants/insets.dart';
+import 'package:receipts/common/constants/constants.dart';
+
 
 class RecipeInfoSectionTitle extends StatelessWidget {
   const RecipeInfoSectionTitle({

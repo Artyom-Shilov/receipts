@@ -26,8 +26,7 @@ class _RecipesPageState extends State<RecipesPage> {
     return BlocBuilder<BaseRecipeListCubit, RecipeListState>(
       builder: (context, state) {
         return switch (state.loadingStatus) {
-          RecipeListLoadingStatus.initial =>
-            const Center(child: CircularProgressIndicator()),
+          RecipeListLoadingStatus.initial ||
           RecipeListLoadingStatus.inProgress =>
             const Center(child: CircularProgressIndicator()),
           RecipeListLoadingStatus.error => Center(child: Text(state.message)),

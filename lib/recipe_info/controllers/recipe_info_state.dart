@@ -7,8 +7,7 @@ enum RecipeSearchStatus {
   initial,
   inProgress,
   found,
- /* notFound,
-  error,*/
+  notFound,
 }
 
 @freezed

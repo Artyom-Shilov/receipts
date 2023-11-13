@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../common/constants/app_colors.dart';
+import 'package:receipts/common/constants/constants.dart';
 
 class InputField extends StatelessWidget {
   final Icon prefixIcon;
