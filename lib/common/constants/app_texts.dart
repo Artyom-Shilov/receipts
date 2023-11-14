@@ -1,6 +1,4 @@
-class BottomAppBarTexts {
-
-  BottomAppBarTexts._();
+abstract class BottomAppBarTexts {
 
   static const recipes = 'Рецепты';
   static const freezer = 'Холодильник';
@@ -9,16 +7,12 @@ class BottomAppBarTexts {
   static const login = 'Вход';
 }
 
-class StabTexts {
-
-  StabTexts._();
+abstract class StabTexts {
 
   static const workInProgress = 'В работе';
 }
 
-class LoginPageTexts {
-
-  LoginPageTexts._();
+abstract class LoginPageTexts {
 
   static const loginHint = 'логин';
   static const passwordHint = 'пароль';
@@ -29,16 +23,12 @@ class LoginPageTexts {
   static const passwordValidatorMessage = 'Введите пароль';
 }
 
-class ProfilePageTexts {
-
-  ProfilePageTexts._();
+abstract class ProfilePageTexts {
 
   static const doLogout = 'Выход';
 }
 
-class RecipeInfoTexts {
-
-  RecipeInfoTexts._();
+abstract class RecipeInfoTexts {
 
   static const appBarTitle = 'Рецепт';
   static const ingredientsSectionTitle = 'Ингридиенты';
@@ -47,5 +37,9 @@ class RecipeInfoTexts {
   static const commentInputHint = 'оставить комментарий';
 }
 
+abstract class ErrorMessages {
+
+  static const commentsError = 'Ошибка при загрузке комментариев';
+}
 
 

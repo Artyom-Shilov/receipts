@@ -14,7 +14,7 @@ class CookingStepRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<BaseStepCubit>(
-      create: (context) => StepCubit(),
+      create: (context) => RecipeStepCubit(),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: Insets.vertical1),
         decoration: BoxDecoration(

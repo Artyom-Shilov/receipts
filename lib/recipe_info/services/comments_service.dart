@@ -10,12 +10,8 @@ class CommentsService implements BaseCommentsService{
   }
 
   @override
-  Future<void> addComment(Recipe recipe, Comment comment) async {
-    if (recipe.comments != null) {
-      recipe.comments!.add(comment);
-    } else {
-      recipe.comments = [];
-      recipe.comments!.add(comment);
-    }
+  Future<void> saveComment({required Comment comment, required Recipe recipe}) async {
+    recipe.comments ??= [];
+    recipe.comments!.add(comment);
   }
 }

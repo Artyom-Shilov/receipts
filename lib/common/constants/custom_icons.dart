@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomIcons {
-  CustomIcons._();
+abstract class CustomIcons {
 
   static const _kFontFam = 'OtusFoodIcons';
   static const String? _kFontPkg = null;

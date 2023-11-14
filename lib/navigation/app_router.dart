@@ -6,9 +6,9 @@ import 'package:receipts/authentication/pages/profile_page.dart';
 import 'package:receipts/common/pages/home_screen.dart';
 import 'package:receipts/favourite/pages/favourite_page.dart';
 import 'package:receipts/freezer/pages/freezer_page.dart';
-import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
-import 'package:receipts/recipe_info/controllers/recipe_info_cubit.dart';
+import 'package:receipts/recipe_info/controllers/controllers.dart';
 import 'package:receipts/recipe_info/pages/recipe_info_screen.dart';
+import 'package:receipts/recipe_info/services/comments_service.dart';
 import 'package:receipts/recipe_info/services/recipe_info_service.dart';
 import 'package:receipts/recipes_list/pages/recipes_page.dart';
 
@@ -59,9 +59,15 @@ class AppRouter {
                         builder: (context, state) {
                           final id = state
                               .pathParameters['${PathParameters.recipeId}']!;
-                          return BlocProvider<BaseRecipeInfoCubit>(
-                            create: (context) =>
-                                RecipeInfoCubit(RecipeInfoService()),
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider<BaseRecipeInfoCubit>(
+                                  create: (context) =>
+                                      RecipeInfoCubit(RecipeInfoService())),
+                              BlocProvider<BaseCommentsCubit>(
+                                  create: (context) =>
+                                      CommentsCubit(CommentsService()))
+                            ],
                             child: RecipeInfoScreen(recipeId: id),
                           );
                         })

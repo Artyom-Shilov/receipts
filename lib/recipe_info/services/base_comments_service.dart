@@ -4,5 +4,5 @@ import 'package:receipts/common/models/recipe.dart';
 abstract interface class BaseCommentsService {
 
   Future<List<Comment>> getComments(Recipe recipe);
-  Future<void> addComment(Recipe recipe, Comment comment);
+  Future<void> saveComment({required Comment comment, required Recipe recipe});
 }

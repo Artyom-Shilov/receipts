@@ -3,21 +3,21 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
-import 'package:receipts/common/constants/app_colors.dart';
-import 'package:receipts/common/constants/app_texts.dart';
-import 'package:receipts/common/constants/insets.dart';
+import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/widgets/common_persistent_header.dart';
+import 'package:receipts/recipe_info/controllers/controllers.dart';
 import 'package:receipts/recipe_info/widgets/widgets.dart';
 
 class ScreenBodyRecipeFound extends StatelessWidget {
-  const ScreenBodyRecipeFound({Key? key, required this.recipe}) : super(key: key);
+  const ScreenBodyRecipeFound({Key? key, required this.recipe})
+      : super(key: key);
   final Recipe recipe;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Insets.horizontal1),
+      padding: const EdgeInsets.symmetric(horizontal: Insets.horizontal1),
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -40,20 +40,17 @@ class ScreenBodyRecipeFound extends StatelessWidget {
               child: RecipeInfoSectionTitle(
                   text: RecipeInfoTexts.stepsSectionTitle)),
           SliverList.separated(
-              itemBuilder: (context, index) =>
-                  CookingStepRow(
-                      step: recipe.steps[index],
-                      index: index + 1,
-                    ),
-              separatorBuilder: (context, index) =>
-              const SizedBox(
-                height: 16,
-              ),
+              itemBuilder: (context, index) => CookingStepRow(
+                    step: recipe.steps[index],
+                    index: index + 1,
+                  ),
+              separatorBuilder: (context, index) => const SizedBox(
+                    height: 16,
+                  ),
               itemCount: recipe.steps.length),
           SliverToBoxAdapter(
             child: Padding(
-              padding:
-              const EdgeInsets.only(top: Insets.vertical1),
+              padding: const EdgeInsets.only(top: Insets.vertical1),
               child: ControlButton(
                 backgroundColor: AppColors.main,
                 borderColor: AppColors.main,
@@ -82,17 +79,17 @@ class ScreenBodyRecipeFound extends StatelessWidget {
                 height: Insets.vertical1,
               ),
             ),
-           /* BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
-                future: commentsUpdate,
-                builder: (context, snapshot) {
-                  return snapshot.connectionState ==
-                      ConnectionState.done
-                      ? const CommentsList()
-                      : const SliverToBoxAdapter(
-                      child: Center(
-                          child:
-                          CircularProgressIndicator()));
-                }),*/
+            BlocBuilder<BaseCommentsCubit, CommentsState>(
+                builder: (context, state) {
+              return switch (state.status) {
+                CommentsStatus.initial ||
+                CommentsStatus.loading =>
+                  const Center(child: CircularProgressIndicator()),
+                CommentsStatus.error =>
+                  const Center(child: Text(ErrorMessages.commentsError)),
+                CommentsStatus.success => const CommentsList()
+              };
+            }),
             const SliverToBoxAdapter(
               child: SizedBox(
                 height: Insets.vertical1,
@@ -103,8 +100,7 @@ class ScreenBodyRecipeFound extends StatelessWidget {
             ),
           ],
           CommonPersistentHeader(
-            maxExtent:
-            MediaQuery.of(context).size.height * 0.07,
+            maxExtent: MediaQuery.of(context).size.height * 0.07,
             color: Colors.white,
           )
         ],

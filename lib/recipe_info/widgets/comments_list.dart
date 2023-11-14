@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:receipts/recipe_info/controllers/base_comments_controller.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:receipts/recipe_info/controllers/controllers.dart';
 import 'package:receipts/recipe_info/widgets/comment_row.dart';
 
 class CommentsList extends StatelessWidget {
@@ -8,12 +8,12 @@ class CommentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BaseCommentsController>(
-      builder: (context, controller, _) =>  SliverList.builder(
-          itemCount: controller.comments.length,
+    return BlocBuilder<BaseCommentsCubit, CommentsState>(
+      builder: (context, state) =>  SliverList.builder(
+          itemCount: state.comments.length,
           itemBuilder: (context, index) {
             return CommentRow(
-              comment: controller.comments[index],
+              comment: state.comments[index],
             );
           }),
     );

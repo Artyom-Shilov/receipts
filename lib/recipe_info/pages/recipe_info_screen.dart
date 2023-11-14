@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/constants/app_texts.dart';
-import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
-import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
+import 'package:receipts/recipe_info/controllers/controllers.dart';
 import 'package:receipts/recipe_info/widgets/screen_body_recipe_found.dart';
 import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 
@@ -23,8 +22,10 @@ class _RecipeInfoScreenState extends State<RecipeInfoScreen> {
   void initState() {
     super.initState();
     final recipes = BlocProvider.of<BaseRecipeListCubit>(context).state.recipes;
-    BlocProvider.of<BaseRecipeInfoCubit>(context)
-        .findRecipe(id: widget.recipeId, recipes: recipes);
+    final recipeBloc = BlocProvider.of<BaseRecipeInfoCubit>(context);
+    recipeBloc.findRecipe(id: widget.recipeId, recipes: recipes).then((value) =>
+        BlocProvider.of<BaseCommentsCubit>(context)
+            .loadComments(recipeBloc.state.recipe));
   }
 
   @override
