@@ -1,17 +1,17 @@
-class CookingStep {
-  CookingStep({required this.description, required this.duration});
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  String description;
-  String duration;
+part 'cooking_step.g.dart';
+part 'cooking_step.freezed.dart';
 
-  factory CookingStep.fromJson(Map<String, dynamic> json) {
-    return CookingStep(
-        description: json['description'] ?? '',
-        duration: json['duration'] ?? '');
-  }
+@freezed
+class CookingStep with _$CookingStep {
+  const factory CookingStep(
+      {
+        required String description,
+        required String duration,
+        @Default(false) bool isDone,
+      }) = _CookingStep;
 
-  @override
-  String toString() {
-    return 'CookingStep{description: $description, duration: $duration}';
-  }
+  factory CookingStep.fromJson(Map<String, dynamic> json) =>
+      _$CookingStepFromJson(json);
 }

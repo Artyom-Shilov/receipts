@@ -4,29 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/constants/app_texts.dart';
-import 'package:receipts/recipe_info/controllers/controllers.dart';
-import 'package:receipts/recipe_info/widgets/screen_body_recipe_found.dart';
-import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
+import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
+import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
+import 'package:receipts/recipe_info/widgets/recipe_info_screen_body.dart';
 
-class RecipeInfoScreen extends StatefulWidget {
-  const RecipeInfoScreen({Key? key, required this.recipeId}) : super(key: key);
-
-  final String recipeId;
-
-  @override
-  State<RecipeInfoScreen> createState() => _RecipeInfoScreenState();
-}
-
-class _RecipeInfoScreenState extends State<RecipeInfoScreen> {
-  @override
-  void initState() {
-    super.initState();
-    final recipes = BlocProvider.of<BaseRecipeListCubit>(context).state.recipes;
-    final recipeBloc = BlocProvider.of<BaseRecipeInfoCubit>(context);
-    recipeBloc.findRecipe(id: widget.recipeId, recipes: recipes).then((value) =>
-        BlocProvider.of<BaseCommentsCubit>(context)
-            .loadComments(recipeBloc.state.recipe));
-  }
+class RecipeInfoScreen extends StatelessWidget {
+  const RecipeInfoScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +34,11 @@ class _RecipeInfoScreenState extends State<RecipeInfoScreen> {
             ),
             body: BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
               builder: (context, state) {
-                return switch (state.searchStatus) {
-                  RecipeSearchStatus.initial ||
-                  RecipeSearchStatus.inProgress =>
-                    const Center(child: CircularProgressIndicator()),
-                  RecipeSearchStatus.notFound => const Center(
-                      child: Text('Не удалось найти данные о рецепте')),
-                  RecipeSearchStatus.found =>
-                    ScreenBodyRecipeFound(recipe: state.recipe!)
+                return switch (state.status) {
+                  RecipeInfoStatus.success =>
+                    RecipeInfoScreenBody(recipe: state.recipe),
+                  RecipeInfoStatus.error =>
+                    const Center(child: Text(ErrorMessages.recipeInfoError)),
                 };
               },
             )));

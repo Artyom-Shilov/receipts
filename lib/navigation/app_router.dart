@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:receipts/authentication/pages/login_page.dart';
 import 'package:receipts/authentication/pages/profile_page.dart';
+import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/pages/home_screen.dart';
+import 'package:receipts/common/services/base_recipe_service.dart';
 import 'package:receipts/favourite/pages/favourite_page.dart';
 import 'package:receipts/freezer/pages/freezer_page.dart';
-import 'package:receipts/recipe_info/controllers/controllers.dart';
+import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
+import 'package:receipts/recipe_info/controllers/recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/pages/recipe_info_screen.dart';
-import 'package:receipts/recipe_info/services/comments_service.dart';
-import 'package:receipts/recipe_info/services/recipe_info_service.dart';
 import 'package:receipts/recipes_list/pages/recipes_page.dart';
 
 class AppRouter {
@@ -24,11 +26,10 @@ class AppRouter {
   final _profileKey =
       GlobalKey<NavigatorState>(debugLabel: '${AppTabs.profile}');
 
-  static const int loginTabCurrentIndexForAppBar = 1;
-  static const int loginTabIndexAsShellBranch = 4;
+  int get loginTabCurrentIndexForAppBar => 1;
+  int get loginTabIndexAsShellBranch => 4;
 
-  static int findCurrentIndexForAppBar(
-      StatefulNavigationShell navigationShell) {
+  int findCurrentIndexForAppBar(StatefulNavigationShell navigationShell) {
     return navigationShell.shellRouteContext.navigatorKey
             .toString()
             .contains('${AppTabs.login}')
@@ -57,18 +58,13 @@ class AppRouter {
                         path:
                             '${RecipesRouteNames.recipe}/:${PathParameters.recipeId}',
                         builder: (context, state) {
-                          final id = state
-                              .pathParameters['${PathParameters.recipeId}']!;
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider<BaseRecipeInfoCubit>(
-                                  create: (context) =>
-                                      RecipeInfoCubit(RecipeInfoService())),
-                              BlocProvider<BaseCommentsCubit>(
-                                  create: (context) =>
-                                      CommentsCubit(CommentsService()))
-                            ],
-                            child: RecipeInfoScreen(recipeId: id),
+                          final recipe = state.extra as Recipe;
+                          return BlocProvider<BaseRecipeInfoCubit>(
+                            create: (context) => RecipeInfoCubit(
+                                service:
+                                    GetIt.instance.get<BaseRecipeService>(),
+                                recipe: recipe),
+                            child: const RecipeInfoScreen(),
                           );
                         })
                   ])

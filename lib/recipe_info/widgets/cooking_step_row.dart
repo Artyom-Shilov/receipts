@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/models/cooking_step.dart';
-import 'package:receipts/recipe_info/controllers/controllers.dart';
+import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
+import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
 
 class CookingStepRow extends StatelessWidget {
   const CookingStepRow({Key? key, required this.step, required this.index})
@@ -13,9 +14,7 @@ class CookingStepRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BaseStepCubit>(
-      create: (context) => RecipeStepCubit(),
-      child: Container(
+     return Container(
         padding: const EdgeInsets.symmetric(vertical: Insets.vertical1),
         decoration: BoxDecoration(
           color: AppColors.greyBackground,
@@ -50,14 +49,14 @@ class CookingStepRow extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    BlocBuilder<BaseStepCubit, RecipeStepState>(
+                    BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
                       builder: (context, state) => Checkbox(
                           activeColor: AppColors.main,
                           side:
                               const BorderSide(width: 2, color: AppColors.greyFont),
-                          value: state.isDone,
+                          value: state.recipe.steps[index-1].isDone,
                           onChanged: (value) {
-                            BlocProvider.of<BaseStepCubit>(context).changeStepStatus();
+                            BlocProvider.of<BaseRecipeInfoCubit>(context).changeCookingStepStatus(index - 1);
                           }),
                     ),
                     Text(
@@ -73,7 +72,6 @@ class CookingStepRow extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }

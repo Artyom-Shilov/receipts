@@ -1,22 +1,19 @@
-import 'user.dart';
-import 'recipe.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:receipts/common/models/user.dart';
 
-class Comment {
-  String text;
-  String photo;
-  String datetime;
-  User? user;
-  Recipe? recipe;
+part 'comment.freezed.dart';
+part 'comment.g.dart';
 
-  Comment(
-      {required this.text,
-      required this.photo,
-      required this.datetime,
-      this.user,
-      this.recipe});
+@freezed
+class Comment with _$Comment {
+  const factory Comment(
+      { required String text,
+        required String photo,
+        required String datetime,
+        required User user
+        }
+      ) = _Comment;
 
-  @override
-  String toString() {
-    return 'Comment{text: $text, photo: $photo, datetime: $datetime, user: $user, recipe: $recipe}';
-  }
+  factory Comment.fromJson(Map<String, dynamic> json) =>
+      _$CommentFromJson(json);
 }

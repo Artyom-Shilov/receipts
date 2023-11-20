@@ -1,36 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/common/constants/app_colors.dart';
+import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/constants/insets.dart';
 import 'package:receipts/common/widgets/common_persistent_header.dart';
 import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 import 'package:receipts/recipes_list/controllers/recipe_list_state.dart';
 import 'package:receipts/recipes_list/widgets/recipe_sliver_list.dart';
 
-class RecipesPage extends StatefulWidget {
+class RecipesPage extends StatelessWidget {
   const RecipesPage({Key? key}) : super(key: key);
-
-  @override
-  State<RecipesPage> createState() => _RecipesPageState();
-}
-
-class _RecipesPageState extends State<RecipesPage> {
-  @override
-  void initState() {
-    super.initState();
-    BlocProvider.of<BaseRecipeListCubit>(context).loadRecipes();
-  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BaseRecipeListCubit, RecipeListState>(
       builder: (context, state) {
-        return switch (state.loadingStatus) {
-          RecipeListLoadingStatus.initial ||
-          RecipeListLoadingStatus.inProgress =>
+        return switch (state.status) {
+          RecipeListStatus.initial ||
+          RecipeListStatus.inProgress =>
             const Center(child: CircularProgressIndicator()),
-          RecipeListLoadingStatus.error => Center(child: Text(state.message)),
-          RecipeListLoadingStatus.done => SafeArea(
+          RecipeListStatus.error =>
+            const Center(child: Text(ErrorMessages.recipeListError)),
+          RecipeListStatus.success => SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: Insets.horizontal1,

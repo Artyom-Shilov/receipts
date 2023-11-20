@@ -39,7 +39,9 @@ abstract class RecipeInfoTexts {
 
 abstract class ErrorMessages {
 
-  static const commentsError = 'Ошибка при загрузке комментариев';
+  static const recipeInfoError = 'Ошибка при работе с рецептом';
+  static const recipeListError = 'Ошибка при загрузке рецептов';
+
 }
 
 

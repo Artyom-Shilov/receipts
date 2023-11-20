@@ -12,9 +12,9 @@ class RecipeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        GoRouter.of(context)
-            .go('/${AppTabs.recipes}/${RecipesRouteNames.recipe}/${recipe.id}');
-        //pathParameters: {'${PathParameters.recipeId}': recipe.id});
+        GoRouter.of(context).go(
+            '/${AppTabs.recipes}/${RecipesRouteNames.recipe}/${recipe.id}',
+            extra: recipe);
       },
       child: DecoratedBox(
         decoration: BoxDecoration(

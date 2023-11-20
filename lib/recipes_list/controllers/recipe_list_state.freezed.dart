@@ -16,10 +16,8 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$RecipeListState {
-  RecipeListLoadingStatus get loadingStatus =>
-      throw _privateConstructorUsedError;
+  RecipeListStatus get status => throw _privateConstructorUsedError;
   List<Recipe> get recipes => throw _privateConstructorUsedError;
-  String get message => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $RecipeListStateCopyWith<RecipeListState> get copyWith =>
@@ -32,10 +30,7 @@ abstract class $RecipeListStateCopyWith<$Res> {
           RecipeListState value, $Res Function(RecipeListState) then) =
       _$RecipeListStateCopyWithImpl<$Res, RecipeListState>;
   @useResult
-  $Res call(
-      {RecipeListLoadingStatus loadingStatus,
-      List<Recipe> recipes,
-      String message});
+  $Res call({RecipeListStatus status, List<Recipe> recipes});
 }
 
 /// @nodoc
@@ -51,23 +46,18 @@ class _$RecipeListStateCopyWithImpl<$Res, $Val extends RecipeListState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loadingStatus = null,
+    Object? status = null,
     Object? recipes = null,
-    Object? message = null,
   }) {
     return _then(_value.copyWith(
-      loadingStatus: null == loadingStatus
-          ? _value.loadingStatus
-          : loadingStatus // ignore: cast_nullable_to_non_nullable
-              as RecipeListLoadingStatus,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as RecipeListStatus,
       recipes: null == recipes
           ? _value.recipes
           : recipes // ignore: cast_nullable_to_non_nullable
               as List<Recipe>,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
     ) as $Val);
   }
 }
@@ -80,10 +70,7 @@ abstract class _$$RecipeListStateImplCopyWith<$Res>
       __$$RecipeListStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {RecipeListLoadingStatus loadingStatus,
-      List<Recipe> recipes,
-      String message});
+  $Res call({RecipeListStatus status, List<Recipe> recipes});
 }
 
 /// @nodoc
@@ -97,23 +84,18 @@ class __$$RecipeListStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loadingStatus = null,
+    Object? status = null,
     Object? recipes = null,
-    Object? message = null,
   }) {
     return _then(_$RecipeListStateImpl(
-      loadingStatus: null == loadingStatus
-          ? _value.loadingStatus
-          : loadingStatus // ignore: cast_nullable_to_non_nullable
-              as RecipeListLoadingStatus,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as RecipeListStatus,
       recipes: null == recipes
           ? _value._recipes
           : recipes // ignore: cast_nullable_to_non_nullable
               as List<Recipe>,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }
@@ -122,13 +104,11 @@ class __$$RecipeListStateImplCopyWithImpl<$Res>
 
 class _$RecipeListStateImpl implements _RecipeListState {
   const _$RecipeListStateImpl(
-      {required this.loadingStatus,
-      required final List<Recipe> recipes,
-      this.message = ''})
+      {required this.status, required final List<Recipe> recipes})
       : _recipes = recipes;
 
   @override
-  final RecipeListLoadingStatus loadingStatus;
+  final RecipeListStatus status;
   final List<Recipe> _recipes;
   @override
   List<Recipe> get recipes {
@@ -138,12 +118,8 @@ class _$RecipeListStateImpl implements _RecipeListState {
   }
 
   @override
-  @JsonKey()
-  final String message;
-
-  @override
   String toString() {
-    return 'RecipeListState(loadingStatus: $loadingStatus, recipes: $recipes, message: $message)';
+    return 'RecipeListState(status: $status, recipes: $recipes)';
   }
 
   @override
@@ -151,15 +127,13 @@ class _$RecipeListStateImpl implements _RecipeListState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$RecipeListStateImpl &&
-            (identical(other.loadingStatus, loadingStatus) ||
-                other.loadingStatus == loadingStatus) &&
-            const DeepCollectionEquality().equals(other._recipes, _recipes) &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other._recipes, _recipes));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, loadingStatus,
-      const DeepCollectionEquality().hash(_recipes), message);
+  int get hashCode => Object.hash(
+      runtimeType, status, const DeepCollectionEquality().hash(_recipes));
 
   @JsonKey(ignore: true)
   @override
@@ -171,16 +145,13 @@ class _$RecipeListStateImpl implements _RecipeListState {
 
 abstract class _RecipeListState implements RecipeListState {
   const factory _RecipeListState(
-      {required final RecipeListLoadingStatus loadingStatus,
-      required final List<Recipe> recipes,
-      final String message}) = _$RecipeListStateImpl;
+      {required final RecipeListStatus status,
+      required final List<Recipe> recipes}) = _$RecipeListStateImpl;
 
   @override
-  RecipeListLoadingStatus get loadingStatus;
+  RecipeListStatus get status;
   @override
   List<Recipe> get recipes;
-  @override
-  String get message;
   @override
   @JsonKey(ignore: true)
   _$$RecipeListStateImplCopyWith<_$RecipeListStateImpl> get copyWith =>

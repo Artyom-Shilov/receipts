@@ -3,18 +3,17 @@ import 'package:receipts/common/models/recipe.dart';
 
 part 'recipe_list_state.freezed.dart';
 
-enum RecipeListLoadingStatus {
+enum RecipeListStatus {
   initial,
   inProgress,
-  done,
+  success,
   error;
 }
 
 @freezed
 class RecipeListState with _$RecipeListState {
   const factory RecipeListState(
-      {required RecipeListLoadingStatus loadingStatus,
+      {required RecipeListStatus status,
       required List<Recipe> recipes,
-      @Default('') String message,
       }) = _RecipeListState;
 }

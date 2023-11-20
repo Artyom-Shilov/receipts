@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:receipts/authentication/controllers/auth_state.dart';
+import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/models/user.dart';
 
 import 'base_auth_cubit.dart';
@@ -14,7 +15,7 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
     emit(state.copyWith(
         status: AuthStatus.loggedIn,
         user: User(
-            id: 1,
+            id: 1.toString(),
             login: login,
             password: password,
             token: 'testToken',
@@ -34,7 +35,7 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
     emit(state.copyWith(
         status: AuthStatus.loggedIn,
         user: User(
-            id: 1,
+            id: 1.toString(),
             login: login,
             password: password,
             token: 'testToken',
@@ -42,7 +43,19 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
   }
 
   @override
-  bool isLoggedIn() {
-    return state.status == AuthStatus.loggedIn;
-  }
+  User? get currentUser => state.user;
+
+  @override
+  bool get isLoggedIn => state.status == AuthStatus.loggedIn;
+
+  @override
+  AuthStatus get status => state.status;
+
+  @override
+  String? Function(String? login) get loginValidation => (value) =>
+      value!.isNotEmpty ? null : LoginPageTexts.loginValidatorMessage;
+
+  @override
+  String? Function(String? passowrd) get passwordValidation => (value) =>
+      value!.isNotEmpty ? null : LoginPageTexts.passwordValidatorMessage;
 }

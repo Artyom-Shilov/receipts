@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:receipts/authentication/controllers/auth_state.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
@@ -36,10 +37,12 @@ class HomeScreen extends StatelessWidget {
       body: navigationShell,
       bottomNavigationBar:
           BlocBuilder<BaseAuthCubit, AuthState>(builder: (context, state) {
-        bool isLoggedIn = BlocProvider.of<BaseAuthCubit>(context).isLoggedIn();
+        bool isLoggedIn = BlocProvider.of<BaseAuthCubit>(context).isLoggedIn;
         return BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          currentIndex: AppRouter.findCurrentIndexForAppBar(navigationShell),
+          currentIndex: GetIt.I
+              .get<AppRouter>()
+              .findCurrentIndexForAppBar(navigationShell),
           backgroundColor: Colors.white,
           selectedFontSize: 10.0,
           unselectedFontSize: 10.0,
@@ -49,7 +52,8 @@ class HomeScreen extends StatelessWidget {
           onTap: (index) {
             !isLoggedIn &&
                     loggedOutItems[index].label == BottomAppBarTexts.login
-                ? navigationShell.goBranch(AppRouter.loginTabIndexAsShellBranch)
+                ? navigationShell.goBranch(
+                    GetIt.I.get<AppRouter>().loginTabIndexAsShellBranch)
                 : navigationShell.goBranch(index);
           },
         );

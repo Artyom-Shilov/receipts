@@ -1,22 +1,18 @@
-import 'package:receipts/common/models/recipe.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'comment.dart';
+part 'user.freezed.dart';
+part 'user.g.dart';
 
-class User {
-  int id;
-  String login;
-  String password;
-  String token;
-  String avatar;
-  List<Comment>? comments;
-  List<Recipe>? favourite;
 
-  User(
-      {required this.id,
-      required this.login,
-      required this.password,
-      required this.token,
-      required this.avatar,
-      this.favourite,
-      this.comments});
+@freezed
+class User with _$User {
+  const factory User(
+  { required String id,
+    required String login,
+    required String password,
+    required String token,
+    required String avatar,
+}) = _User;
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }

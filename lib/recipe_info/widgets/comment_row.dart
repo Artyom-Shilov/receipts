@@ -17,7 +17,7 @@ class CommentRow extends StatelessWidget {
             flex: 2,
             child: CircleAvatar(
               radius: 30,
-              child: Image.asset(comment.user!.avatar),
+              child: Image.asset(comment.user.avatar),
             )),
         const Spacer(
           flex: 1,
@@ -31,7 +31,7 @@ class CommentRow extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    comment.user?.login ?? '',
+                    comment.user.login,
                     style: const TextStyle(color: AppColors.accent),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,

@@ -68,11 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.grey,
                       ),
                       textController: loginController,
-                      validator: (value) {
-                        return value!.isNotEmpty
-                            ? null
-                            : LoginPageTexts.loginValidatorMessage;
-                      },
+                      validator: BlocProvider.of<BaseAuthCubit>(context).loginValidation
                     ),
                     const SizedBox(
                       height: 16,
@@ -85,11 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.grey,
                       ),
                       textController: passwordController,
-                      validator: (value) {
-                        return value!.isNotEmpty
-                            ? null
-                            : LoginPageTexts.passwordValidatorMessage;
-                      },
+                      validator: BlocProvider.of<BaseAuthCubit>(context).passwordValidation
                     ),
                     const SizedBox(
                       height: 40,

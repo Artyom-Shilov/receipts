@@ -1,16 +1,17 @@
-class Ingredient {
-  Ingredient({required this.title, required this.quantity});
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  String title;
-  String quantity;
+part 'ingredient.g.dart';
 
-  factory Ingredient.fromJson(Map<String, dynamic> json) {
-    return Ingredient(
-        title: json['title'] ?? '', quantity: json['quantity'] ?? '');
+part 'ingredient.freezed.dart';
+
+@freezed
+class Ingredient with _$Ingredient {
+  const factory Ingredient(
+  {required String title,
+   required String quantity
   }
+      ) = _Ingredient;
 
-  @override
-  String toString() {
-    return 'Ingredient{title: $title, quantity: $quantity}';
-  }
+  factory Ingredient.fromJson(Map<String, dynamic> json) =>
+      _$IngredientFromJson(json);
 }

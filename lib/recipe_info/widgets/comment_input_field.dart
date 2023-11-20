@@ -6,7 +6,7 @@ import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/models/comment.dart';
 import 'package:receipts/common/models/recipe.dart';
-import 'package:receipts/recipe_info/controllers/comments/base_comments_cubit.dart';
+import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 
 class CommentInputField extends StatefulWidget {
   final Recipe recipe;
@@ -54,16 +54,14 @@ class _CommentInputFieldState extends State<CommentInputField> {
       ),
       onSubmitted: (text) {
         final user = BlocProvider.of<BaseAuthCubit>(context).state.user!;
-        BlocProvider.of<BaseCommentsCubit>(context).saveComment(
-              recipe: widget.recipe,
-              comment: Comment(
-                  text: text,
-                  user: user,
-                  photo: 'assets/sample_data/comment_sample_photo.png',
-                  datetime: DateFormat('dd.MM.yyyy')
-                      .format(DateTime.now())
-                      .toString()),
-            );
+        BlocProvider.of<BaseRecipeInfoCubit>(context).saveComment(
+          Comment(
+              text: text,
+              user: user,
+              photo: 'assets/sample_data/comment_sample_photo.png',
+              datetime:
+                  DateFormat('dd.MM.yyyy').format(DateTime.now()).toString()),
+        );
         _textController.clear();
       },
     );
