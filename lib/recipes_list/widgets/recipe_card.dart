@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/models/recipe.dart';
-import 'package:receipts/recipe_info/pages/recipe_screen.dart';
+import 'package:receipts/navigation/app_router.dart';
 
 class RecipeCard extends StatelessWidget {
   const RecipeCard({Key? key, required this.recipe}) : super(key: key);
@@ -11,13 +12,11 @@ class RecipeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => RecipePage(recipe: recipe)));
+        GoRouter.of(context).go(
+            '/${AppTabs.recipes}/${RecipesRouteNames.recipe}/${recipe.id}',
+            extra: recipe);
       },
-      child: Container(
-        height: MediaQuery.of(context).size.longestSide * 0.15,
+      child: DecoratedBox(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(5.0),
@@ -35,15 +34,15 @@ class RecipeCard extends StatelessWidget {
             Image.asset(
               recipe.image,
               fit: BoxFit.cover,
+              height: MediaQuery.of(context).size.longestSide * 0.15,
             ),
             const Spacer(
               flex: 1,
             ),
-            Flexible(
+            Expanded(
               flex: 10,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
                     recipe.title,
@@ -55,21 +54,27 @@ class RecipeCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.access_time,
-                        size: 16,
-                      ),
-                      Text(
-                        '   ${recipe.cookingTime}',
-                        style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.accent),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          size: 16,
+                        ),
+                        Expanded(
+                          child: Text(
+                            '   ${recipe.cookingTime}',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.accent),
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CommonPersistentHeader extends StatelessWidget {
-  const CommonPersistentHeader({Key? key, required this.maxExtent, required this.color})
+  const CommonPersistentHeader(
+      {Key? key, required this.maxExtent, required this.color})
       : super(key: key);
 
   final double maxExtent;

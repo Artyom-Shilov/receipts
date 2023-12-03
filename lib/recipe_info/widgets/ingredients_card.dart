@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:receipts/common/constants/app_colors.dart';
+import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/models/ingredient.dart';
 
 class IngredientsCard extends StatelessWidget {
@@ -11,7 +11,7 @@ class IngredientsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.longestSide * 0.35,
+      padding: const EdgeInsets.only(top: Insets.vertical1),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(5),
@@ -20,25 +20,34 @@ class IngredientsCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           for (final ingredient in ingredients)
-            Row(
-              children: [
-                const Spacer(
-                  flex: 1,
-                ),
-                Expanded(
-                    flex: 20,
-                    child: Text(
-                      '• ${ingredient.title}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    )),
-                Expanded(
-                    flex: 8,
-                    child: Text(ingredient.quantity,
+            Padding(
+              padding: const EdgeInsets.only(bottom: Insets.vertical1),
+              child: Row(
+                children: [
+                  const Spacer(
+                    flex: 1,
+                  ),
+                  Expanded(
+                      flex: 20,
+                      child: Text(
+                        '• ${ingredient.title}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.greyFont)))
-              ],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )),
+                  Expanded(
+                      flex: 8,
+                      child: Text(ingredient.quantity,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.greyFont)))
+                ],
+              ),
             )
         ],
       ),
