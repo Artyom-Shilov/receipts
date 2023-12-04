@@ -30,7 +30,7 @@ class IngredientsCard extends StatelessWidget {
                   Expanded(
                       flex: 20,
                       child: Text(
-                        '• ${ingredient.title}',
+                        '• ${ingredient.name}',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -39,7 +39,7 @@ class IngredientsCard extends StatelessWidget {
                       )),
                   Expanded(
                       flex: 8,
-                      child: Text(ingredient.quantity,
+                      child: Text('${ingredient.count} ${ingredient.measureUnit}',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(

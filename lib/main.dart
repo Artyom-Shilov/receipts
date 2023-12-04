@@ -5,22 +5,29 @@ import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receipts/authentication/controllers/auth_cubit.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
-import 'package:receipts/common/services/base_recipe_service.dart';
-import 'package:receipts/common/services/recipe_service.dart';
+import 'package:receipts/common/local_storage/hive_recipe_client.dart';
+import 'package:receipts/common/network/dio_recipe_client.dart';
+import 'package:receipts/common/repositories/base_recipe_repository.dart';
+import 'package:receipts/common/repositories/recipe_repository.dart';
 import 'package:receipts/navigation/app_router.dart';
 import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 import 'package:receipts/recipes_list/controllers/recipe_list_cubit.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
-void main() {
+void main() async {
   SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-  GetIt.instance.registerSingleton<BaseRecipeService>(RecipeService());
+  final directory = await path_provider.getApplicationDocumentsDirectory();
+  final storageClient = HiveRecipeClient();
+  await storageClient.init(directory.path);
+  GetIt.instance.registerSingleton<BaseRecipeRepository>(RecipeRepository(
+      storageClient: storageClient, networkClient: DioRecipeClient()));
   GetIt.instance.registerSingleton<AppRouter>(AppRouter());
   runApp(MultiBlocProvider(providers: [
     BlocProvider<BaseAuthCubit>(create: (context) => AuthCubit()),
     BlocProvider<BaseRecipeListCubit>(
         create: (context) =>
-            RecipeListCubit(GetIt.instance.get<BaseRecipeService>()))
+            RecipeListCubit(GetIt.instance.get<BaseRecipeRepository>()))
   ], child: const MyApp()));
 }
 
@@ -32,7 +39,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();

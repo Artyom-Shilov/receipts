@@ -6,7 +6,7 @@ import 'package:receipts/authentication/pages/login_page.dart';
 import 'package:receipts/authentication/pages/profile_page.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/pages/home_screen.dart';
-import 'package:receipts/common/services/base_recipe_service.dart';
+import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/favourite/pages/favourite_page.dart';
 import 'package:receipts/freezer/pages/freezer_page.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
@@ -61,8 +61,8 @@ class AppRouter {
                           final recipe = state.extra as Recipe;
                           return BlocProvider<BaseRecipeInfoCubit>(
                             create: (context) => RecipeInfoCubit(
-                                service:
-                                    GetIt.instance.get<BaseRecipeService>(),
+                                repository:
+                                    GetIt.instance.get<BaseRecipeRepository>(),
                                 recipe: recipe),
                             child: const RecipeInfoScreen(),
                           );

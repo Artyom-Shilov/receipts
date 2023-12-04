@@ -1,6 +1,6 @@
 import 'package:receipts/common/models/recipe.dart';
 
-abstract interface class BaseRecipeService {
+abstract interface class BaseRecipeRepository {
 
   Future<void> loadRecipes();
   Future<void> saveRecipeInfo(Recipe recipe);

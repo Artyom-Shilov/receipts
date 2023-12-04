@@ -31,8 +31,8 @@ class RecipeCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Image.asset(
-              recipe.image,
+            Image.network(
+              recipe.photo,
               fit: BoxFit.cover,
               height: MediaQuery.of(context).size.longestSide * 0.15,
             ),
@@ -45,7 +45,7 @@ class RecipeCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    recipe.title,
+                    recipe.name,
                     style: const TextStyle(
                       fontSize: 22,
                       height: 1,
@@ -65,7 +65,7 @@ class RecipeCard extends StatelessWidget {
                         ),
                         Expanded(
                           child: Text(
-                            '   ${recipe.cookingTime}',
+                            '   ${recipe.duration}',
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontSize: 16,

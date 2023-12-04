@@ -2,18 +2,18 @@ import 'package:bloc/bloc.dart';
 import 'package:receipts/common/models/comment.dart';
 import 'package:receipts/common/models/cooking_step.dart';
 import 'package:receipts/common/models/recipe.dart';
-import 'package:receipts/common/services/base_recipe_service.dart';
+import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 
 import 'recipe_info_state.dart';
 
 class RecipeInfoCubit extends Cubit<RecipeInfoState> implements BaseRecipeInfoCubit {
 
-  RecipeInfoCubit({required BaseRecipeService service, required Recipe recipe })
-      : _service = service,
+  RecipeInfoCubit({required BaseRecipeRepository repository, required Recipe recipe })
+      : _repository = repository,
         super(RecipeInfoState(status: RecipeInfoStatus.success, recipe: recipe));
 
-  final BaseRecipeService _service;
+  final BaseRecipeRepository _repository;
 
   @override
   Future<void> changeFavouriteStatus() async {
@@ -26,7 +26,7 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState> implements BaseRecipeInfoCu
       return;
     }
     emit(state.copyWith(recipe: changedInfo));
-    await _service.saveRecipeInfo(changedInfo);
+    await _repository.saveRecipeInfo(changedInfo);
   }
 
   @override
@@ -41,7 +41,7 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState> implements BaseRecipeInfoCu
       return;
     }
     emit(state.copyWith(recipe: changedInfo));
-    await _service.saveRecipeInfo(changedInfo);
+    await _repository.saveRecipeInfo(changedInfo);
   }
 
   @override
@@ -59,7 +59,7 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState> implements BaseRecipeInfoCu
       return;
     }
     emit(state.copyWith(recipe: changedInfo));
-    await _service.saveRecipeInfo(changedInfo);
+    await _repository.saveRecipeInfo(changedInfo);
   }
 
 
