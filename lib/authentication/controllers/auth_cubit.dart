@@ -11,7 +11,7 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
   @override
   Future<void> logIn({required String login, required String password}) async {
     emit(state.copyWith(status: AuthStatus.inProgress));
-    //some request here with login and password to get user
+    await Future.delayed(const Duration(seconds: 2));
     emit(state.copyWith(
         status: AuthStatus.loggedIn,
         user: User(

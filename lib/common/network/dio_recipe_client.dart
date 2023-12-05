@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:dio/dio.dart';
 
@@ -53,5 +55,11 @@ class DioRecipeClient implements BaseNetworkRecipeClient {
   Future<NetworkMeasureUnit> getMeasureUnitById(int id) async {
     final response = await _dio.get('/measure_unit/$id');
     return NetworkMeasureUnit.fromJson(response.data);
+  }
+
+  @override
+  Future<Uint8List> getImage(String imageUrl) async {
+    final response = await _dio.get<Uint8List>(imageUrl, options: Options(responseType: ResponseType.bytes));
+    return response.data!;
   }
 }

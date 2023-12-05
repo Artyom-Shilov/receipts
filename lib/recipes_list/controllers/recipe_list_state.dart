@@ -15,5 +15,6 @@ class RecipeListState with _$RecipeListState {
   const factory RecipeListState(
       {required RecipeListStatus status,
       required List<Recipe> recipes,
+      @Default('') String message
       }) = _RecipeListState;
 }

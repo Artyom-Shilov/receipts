@@ -46,9 +46,7 @@ class RecipeInfoScreenBody extends StatelessWidget {
                       step: recipe.steps[index],
                       index: index + 1,
                     ),
-              separatorBuilder: (context, index) => const SizedBox(
-                    height: 16,
-                  ),
+              separatorBuilder: (context, index) => const SizedBox(height: 16),
               itemCount: recipe.steps.length),
           SliverToBoxAdapter(
             child: Padding(

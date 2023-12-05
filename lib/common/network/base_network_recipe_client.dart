@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'network_models/network_ingredient.dart';
 import 'network_models/network_measure_unit.dart';
 import 'network_models/network_recipe.dart';
@@ -13,4 +15,5 @@ abstract interface class BaseNetworkRecipeClient {
   Future<List<RecipeIngredientLink>> getRecipeIngredientsLinks();
   Future<NetworkIngredient> getIngredientById(int id);
   Future<NetworkMeasureUnit> getMeasureUnitById(int id);
+  Future<Uint8List> getImage(String imageUrl);
 }

@@ -1,17 +1,19 @@
 import 'package:bloc/bloc.dart';
+import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/models/comment.dart';
-import 'package:receipts/common/models/cooking_step.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 
 import 'recipe_info_state.dart';
 
-class RecipeInfoCubit extends Cubit<RecipeInfoState> implements BaseRecipeInfoCubit {
-
-  RecipeInfoCubit({required BaseRecipeRepository repository, required Recipe recipe })
+class RecipeInfoCubit extends Cubit<RecipeInfoState>
+    implements BaseRecipeInfoCubit {
+  RecipeInfoCubit(
+      {required BaseRecipeRepository repository, required Recipe recipe})
       : _repository = repository,
-        super(RecipeInfoState(status: RecipeInfoStatus.success, recipe: recipe));
+        super(
+            RecipeInfoState(status: RecipeInfoStatus.success, recipe: recipe));
 
   final BaseRecipeRepository _repository;
 
@@ -40,7 +42,9 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState> implements BaseRecipeInfoCu
       emit(state.copyWith(status: RecipeInfoStatus.error));
       return;
     }
-    emit(state.copyWith(recipe: changedInfo));
+    emit(state.copyWith(
+        status: RecipeInfoStatus.error,
+        message: ErrorMessages.changeRecipeInfo));
     await _repository.saveRecipeInfo(changedInfo);
   }
 
@@ -48,20 +52,20 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState> implements BaseRecipeInfoCu
   Future<void> changeCookingStepStatus(int index) async {
     Recipe changedInfo;
     try {
-      final newStepList = [...state.recipe.steps];
-      CookingStep changingCookingStep = newStepList[index];
-      bool newValue = !changingCookingStep.isDone;
-      changingCookingStep = changingCookingStep.copyWith(isDone: newValue);
-      newStepList[index] = changingCookingStep;
-      changedInfo = state.recipe.copyWith(steps: newStepList);
+      final steps = state.recipe.steps;
+      bool newValue = !steps[index].isDone;
+      final newStep = steps[index].copyWith(isDone: newValue);
+      steps[index] = newStep;
+      changedInfo = state.recipe.copyWith(steps: steps);
     } catch (e) {
-      emit(state.copyWith(status: RecipeInfoStatus.error));
+      emit(state.copyWith(
+          status: RecipeInfoStatus.error,
+          message: ErrorMessages.changeRecipeInfo));
       return;
     }
     emit(state.copyWith(recipe: changedInfo));
     await _repository.saveRecipeInfo(changedInfo);
   }
-
 
   @override
   List<Comment> get comments => state.recipe.comments;

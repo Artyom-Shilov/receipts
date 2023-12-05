@@ -38,21 +38,17 @@ class RecipeTopColumn extends StatelessWidget {
                   icon: const Icon(Icons.favorite),
                   color: state.recipe.isFavourite ? Colors.red : Colors.black,
                   onPressed: () {
-                    BlocProvider.of<BaseRecipeInfoCubit>(context).changeFavouriteStatus();
+                    BlocProvider.of<BaseRecipeInfoCubit>(context)
+                        .changeFavouriteStatus();
                   },
                 ),
               )
           ],
         ),
-        const SizedBox(
-          height: Insets.vertical1,
-        ),
+        const SizedBox(height: Insets.vertical1),
         Row(
           children: [
-            const Icon(
-              Icons.access_time,
-              size: 16,
-            ),
+            const Icon(Icons.access_time, size: 16),
             Text(
               '  ${recipe.duration}',
               style: const TextStyle(
@@ -71,7 +67,7 @@ class RecipeTopColumn extends StatelessWidget {
               height: constraints.maxWidth < SizeBreakPoints.phoneLandscape
                   ? MediaQuery.of(context).size.longestSide * 0.25
                   : MediaQuery.of(context).size.longestSide * 0.50,
-              child: Image.network(recipe.photo, fit: BoxFit.cover));
+              child: Image.memory(recipe.photoBytes!, fit: BoxFit.cover));
         })
       ],
     );

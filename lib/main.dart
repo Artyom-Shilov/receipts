@@ -15,6 +15,7 @@ import 'package:receipts/recipes_list/controllers/recipe_list_cubit.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   final directory = await path_provider.getApplicationDocumentsDirectory();

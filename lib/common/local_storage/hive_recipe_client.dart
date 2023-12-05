@@ -18,7 +18,7 @@ class HiveRecipeClient implements BaseStorageRecipeClient {
   Future<void> writeRecipes(List<Recipe> recipes) async {
     final recipeBox = await Hive.openBox<Recipe>('recipes');
     await recipeBox.clear();
-    await recipeBox.addAll(recipes);
+    recipeBox.addAll(recipes);
     await recipeBox.close();
   }
 
