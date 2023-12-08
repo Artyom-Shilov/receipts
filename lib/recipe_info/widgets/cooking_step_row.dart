@@ -50,15 +50,19 @@ class CookingStepRow extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
-                    builder: (context, state) => Checkbox(
-                        activeColor: AppColors.main,
-                        side: const BorderSide(
-                            width: 2, color: AppColors.greyFont),
-                        value: state.recipe.steps[index - 1].isDone,
-                        onChanged: (value) {
-                          BlocProvider.of<BaseRecipeInfoCubit>(context)
-                              .changeCookingStepStatus(index - 1);
-                        }),
+                    builder: (context, state) {
+                      print('!!!!!!Rebuild');
+                      return Checkbox(
+                          activeColor: AppColors.main,
+                          side: const BorderSide(
+                              width: 2, color: AppColors.greyFont),
+                          value: state.recipe.steps[index - 1].isDone,
+                          onChanged: (value) {
+                            BlocProvider.of<BaseRecipeInfoCubit>(context)
+                                .changeCookingStepStatus(index - 1);
+                          });
+
+                    }
                   ),
                   Text(
                     step.duration,

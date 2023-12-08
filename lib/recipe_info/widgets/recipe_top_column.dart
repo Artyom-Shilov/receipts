@@ -7,14 +7,42 @@ import 'package:receipts/common/constants/size_break_points.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
+import 'package:rive/rive.dart';
 
-class RecipeTopColumn extends StatelessWidget {
-  const RecipeTopColumn({
+class RecipeTopColumn extends StatefulWidget {
+  RecipeTopColumn({
     super.key,
     required this.recipe,
   });
 
   final Recipe recipe;
+
+  @override
+  State<RecipeTopColumn> createState() => _RecipeTopColumnState();
+}
+
+class _RecipeTopColumnState extends State<RecipeTopColumn> {
+
+
+  late final RiveAnimationController _controller;
+
+  bool isActive = false;
+
+  void animate() {
+    setState(() {
+      _controller.isActive = true;
+    });
+  }
+
+  int number = 2;
+  bool isPlay = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = OneShotAnimation('heart');
+    _controller.isActive = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,22 +54,23 @@ class RecipeTopColumn extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                recipe.name,
+                widget.recipe.name,
                 overflow: TextOverflow.ellipsis,
                 style:
                     const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-            if (BlocProvider.of<BaseAuthCubit>(context).isLoggedIn)
-              BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
-                builder: (context, state) => IconButton(
-                  icon: const Icon(Icons.favorite),
-                  color: state.recipe.isFavourite ? Colors.red : Colors.black,
-                  onPressed: () {
-                    BlocProvider.of<BaseRecipeInfoCubit>(context)
-                        .changeFavouriteStatus();
-                  },
-                ),
+           // if (BlocProvider.of<BaseAuthCubit>(context).isLoggedIn)
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _controller.isActive = true;
+                  });
+                },
+                child: SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: RiveAnimation.asset('assets/animations/heart_1.riv', controllers: [_controller], fit: BoxFit.fill,),)
               )
           ],
         ),
@@ -50,7 +79,7 @@ class RecipeTopColumn extends StatelessWidget {
           children: [
             const Icon(Icons.access_time, size: 16),
             Text(
-              '  ${recipe.duration}',
+              '  ${widget.recipe.duration}',
               style: const TextStyle(
                   fontSize: 16,
                   color: AppColors.accent,
@@ -67,7 +96,7 @@ class RecipeTopColumn extends StatelessWidget {
               height: constraints.maxWidth < SizeBreakPoints.phoneLandscape
                   ? MediaQuery.of(context).size.longestSide * 0.25
                   : MediaQuery.of(context).size.longestSide * 0.50,
-              child: Image.memory(recipe.photoBytes!, fit: BoxFit.cover));
+              child: Image.memory(widget.recipe.photoBytes!, fit: BoxFit.cover));
         })
       ],
     );

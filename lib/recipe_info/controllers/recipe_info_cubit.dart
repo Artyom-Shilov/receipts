@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/models/comment.dart';
+import 'package:receipts/common/models/cooking_step.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
@@ -52,11 +53,12 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
   Future<void> changeCookingStepStatus(int index) async {
     Recipe changedInfo;
     try {
-      final steps = state.recipe.steps;
-      bool newValue = !steps[index].isDone;
-      final newStep = steps[index].copyWith(isDone: newValue);
-      steps[index] = newStep;
-      changedInfo = state.recipe.copyWith(steps: steps);
+      final newStepList = [...state.recipe.steps];
+      CookingStep changingCookingStep = newStepList[index];
+      bool newValue = !changingCookingStep.isDone;
+      changingCookingStep = changingCookingStep.copyWith(isDone: newValue);
+      newStepList[index] = changingCookingStep;
+      changedInfo = state.recipe.copyWith(steps: newStepList);
     } catch (e) {
       emit(state.copyWith(
           status: RecipeInfoStatus.error,
