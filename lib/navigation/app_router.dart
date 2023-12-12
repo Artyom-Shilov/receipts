@@ -4,6 +4,9 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:receipts/authentication/pages/login_page.dart';
 import 'package:receipts/authentication/pages/profile_page.dart';
+import 'package:receipts/camera/controllers/base_camera_cubit.dart';
+import 'package:receipts/camera/controllers/camera_cubit.dart';
+import 'package:receipts/camera/pages/camera_page.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/pages/home_screen.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
@@ -66,7 +69,20 @@ class AppRouter {
                                 recipe: recipe),
                             child: const RecipeInfoScreen(),
                           );
-                        })
+                        },
+                        routes: [
+                          GoRoute(
+                              path: '${RecipesRouteNames.camera}',
+                              builder: (context, state) {
+                                final recipe = state.extra as Recipe;
+                                return BlocProvider<BaseCameraCubit>(
+                                    create: (context) => CameraCubit(
+                                        recipe: recipe,
+                                        repository: GetIt.instance
+                                            .get<BaseRecipeRepository>()),
+                                    child: const CameraPage());
+                              })
+                        ]),
                   ])
             ]),
             StatefulShellBranch(navigatorKey: _freezerKey, routes: [
@@ -110,7 +126,8 @@ enum AppTabs {
 }
 
 enum RecipesRouteNames {
-  recipe;
+  recipe,
+  camera;
 
   @override
   String toString() {

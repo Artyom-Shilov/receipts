@@ -8,6 +8,7 @@ import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/widgets/common_persistent_header.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
+import 'package:receipts/recipe_info/widgets/gallery_preview.dart';
 import 'package:receipts/recipe_info/widgets/widgets.dart';
 
 class RecipeInfoScreenBody extends StatelessWidget {
@@ -28,6 +29,9 @@ class RecipeInfoScreenBody extends StatelessWidget {
           ),
           SliverToBoxAdapter(
             child: RecipeTopColumn(recipe: recipe),
+          ),
+          SliverToBoxAdapter(
+            child: GalleryPreview(),
           ),
           const SliverToBoxAdapter(
               child: RecipeInfoSectionTitle(

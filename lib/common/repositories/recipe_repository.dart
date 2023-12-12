@@ -142,7 +142,9 @@ class RecipeRepository implements BaseRecipeRepository {
           steps: steps,
           ingredients: ingredients,
           photoBytes: photoBytes,
-          comments: []));
+          comments: [],
+          userPhotos: []
+      ));
     }
     return recipes;
   }

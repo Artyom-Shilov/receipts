@@ -1,8 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:bloc/bloc.dart';
 import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/models/comment.dart';
 import 'package:receipts/common/models/cooking_step.dart';
 import 'package:receipts/common/models/recipe.dart';
+import 'package:receipts/common/models/user_recipe_photo.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 
@@ -40,12 +43,12 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
       commentList.add(comment);
       changedInfo = state.recipe.copyWith(comments: commentList);
     } catch (e) {
-      emit(state.copyWith(status: RecipeInfoStatus.error));
+      emit(state.copyWith(
+          status: RecipeInfoStatus.error,
+          message: ErrorMessages.changeRecipeInfo));
       return;
     }
-    emit(state.copyWith(
-        status: RecipeInfoStatus.error,
-        message: ErrorMessages.changeRecipeInfo));
+    emit(state.copyWith(recipe: changedInfo));
     await _repository.saveRecipeInfo(changedInfo);
   }
 
@@ -77,4 +80,7 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
 
   @override
   Recipe get recipe => state.recipe;
+
+  @override
+  List<UserRecipePhoto> get userPhotos => state.recipe.userPhotos;
 }

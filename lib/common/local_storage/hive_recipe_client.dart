@@ -3,6 +3,7 @@ import 'package:receipts/common/local_storage/base_storage_recipe_client.dart';
 import 'package:receipts/common/models/cooking_step.dart';
 import 'package:receipts/common/models/ingredient.dart';
 import 'package:receipts/common/models/recipe.dart';
+import 'package:receipts/common/models/user_recipe_photo.dart';
 
 class HiveRecipeClient implements BaseStorageRecipeClient {
 
@@ -12,14 +13,15 @@ class HiveRecipeClient implements BaseStorageRecipeClient {
     Hive.registerAdapter<Recipe>(RecipeAdapter());
     Hive.registerAdapter<CookingStep>(CookingStepAdapter());
     Hive.registerAdapter<Ingredient>(IngredientAdapter());
+    Hive.registerAdapter<UserRecipePhoto>(UserRecipePhotoAdapter());
   }
 
   @override
   Future<void> writeRecipes(List<Recipe> recipes) async {
-    final recipeBox = await Hive.openBox<Recipe>('recipes');
-    await recipeBox.clear();
-    recipeBox.addAll(recipes);
-    await recipeBox.close();
+   final recipeBox = await Hive.openBox<Recipe>('recipes');
+   await recipeBox.clear();
+   recipeBox.addAll(recipes);
+   await recipeBox.close();
   }
 
   @override

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/constants/insets.dart';
 import 'package:receipts/common/constants/size_break_points.dart';
 import 'package:receipts/common/models/recipe.dart';
+import 'package:receipts/navigation/app_router.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
 import 'package:rive/rive.dart';
@@ -76,17 +78,34 @@ class _RecipeTopColumnState extends State<RecipeTopColumn> {
         ),
         const SizedBox(height: Insets.vertical1),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Icon(Icons.access_time, size: 16),
-            Text(
-              '  ${widget.recipe.duration}',
-              style: const TextStyle(
-                  fontSize: 16,
-                  color: AppColors.accent,
-                  fontWeight: FontWeight.w400),
-            )
-          ],
-        ),
+            Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const Icon(Icons.access_time, size: 16),
+              Text(
+                '  ${widget.recipe.duration}',
+                style: const TextStyle(
+                    fontSize: 16,
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.w400),
+              ),
+            ],
+          ),
+          GestureDetector(
+            child: const Icon(
+              Icons.add_a_photo,
+              size: 20,
+            ),
+            onTap: () {
+              GoRouter.of(context).go(
+                  '/${AppTabs.recipes}/${RecipesRouteNames.recipe}/${widget.recipe.id}/${RecipesRouteNames.camera}',
+                extra: widget.recipe,
+              );
+            },
+          ),
+        ]),
         const SizedBox(
           height: Insets.vertical1,
         ),
