@@ -1,0 +1,3 @@
+class EmptyStorageException implements Exception {
+
+}

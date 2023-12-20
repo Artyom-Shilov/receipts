@@ -26,7 +26,7 @@ class RecipeTopColumn extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                recipe.title,
+                recipe.name,
                 overflow: TextOverflow.ellipsis,
                 style:
                     const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -38,23 +38,19 @@ class RecipeTopColumn extends StatelessWidget {
                   icon: const Icon(Icons.favorite),
                   color: state.recipe.isFavourite ? Colors.red : Colors.black,
                   onPressed: () {
-                    BlocProvider.of<BaseRecipeInfoCubit>(context).changeFavouriteStatus();
+                    BlocProvider.of<BaseRecipeInfoCubit>(context)
+                        .changeFavouriteStatus();
                   },
                 ),
               )
           ],
         ),
-        const SizedBox(
-          height: Insets.vertical1,
-        ),
+        const SizedBox(height: Insets.vertical1),
         Row(
           children: [
-            const Icon(
-              Icons.access_time,
-              size: 16,
-            ),
+            const Icon(Icons.access_time, size: 16),
             Text(
-              '  ${recipe.cookingTime}',
+              '  ${recipe.duration}',
               style: const TextStyle(
                   fontSize: 16,
                   color: AppColors.accent,
@@ -71,7 +67,7 @@ class RecipeTopColumn extends StatelessWidget {
               height: constraints.maxWidth < SizeBreakPoints.phoneLandscape
                   ? MediaQuery.of(context).size.longestSide * 0.25
                   : MediaQuery.of(context).size.longestSide * 0.50,
-              child: Image.asset(recipe.image, fit: BoxFit.cover));
+              child: Image.memory(recipe.photoBytes!, fit: BoxFit.cover));
         })
       ],
     );

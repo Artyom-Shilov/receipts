@@ -12,9 +12,7 @@ class RecipeSliverList extends StatelessWidget {
     return SliverList.separated(
         itemCount: recipes.length,
         itemBuilder: (context, index) {
-          return RecipeCard(
-            recipe: recipes[index],
-          );
+          return RecipeCard(recipeIndex: index,);
         },
         separatorBuilder: (context, index) {
           return SizedBox(

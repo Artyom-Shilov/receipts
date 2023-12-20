@@ -47,10 +47,7 @@ class _CommentInputFieldState extends State<CommentInputField> {
             OutlineInputBorder(borderSide: BorderSide(color: AppColors.main)),
         suffixIcon: Padding(
             padding: EdgeInsets.only(bottom: 15),
-            child: Icon(
-              Icons.photo,
-              color: AppColors.main,
-            )),
+            child: Icon(Icons.photo, color: AppColors.main,)),
       ),
       onSubmitted: (text) {
         final user = BlocProvider.of<BaseAuthCubit>(context).state.user!;

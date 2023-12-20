@@ -19,9 +19,7 @@ class CommentRow extends StatelessWidget {
               radius: 30,
               child: Image.asset(comment.user.avatar),
             )),
-        const Spacer(
-          flex: 1,
-        ),
+        const Spacer(flex: 1),
         Expanded(
           flex: 8,
           child: Column(
@@ -44,18 +42,12 @@ class CommentRow extends StatelessWidget {
                   )
                 ],
               ),
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
               Text(comment.text),
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
               Image.asset(comment.photo,
                   height: MediaQuery.of(context).size.longestSide * 0.15),
-              const SizedBox(
-                height: Insets.vertical1,
-              ),
+              const SizedBox(height: Insets.vertical1),
             ],
           ),
         )

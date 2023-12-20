@@ -26,9 +26,7 @@ class RecipeInfoScreen extends StatelessWidget {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.campaign),
-                  onPressed: () {
-                    log('campaign tapped');
-                  },
+                  onPressed: () {log('campaign tapped');},
                 )
               ],
             ),
@@ -38,7 +36,7 @@ class RecipeInfoScreen extends StatelessWidget {
                   RecipeInfoStatus.success =>
                     RecipeInfoScreenBody(recipe: state.recipe),
                   RecipeInfoStatus.error =>
-                    const Center(child: Text(ErrorMessages.recipeInfoError)),
+                    Center(child: Text(state.message)),
                 };
               },
             )));

@@ -1,30 +1,54 @@
 import 'dart:async';
 
+import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/models/recipe.dart';
-import 'package:receipts/common/services/base_recipe_service.dart';
+import 'package:receipts/common/repositories/base_recipe_repository.dart';
+import 'package:receipts/common/repositories/exceptions/empty_storage_exception.dart';
+import 'package:receipts/common/repositories/exceptions/load_recipes_local_exception.dart';
+import 'package:receipts/common/repositories/exceptions/load_recipes_net_exception.dart';
+import 'package:receipts/common/repositories/exceptions/save_recipe_info_exception.dart';
 import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 import 'package:receipts/recipes_list/controllers/recipe_list_state.dart';
 import 'package:bloc/bloc.dart';
 
 class RecipeListCubit extends Cubit<RecipeListState>
     implements BaseRecipeListCubit {
-
-  RecipeListCubit(this.recipeService)
-      : super(const RecipeListState(
+  RecipeListCubit(this.recipeRepository) : super(const RecipeListState(
             status: RecipeListStatus.initial, recipes: [])) {
-    _recipeSubscription = recipeService.recipes.listen((event) {
-      emit(state.copyWith(recipes: event, status: RecipeListStatus.success));
-    }, onError: (_) => state.copyWith(status: RecipeListStatus.error));
+    _recipeSubscription = recipeRepository.recipes.listen((recipeChanges) {
+      emit(state.copyWith(recipes: recipeChanges, status: RecipeListStatus.success));
+    }, onError: (e) {
+      switch (e.runtimeType) {
+        case EmptyStorageException:
+          emit(state.copyWith(
+              status: RecipeListStatus.error,
+              message: ErrorMessages.emptyRecipeStorage));
+        case SaveRecipeInfoException:
+          emit(state.copyWith(
+              status: RecipeListStatus.error,
+              message: ErrorMessages.changeRecipeInfo));
+        case LoadRecipesNetException:
+          emit(state.copyWith(
+              status: RecipeListStatus.error,
+              message: ErrorMessages.loadRecipesNet));
+        case LoadRecipesLocalException:
+          emit(state.copyWith(
+              status: RecipeListStatus.error,
+              message: ErrorMessages.loadRecipesLocal));
+        default:
+          emit(state.copyWith(
+              status: RecipeListStatus.error, message: ErrorMessages.common));
+      }
+    });
   }
 
-  final BaseRecipeService recipeService;
+  final BaseRecipeRepository recipeRepository;
   StreamSubscription<List<Recipe>>? _recipeSubscription;
 
   @override
   Future<void> loadRecipes() async {
     emit(state.copyWith(status: RecipeListStatus.inProgress));
-    await recipeService.loadRecipes();
-    emit(state.copyWith(status: RecipeListStatus.error));
+    await recipeRepository.loadRecipes();
   }
 
   @override

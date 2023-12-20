@@ -12,6 +12,13 @@ abstract class StabTexts {
   static const workInProgress = 'В работе';
 }
 
+abstract class TimeUnits {
+
+  static const minutesOne = 'минута';
+  static const minutesFew = 'минуты';
+  static const minutesMany = 'минут';
+}
+
 abstract class LoginPageTexts {
 
   static const loginHint = 'логин';
@@ -39,9 +46,11 @@ abstract class RecipeInfoTexts {
 
 abstract class ErrorMessages {
 
-  static const recipeInfoError = 'Ошибка при работе с рецептом';
-  static const recipeListError = 'Ошибка при загрузке рецептов';
-
+  static const common = 'Возникла непредвиденная ошибка';
+  static const changeRecipeInfo = 'Ошибка при работе с рецептом';
+  static const loadRecipesNet = 'Ошибка при загрузке рецепта по сети';
+  static const loadRecipesLocal = 'Ошибка при загрузке локальных рецептов';
+  static const emptyRecipeStorage = 'Нет доступа к сети. Не найдено локальных рецептов';
 }
 
 

@@ -13,5 +13,6 @@ class RecipeInfoState with _$RecipeInfoState {
   const factory RecipeInfoState(
       {required RecipeInfoStatus status,
        required Recipe recipe,
+       @Default('') String message
       }) = _RecipeInfoState;
 }
