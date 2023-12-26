@@ -1,11 +1,7 @@
 import 'dart:typed_data';
 
-import 'network_models/network_ingredient.dart';
-import 'network_models/network_measure_unit.dart';
-import 'network_models/network_recipe.dart';
-import 'network_models/network_recipe_step.dart';
-import 'network_models/recipe_ingredient_link.dart';
-import 'network_models/recipe_step_link.dart';
+import 'network_models/network_models.dart';
+
 
 abstract interface class BaseNetworkRecipeClient {
 

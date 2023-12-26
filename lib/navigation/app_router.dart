@@ -6,8 +6,8 @@ import 'package:receipts/authentication/pages/login_page.dart';
 import 'package:receipts/authentication/pages/profile_page.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
 import 'package:receipts/camera/controllers/camera_cubit.dart';
-import 'package:receipts/camera/pages/camera_page.dart';
-import 'package:receipts/common/models/recipe.dart';
+import 'package:receipts/camera/pages/camera_global_screen.dart';
+import 'package:receipts/common/models/models.dart';
 import 'package:receipts/common/pages/home_screen.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/favourite/pages/favourite_page.dart';
@@ -15,6 +15,7 @@ import 'package:receipts/freezer/pages/freezer_page.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/controllers/recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/pages/recipe_info_screen.dart';
+import 'package:receipts/recipe_info/pages/recipe_photo_carousel_page.dart';
 import 'package:receipts/recipes_list/pages/recipes_page.dart';
 
 class AppRouter {
@@ -30,6 +31,7 @@ class AppRouter {
       GlobalKey<NavigatorState>(debugLabel: '${AppTabs.profile}');
 
   int get loginTabCurrentIndexForAppBar => 1;
+
   int get loginTabIndexAsShellBranch => 4;
 
   int findCurrentIndexForAppBar(StatefulNavigationShell navigationShell) {
@@ -73,6 +75,7 @@ class AppRouter {
                         routes: [
                           GoRoute(
                               path: '${RecipesRouteNames.camera}',
+                              parentNavigatorKey: _rootNavigatorKey,
                               builder: (context, state) {
                                 final recipe = state.extra as Recipe;
                                 return BlocProvider<BaseCameraCubit>(
@@ -80,7 +83,14 @@ class AppRouter {
                                         recipe: recipe,
                                         repository: GetIt.instance
                                             .get<BaseRecipeRepository>()),
-                                    child: const CameraPage());
+                                    child: const CameraGlobalScreen());
+                              }),
+                          GoRoute(
+                              path: '${RecipesRouteNames.carousel}',
+                              parentNavigatorKey: _rootNavigatorKey,
+                              builder: (context, state) {
+                                final photos = (state.extra as Recipe).userPhotos;
+                                return RecipePhotoCarouselPage(photos: photos);
                               })
                         ]),
                   ])
@@ -127,7 +137,8 @@ enum AppTabs {
 
 enum RecipesRouteNames {
   recipe,
-  camera;
+  camera,
+  carousel;
 
   @override
   String toString() {

@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:receipts/common/constants/app_texts.dart';
@@ -13,13 +13,20 @@ import 'recipe_info_state.dart';
 
 class RecipeInfoCubit extends Cubit<RecipeInfoState>
     implements BaseRecipeInfoCubit {
-  RecipeInfoCubit(
-      {required BaseRecipeRepository repository, required Recipe recipe})
+
+  RecipeInfoCubit({required BaseRecipeRepository repository, required Recipe recipe})
       : _repository = repository,
-        super(
-            RecipeInfoState(status: RecipeInfoStatus.success, recipe: recipe));
+        super(RecipeInfoState(status: RecipeInfoStatus.success, recipe: recipe)) {
+    _recipeSubscription = _repository.recipes.listen((event) {
+      if (event.firstWhere((element) => element.id == state.recipe.id) != state.recipe) {
+        emit(state.copyWith(recipe: event.firstWhere((element) => element.id == state.recipe.id)));
+      }
+    });
+  }
 
   final BaseRecipeRepository _repository;
+  StreamSubscription<List<Recipe>>? _recipeSubscription;
+
 
   @override
   Future<void> changeFavouriteStatus() async {
@@ -83,4 +90,10 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
 
   @override
   List<UserRecipePhoto> get userPhotos => state.recipe.userPhotos;
+
+  @override
+  Future<void> close() {
+    _recipeSubscription?.cancel();
+    return super.close();
+  }
 }

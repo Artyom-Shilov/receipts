@@ -5,8 +5,6 @@ import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receipts/authentication/controllers/auth_cubit.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
-import 'package:receipts/camera/controllers/base_camera_cubit.dart';
-import 'package:receipts/camera/controllers/camera_cubit.dart';
 import 'package:receipts/common/local_storage/hive_recipe_client.dart';
 import 'package:receipts/common/network/dio_recipe_client.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';

@@ -44,6 +44,12 @@ abstract class RecipeInfoTexts {
   static const commentInputHint = 'оставить комментарий';
 }
 
+abstract class DetectionTexts {
+
+  static const couldNotReliableFindDetections = 'Не удалось найти объекты с высокой достоверностью';
+  static const undoSnackBar = 'Убрать';
+}
+
 abstract class ErrorMessages {
 
   static const common = 'Возникла непредвиденная ошибка';
@@ -51,6 +57,9 @@ abstract class ErrorMessages {
   static const loadRecipesNet = 'Ошибка при загрузке рецепта по сети';
   static const loadRecipesLocal = 'Ошибка при загрузке локальных рецептов';
   static const emptyRecipeStorage = 'Нет доступа к сети. Не найдено локальных рецептов';
+
+  static const photoViewError = 'Не удалось отобразить фото';
+  static const cameraInitError = 'Ошибка инициализации камеры';
 }
 
 

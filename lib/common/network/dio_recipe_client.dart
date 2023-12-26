@@ -3,12 +3,7 @@ import 'dart:typed_data';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:dio/dio.dart';
 
-import 'network_models/network_ingredient.dart';
-import 'network_models/network_measure_unit.dart';
-import 'network_models/network_recipe.dart';
-import 'network_models/network_recipe_step.dart';
-import 'network_models/recipe_ingredient_link.dart';
-import 'network_models/recipe_step_link.dart';
+import 'network_models/network_models.dart';
 
 class DioRecipeClient implements BaseNetworkRecipeClient {
   final String baseUrl = 'https://foodapi.dzolotov.tech';
@@ -59,7 +54,8 @@ class DioRecipeClient implements BaseNetworkRecipeClient {
 
   @override
   Future<Uint8List> getImage(String imageUrl) async {
-    final response = await _dio.get<Uint8List>(imageUrl, options: Options(responseType: ResponseType.bytes));
+    final response = await _dio.get<Uint8List>(imageUrl,
+        options: Options(responseType: ResponseType.bytes));
     return response.data!;
   }
 }

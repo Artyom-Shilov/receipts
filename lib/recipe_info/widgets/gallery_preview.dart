@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:receipts/navigation/app_router.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
 
@@ -26,10 +28,17 @@ class GalleryPreview extends StatelessWidget {
                       child: const Icon(Icons.add_a_photo),
                     ),
                     onTap: () {
-                      print('clicked');
-                    },
-                  )
-                ],
+                      final recipeInfoCubit =
+                      BlocProvider.of<BaseRecipeInfoCubit>(context);
+                      GoRouter.of(context).go(
+                        '/${AppTabs.recipes}'
+                            '/${RecipesRouteNames.recipe}'
+                            '/${recipeInfoCubit.recipe.id}'
+                            '/${RecipesRouteNames.carousel}',
+                        extra: recipeInfoCubit.recipe,
+                      );
+                    }
+        )]
             ),
               ),
           ]

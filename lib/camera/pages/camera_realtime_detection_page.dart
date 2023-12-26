@@ -2,19 +2,30 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
-import 'package:receipts/common/constants/app_colors.dart';
+import 'package:receipts/camera/controllers/camera_state.dart';
+import 'package:receipts/camera/widgets/detections_stack.dart';
+import 'package:receipts/common/constants/constants.dart';
 
-class CameraPage extends StatelessWidget {
-  const CameraPage({Key? key}) : super(key: key);
+class CameraRealtimeDetectionPage extends StatelessWidget {
+  const CameraRealtimeDetectionPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final cameraCubit = BlocProvider.of<BaseCameraCubit>(context);
     return Stack(children: [
       SizedBox(
+          height: double.infinity,
+          width: double.infinity,
+          child: CameraPreview(cameraCubit.state.cameraController!)
+      ),
+      SizedBox(
           width: double.infinity,
           height: double.infinity,
-          child: CameraPreview(cameraCubit.state.cameraController!)),
+          child: BlocBuilder<BaseCameraCubit, CameraState>(
+              buildWhen: (prev, next) => prev.detections != next.detections,
+              builder: (context, state) {
+                return DetectionStack(detections: state.detections);
+              })),
       Align(
         alignment: Alignment.bottomCenter,
         child: Padding(
@@ -31,6 +42,7 @@ class CameraPage extends StatelessWidget {
                   onPressed: () async {
                     await cameraCubit
                         .takePhotoAndFindDetections(MediaQuery.sizeOf(context));
+                    await cameraCubit.stopRealtimeDetection();
                     await cameraCubit.viewPhoto();
                   },
                 ),
@@ -38,10 +50,12 @@ class CameraPage extends StatelessWidget {
               const Spacer(),
               Flexible(
                 child: ElevatedButton(
-                  child: const Icon(Icons.search, color: Colors.grey),
+                  child: const Icon(
+                    Icons.search,
+                    color: AppColors.accent,
+                  ),
                   onPressed: () async {
-                    cameraCubit
-                        .startRealtimeDetection(MediaQuery.sizeOf(context));
+                    await cameraCubit.stopRealtimeDetection();
                   },
                 ),
               )

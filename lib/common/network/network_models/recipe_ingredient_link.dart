@@ -10,7 +10,7 @@ class RecipeIngredientLink with _$RecipeIngredientLink {
     required int id,
     required int count,
     required LinkedIngredient ingredient,
-    required LinkedRecipe recipe
+    required LinkedToIngredientRecipe recipe
 }
       ) = _RecipeIngredientLink;
 
@@ -29,11 +29,11 @@ class LinkedIngredient with _$LinkedIngredient {
 }
 
 @freezed
-class LinkedRecipe with _$LinkedRecipe {
-  const factory LinkedRecipe(
+class LinkedToIngredientRecipe with _$LinkedToIngredientRecipe {
+  const factory LinkedToIngredientRecipe(
   {required int id}
-      ) = _LinkedRecipe;
+      ) = _LinkedToIngredientRecipe;
 
-  factory LinkedRecipe.fromJson(Map<String, dynamic> json) =>
-      _$LinkedRecipeFromJson(json);
+  factory LinkedToIngredientRecipe.fromJson(Map<String, dynamic> json) =>
+      _$LinkedToIngredientRecipeFromJson(json);
 }
