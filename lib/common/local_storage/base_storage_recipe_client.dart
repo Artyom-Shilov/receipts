@@ -1,5 +1,5 @@
 
-import 'package:receipts/common/local_storage/storage_models/local_recipe.dart';
+import 'storage_models/storage_models.dart';
 
 abstract interface class BaseStorageRecipeClient {
 
@@ -7,4 +7,5 @@ abstract interface class BaseStorageRecipeClient {
   Future<void> writeRecipes(List<LocalRecipe> recipes);
   Future<List<LocalRecipe>> readRecipes();
   Future<void> updateRecipe(LocalRecipe recipe);
+  Future<List<LocalUserRecipePhoto>> getLocalUserRecipePhotosByRecipeId(int id);
 }

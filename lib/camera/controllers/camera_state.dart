@@ -12,7 +12,7 @@ enum CameraStatus {
   loading,
   ready,
   viewing,
-  viewingDetections,
+  viewingWithDetections,
   streaming,
   error,
 }

@@ -14,6 +14,6 @@ abstract interface class BaseCameraCubit extends Cubit<CameraState> {
   Future<void> takePhotoAndFindDetections(Size screenSize);
   Future<void> declinePhoto();
   Future<void> viewPhoto();
-  Future<void> viewPhotoAndDetections();
+  Future<void> viewPhotoWithDetections();
   Future<void> savePhoto();
 }

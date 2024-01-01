@@ -8,6 +8,8 @@ import 'package:receipts/camera/controllers/camera_state.dart';
 import 'package:receipts/camera/pages/camera_realtime_detection_page.dart';
 import 'package:receipts/camera/pages/camera_page.dart';
 import 'package:receipts/camera/pages/photo_view_page.dart';
+import 'package:receipts/common/util/util_logic.dart';
+import 'package:receipts/common/widgets/back_navigation_arrow.dart';
 
 class CameraGlobalScreen extends HookWidget {
   const CameraGlobalScreen({Key? key}) : super(key: key);
@@ -18,7 +20,11 @@ class CameraGlobalScreen extends HookWidget {
     log(cameraCubit.state.status.name, time: DateTime.now());
     useEffect(() {
       cameraCubit.initCamera();
-      return () => cameraCubit.disposeCamera();
+      UtilLogic.fixPortraitUpOrientation();
+      return () {
+        cameraCubit.disposeCamera();
+        UtilLogic.unfixOrientation();
+      };
     });
     return Scaffold(
       body: Stack(children: [
@@ -32,22 +38,12 @@ class CameraGlobalScreen extends HookWidget {
                 CameraStatus.ready => const CameraPage(),
                 CameraStatus.streaming => const CameraRealtimeDetectionPage(),
                 CameraStatus.viewing ||
-                CameraStatus.viewingDetections =>
+                CameraStatus.viewingWithDetections =>
                   const PhotoViewPage(),
                 CameraStatus.error => Center(child: Text(state.message)),
               };
             }),
-        Align(
-            alignment: Alignment.topLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 30),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ))
+        const BackNavigationArrow()
       ]),
     );
   }

@@ -16,6 +16,7 @@ import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/controllers/recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/pages/recipe_info_screen.dart';
 import 'package:receipts/recipe_info/pages/recipe_photo_carousel_page.dart';
+import 'package:receipts/recipe_info/pages/recipe_photo_grid_page.dart';
 import 'package:receipts/recipes_list/pages/recipes_page.dart';
 
 class AppRouter {
@@ -55,29 +56,43 @@ class AppRouter {
             StatefulShellBranch(navigatorKey: _recipeListKey, routes: [
               GoRoute(
                   path: '/${AppTabs.recipes}',
-                  builder: (context, state) {
-                    return const RecipesPage();
-                  },
+                  builder: (context, state) => const RecipesPage(),
                   routes: [
                     GoRoute(
                         path:
                             '${RecipesRouteNames.recipe}/:${PathParameters.recipeId}',
-                        builder: (context, state) {
-                          final recipe = state.extra as Recipe;
-                          return BlocProvider<BaseRecipeInfoCubit>(
-                            create: (context) => RecipeInfoCubit(
-                                repository:
-                                    GetIt.instance.get<BaseRecipeRepository>(),
-                                recipe: recipe),
-                            child: const RecipeInfoScreen(),
-                          );
+                        pageBuilder: (context, state) {
+                          final recipe = (state.extra
+                                  as Map<ExtraKeys, dynamic>)[ExtraKeys.recipe]
+                              as Recipe;
+                          return CustomTransitionPage(
+                              child: BlocProvider<BaseRecipeInfoCubit>(
+                                create: (context) => RecipeInfoCubit(
+                                    repository: GetIt.instance
+                                        .get<BaseRecipeRepository>(),
+                                    recipe: recipe),
+                                child: const RecipeInfoScreen(),
+                              ),
+                              transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) =>
+                                  animation.status == AnimationStatus.forward
+                                      ? SlideTransition(
+                                          position:
+                                              animation.drive(Tween<Offset>(
+                                            begin: const Offset(1, 0),
+                                            end: Offset.zero,
+                                          )),
+                                          child: child)
+                                      : FadeTransition(
+                                          opacity: animation, child: child));
                         },
                         routes: [
                           GoRoute(
                               path: '${RecipesRouteNames.camera}',
                               parentNavigatorKey: _rootNavigatorKey,
                               builder: (context, state) {
-                                final recipe = state.extra as Recipe;
+                                final recipe = (state.extra as Map<ExtraKeys,
+                                    dynamic>)[ExtraKeys.recipe] as Recipe;
                                 return BlocProvider<BaseCameraCubit>(
                                     create: (context) => CameraCubit(
                                         recipe: recipe,
@@ -86,12 +101,67 @@ class AppRouter {
                                     child: const CameraGlobalScreen());
                               }),
                           GoRoute(
-                              path: '${RecipesRouteNames.carousel}',
-                              parentNavigatorKey: _rootNavigatorKey,
-                              builder: (context, state) {
-                                final photos = (state.extra as Recipe).userPhotos;
-                                return RecipePhotoCarouselPage(photos: photos);
-                              })
+                              path: '${RecipesRouteNames.photoView}',
+                              pageBuilder: (context, state) {
+                                final recipe = (state.extra as Map<ExtraKeys,
+                                    dynamic>)[ExtraKeys.recipe] as Recipe;
+                                return CustomTransitionPage(
+                                    child: BlocProvider<BaseRecipeInfoCubit>(
+                                        create: (context) => RecipeInfoCubit(
+                                            recipe: recipe,
+                                            repository: GetIt.instance
+                                                .get<BaseRecipeRepository>()),
+                                        child: const RecipePhotoGridPage()),
+                                    transitionsBuilder:
+                                        (context, animation, _, child) =>
+                                            animation.status ==
+                                                    AnimationStatus.forward
+                                                ? SlideTransition(
+                                                    position: animation
+                                                        .drive(Tween<Offset>(
+                                                      begin: const Offset(1, 0),
+                                                      end: Offset.zero,
+                                                    )),
+                                                    child: child)
+                                                : FadeTransition(
+                                                    opacity: animation,
+                                                    child: child));
+                              },
+                              routes: [
+                                GoRoute(
+                                    path: '${RecipesRouteNames.carousel}',
+                                    parentNavigatorKey: _rootNavigatorKey,
+                                    pageBuilder: (context, state) {
+                                      final recipe = (state.extra as Map<
+                                          ExtraKeys,
+                                          dynamic>)[ExtraKeys.recipe] as Recipe;
+                                      final photos = recipe.userPhotos;
+                                      final initIndex = (state.extra
+                                              as Map<ExtraKeys, dynamic>)[
+                                          ExtraKeys.recipePhotoIndex] as int;
+                                      return CustomTransitionPage(
+                                          child: BlocProvider<BaseCameraCubit>(
+                                              create: (context) => CameraCubit(
+                                                  recipe: recipe,
+                                                  repository: GetIt.instance.get<
+                                                      BaseRecipeRepository>()),
+                                              child: RecipePhotoCarouselPage(
+                                                photos: photos,
+                                                initIndex: initIndex,
+                                              )),
+                                          transitionsBuilder: (context,
+                                                  animation, _, child) =>
+                                              animation.status ==
+                                                      AnimationStatus.forward
+                                                  ? ScaleTransition(
+                                                      scale: animation,
+                                                      child: child)
+                                                  : FadeTransition(
+                                                      opacity: animation,
+                                                      child: child,
+                                                    ));
+                                    })
+                              ]),
                         ]),
                   ])
             ]),
@@ -138,7 +208,8 @@ enum AppTabs {
 enum RecipesRouteNames {
   recipe,
   camera,
-  carousel;
+  carousel,
+  photoView;
 
   @override
   String toString() {
@@ -148,6 +219,16 @@ enum RecipesRouteNames {
 
 enum PathParameters {
   recipeId;
+
+  @override
+  String toString() {
+    return name;
+  }
+}
+
+enum ExtraKeys {
+  recipe,
+  recipePhotoIndex;
 
   @override
   String toString() {

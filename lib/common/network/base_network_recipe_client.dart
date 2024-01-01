@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'network_models/network_models.dart';
+import 'package:receipts/common/network/network_models/network_models.dart';
 
 
 abstract interface class BaseNetworkRecipeClient {

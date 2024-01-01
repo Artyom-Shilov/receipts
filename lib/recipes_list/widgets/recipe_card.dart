@@ -21,7 +21,7 @@ class RecipeCard extends StatelessWidget {
           onTap: () {
             GoRouter.of(context).go(
                 '/${AppTabs.recipes}/${RecipesRouteNames.recipe}/${recipe.id}',
-                extra: recipe);
+                extra: {ExtraKeys.recipe: recipe});
           },
           child: DecoratedBox(
             decoration: BoxDecoration(

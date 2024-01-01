@@ -5,8 +5,8 @@ import 'package:receipts/authentication/controllers/auth_state.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/authentication/widgets/input_field.dart';
 import 'package:receipts/common/constants/constants.dart';
+import 'package:receipts/common/widgets/control_button.dart';
 import 'package:receipts/navigation/app_router.dart';
-import 'package:receipts/recipe_info/widgets/widgets.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

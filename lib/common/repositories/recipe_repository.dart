@@ -1,26 +1,25 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:intl/intl.dart';
-import 'package:receipts/common/constants/app_texts.dart';
+import 'package:receipts/common/exceptions/exceptions.dart';
 import 'package:receipts/common/local_storage/base_storage_recipe_client.dart';
 import 'package:receipts/common/local_storage/storage_models/local_recipe.dart';
 import 'package:receipts/common/models/models.dart';
-import 'package:receipts/common/models/converter.dart' as converter;
 import 'package:receipts/common/network/base_network_recipe_client.dart';
-import 'package:receipts/common/network/network_models/network_models.dart';
+import 'package:receipts/common/repositories/model_converter.dart';
 import 'package:rxdart/subjects.dart';
 import 'base_recipe_repository.dart';
-import 'exceptions/exceptions.dart';
 
 class RecipeRepository implements BaseRecipeRepository {
   RecipeRepository(
       {required BaseStorageRecipeClient storageClient,
       required BaseNetworkRecipeClient networkClient})
       : _storageClient = storageClient,
-        _networkClient = networkClient;
+        _networkClient = networkClient,
+        _converter = ModelsConverter(storageClient, networkClient);
 
   final BaseStorageRecipeClient _storageClient;
   final BaseNetworkRecipeClient _networkClient;
+  final ModelsConverter _converter;
 
   final _recipeListStreamController = BehaviorSubject<List<Recipe>>();
 
@@ -32,14 +31,16 @@ class RecipeRepository implements BaseRecipeRepository {
   @override
   Future<void> loadRecipes() async {
     final connectivityResult = await (Connectivity().checkConnectivity());
-    List<Recipe> recipes;
+    List<Recipe> appRecipes;
     List<LocalRecipe> localRecipes;
     if (connectivityResult == ConnectivityResult.wifi ||
         connectivityResult == ConnectivityResult.mobile) {
       try {
-        recipes = await _loadRecipesFromNet();
-        localRecipes =
-            recipes.map((e) => converter.appRecipeToLocalRecipe(e)).toList();
+        final networkRecipes = await _networkClient.getRecipes();
+        appRecipes = await _converter.netRecipesToAppRecipes(networkRecipes);
+        localRecipes = appRecipes.map((e) {
+          return _converter.appRecipeToLocalRecipe(e);
+        }).toList();
         await _storageClient.writeRecipes(localRecipes);
       } catch (e) {
         _recipeListSink.addError(LoadRecipesNetException(e));
@@ -48,111 +49,26 @@ class RecipeRepository implements BaseRecipeRepository {
     } else {
       try {
         localRecipes = await _storageClient.readRecipes();
-        recipes = localRecipes
-            .map((e) => converter.localRecipeToAppRecipe(e))
+        appRecipes = localRecipes
+            .map((e) => _converter.localRecipeToAppRecipe(e))
             .toList();
       } catch (e) {
         _recipeListSink.addError(LoadRecipesLocalException(e));
         return;
       }
-      if (recipes.isEmpty) {
+      if (appRecipes.isEmpty) {
         _recipeListSink.addError(EmptyStorageException());
         return;
       }
     }
-    _recipeListSink.add(recipes);
-  }
-
-  Future<CookingStep> _formStepFromNet(RecipeStepLink stepLink) async {
-    final loadedStep = await _networkClient.getRecipeStepById(stepLink.step.id);
-    final formattedDuration = DateFormat('mm:ss').format(
-        DateTime.fromMillisecondsSinceEpoch(
-            Duration(minutes: loadedStep.duration).inMilliseconds));
-    return CookingStep(
-        id: loadedStep.id,
-        number: stepLink.number.toString(),
-        description: loadedStep.name,
-        duration: formattedDuration);
-  }
-
-  Future<Ingredient> _formIngredientFromNet(
-      RecipeIngredientLink ingredientLink) async {
-    final loadedIngredient =
-        await _networkClient.getIngredientById(ingredientLink.ingredient.id);
-    final loadedMeasureUnit = await _networkClient
-        .getMeasureUnitById(loadedIngredient.measureUnit.id);
-    return Ingredient(
-        id: loadedIngredient.id,
-        count: ingredientLink.count.toString(),
-        name: loadedIngredient.name,
-        measureUnit: _calcMeasureUnit(ingredientLink.count, loadedMeasureUnit));
-  }
-
-  String _calcMeasureUnit(int count, NetworkMeasureUnit unit) {
-    if (count % 10 == 1) {
-      return unit.one;
-    }
-    if (count % 10 == 0) {
-      return unit.many;
-    }
-    if (count % 10 <= 4) {
-      return unit.few;
-    }
-    return unit.many;
-  }
-
-  String _calcRecipeDurationForm(int duration) {
-    if (duration % 10 == 1) {
-      return TimeUnits.minutesOne;
-    }
-    if (duration % 10 == 0) {
-      return TimeUnits.minutesOne;
-    }
-    if (duration % 10 <= 4) {
-      return TimeUnits.minutesFew;
-    }
-    return TimeUnits.minutesMany;
-  }
-
-  Future<List<Recipe>> _loadRecipesFromNet() async {
-    List<Recipe> recipes = [];
-    final networkRecipes = await _networkClient.getRecipes();
-    final ingredientsLinks = await _networkClient.getRecipeIngredientsLinks();
-    final stepLinks = await _networkClient.getRecipeStepLinks();
-    for (final networkRecipe in networkRecipes) {
-      final steps = <CookingStep>[];
-      final ingredients = <Ingredient>[];
-      final filteredIngredientsLinks = ingredientsLinks
-          .where((element) => element.recipe.id == networkRecipe.id);
-      final filteredStepLinks =
-          stepLinks.where((element) => element.recipe.id == networkRecipe.id);
-      for (final stepLink in filteredStepLinks) {
-        steps.add(await _formStepFromNet(stepLink));
-      }
-      for (final ingredientLink in filteredIngredientsLinks) {
-        ingredients.add(await _formIngredientFromNet(ingredientLink));
-      }
-      final photoBytes = await _networkClient.getImage(networkRecipe.photo);
-      recipes.add(Recipe(
-          id: networkRecipe.id,
-          name: networkRecipe.name,
-          photoUrl: networkRecipe.photo,
-          duration:
-              '${networkRecipe.duration} ${_calcRecipeDurationForm(networkRecipe.duration)}',
-          steps: steps,
-          ingredients: ingredients,
-          photoBytes: photoBytes,
-          comments: [],
-          userPhotos: []));
-    }
-    return recipes;
+    _recipeListSink.add(appRecipes);
   }
 
   @override
   Future<void> saveRecipeInfo(Recipe recipe) async {
     List<Recipe> recipeList;
     try {
-      await _storageClient.updateRecipe(converter.appRecipeToLocalRecipe(recipe));
+      await _storageClient.updateRecipe(_converter.appRecipeToLocalRecipe(recipe));
       recipeList = [..._recipeListStreamController.value];
       int index = recipeList.indexWhere((element) => element.id == recipe.id);
       recipeList[index] = recipe;

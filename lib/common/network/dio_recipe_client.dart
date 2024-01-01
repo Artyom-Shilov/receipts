@@ -9,9 +9,7 @@ class DioRecipeClient implements BaseNetworkRecipeClient {
   final String baseUrl = 'https://foodapi.dzolotov.tech';
 
   DioRecipeClient() {
-    final options =
-        BaseOptions(baseUrl: baseUrl, contentType: Headers.jsonContentType);
-    _dio.options = options;
+    _dio.options = BaseOptions(baseUrl: baseUrl, contentType: Headers.jsonContentType);
   }
 
   final Dio _dio = Dio();

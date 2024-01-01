@@ -37,7 +37,8 @@ abstract class ProfilePageTexts {
 
 abstract class RecipeInfoTexts {
 
-  static const appBarTitle = 'Рецепт';
+  static const mainAppBarTitle = 'Рецепт';
+  static const photoGridPageAppBarTitle = 'Фото пользователя';
   static const ingredientsSectionTitle = 'Ингридиенты';
   static const stepsSectionTitle = 'Шаги приготовления';
   static const startCookingButton = 'Начать готовить';

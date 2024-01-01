@@ -12,76 +12,74 @@ class PhotoViewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cameraCubit = BlocProvider.of<BaseCameraCubit>(context);
-    return LayoutBuilder(builder: (context, constraints) {
-      return BlocBuilder<BaseCameraCubit, CameraState>(
-          builder: (context, state) {
-        return Stack(children: [
-          Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      alignment: Alignment.topCenter,
-                      image: MemoryImage(cameraCubit.state.viewingPhoto!),
-                      fit: BoxFit.fill))),
-          if (cameraCubit.state.detections.isNotEmpty &&
-              state.status == CameraStatus.viewingDetections)
-            DetectionStack(
-              detections: state.detections,
-            ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      await cameraCubit.declinePhoto();
-                    },
-                    child: const Icon(
-                      Icons.cancel,
-                      color: Colors.red,
-                    ),
+    return BlocBuilder<BaseCameraCubit, CameraState>(
+        builder: (context, state) {
+      return Stack(children: [
+        Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    alignment: Alignment.topCenter,
+                    image: MemoryImage(cameraCubit.state.viewingPhoto!),
+                    fit: BoxFit.fill))),
+        if (state.detections.isNotEmpty &&
+            state.status == CameraStatus.viewingWithDetections)
+          DetectionStack(
+            detections: state.detections,
+          ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    await cameraCubit.declinePhoto();
+                  },
+                  child: const Icon(
+                    Icons.cancel,
+                    color: Colors.red,
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      cameraCubit.savePhoto();
-                      Navigator.pop(context);
-                    },
-                    child: const Icon(
-                      Icons.done,
-                      color: AppColors.accent,
-                    ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    cameraCubit.savePhoto();
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(
+                    Icons.done,
+                    color: AppColors.accent,
                   ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        if (state.status == CameraStatus.viewing) {
-                          if (state.detections.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: const Text(DetectionTexts
-                                    .couldNotReliableFindDetections),
-                                action: SnackBarAction(
-                                  label: DetectionTexts.undoSnackBar,
-                                  onPressed: () {},
-                                )));
-                          }
-                          await cameraCubit.viewPhotoAndDetections();
-                        } else {
-                          await cameraCubit.viewPhoto();
+                ),
+                ElevatedButton(
+                    onPressed: () async {
+                      if (state.status == CameraStatus.viewing) {
+                        if (state.detections.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: const Text(DetectionTexts
+                                  .couldNotReliableFindDetections),
+                              action: SnackBarAction(
+                                label: DetectionTexts.undoSnackBar,
+                                onPressed: () {},
+                              )));
                         }
-                      },
-                      child: Icon(
-                        Icons.search,
-                        color: state.status == CameraStatus.viewing
-                            ? Colors.grey
-                            : AppColors.accent,
-                      ))
-                ],
-              ),
+                        await cameraCubit.viewPhotoWithDetections();
+                      } else {
+                        await cameraCubit.viewPhoto();
+                      }
+                    },
+                    child: Icon(
+                      Icons.search,
+                      color: state.status == CameraStatus.viewing
+                          ? Colors.grey
+                          : AppColors.accent,
+                    ))
+              ],
             ),
-          )
-        ]);
-      });
+          ),
+        )
+      ]);
     });
   }
 }

@@ -20,7 +20,6 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
 
   @override
   Future<void> initCamera() async {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     emit(state.copyWith(status: CameraStatus.loading));
     List<CameraDescription> cameras;
     try {
@@ -42,12 +41,6 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
 
   @override
   Future<void> disposeCamera() async {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown
-    ]);
     if (state.status == CameraStatus.streaming) {
       state.cameraController?.stopImageStream();
     }
@@ -181,8 +174,8 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
   }
 
   @override
-  Future<void> viewPhotoAndDetections() async {
-    emit(state.copyWith(status: CameraStatus.viewingDetections));
+  Future<void> viewPhotoWithDetections() async {
+    emit(state.copyWith(status: CameraStatus.viewingWithDetections));
   }
 
   @override
