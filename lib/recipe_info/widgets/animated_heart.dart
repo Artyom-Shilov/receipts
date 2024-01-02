@@ -28,25 +28,27 @@ class _AnimatedHeartState extends State<AnimatedHeart> {
                 await recipeInfoCubit.changeFavouriteStatus();
                 heartAnimationCubit.startTransition();
               },
-              child: SizedBox(
-                height: 24,
-                width: 24,
-                child: Builder(
-                  builder: (context) {
-                    return RiveAnimation.asset(
-                      'assets/animations/heart_6.riv',
-                      fit: BoxFit.fill,
-                      onInit: (artBoard) {
-                        final controller = StateMachineController.fromArtboard(artBoard, 'state');
-                        artBoard.addController(controller!);
-                        final initAnimationState = controller.findInput<bool>('isInitFavourite');
-                        initAnimationState?.value = recipeInfoCubit.isFavourite;
-                        final direction = controller.findInput<bool>('isFavourite');
-                        direction?.value = recipeInfoCubit.isFavourite;
-                        heartAnimationCubit.initTransitionDirection(direction);
-                      },
-                    );
-                  }
+              child: RepaintBoundary(
+                child: SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: Builder(
+                    builder: (context) {
+                      return RiveAnimation.asset(
+                        'assets/animations/heart_6.riv',
+                        fit: BoxFit.fill,
+                        onInit: (artBoard) {
+                          final controller = StateMachineController.fromArtboard(artBoard, 'state');
+                          artBoard.addController(controller!);
+                          final initAnimationState = controller.findInput<bool>('isInitFavourite');
+                          initAnimationState?.value = recipeInfoCubit.isFavourite;
+                          final direction = controller.findInput<bool>('isFavourite');
+                          direction?.value = recipeInfoCubit.isFavourite;
+                          heartAnimationCubit.initTransitionDirection(direction);
+                        },
+                      );
+                    }
+                  ),
                 ),
               ));
         }
