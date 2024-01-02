@@ -22,21 +22,23 @@ class RecipeInfoScreen extends StatelessWidget {
                   color: AppColors.main,
                   fontSize: 20,
                   fontWeight: FontWeight.w400),
-              title: const Text(RecipeInfoTexts.appBarTitle),
+              title: const Text(RecipeInfoTexts.mainAppBarTitle),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.campaign),
-                  onPressed: () {log('campaign tapped');},
+                  onPressed: () {
+                    log('campaign tapped');
+                  }
                 )
               ],
             ),
             body: BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
+              buildWhen: (prev, next) => prev.status != next.status,
               builder: (context, state) {
                 return switch (state.status) {
                   RecipeInfoStatus.success =>
                     RecipeInfoScreenBody(recipe: state.recipe),
-                  RecipeInfoStatus.error =>
-                    Center(child: Text(state.message)),
+                  RecipeInfoStatus.error => Center(child: Text(state.message)),
                 };
               },
             )));

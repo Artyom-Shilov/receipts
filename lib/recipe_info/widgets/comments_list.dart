@@ -10,7 +10,9 @@ class CommentsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
-      builder: (context, state) =>  SliverList.builder(
+      buildWhen: (prev, next) =>
+          prev.recipe.comments.length != next.recipe.comments.length,
+      builder: (context, state) => SliverList.builder(
           itemCount: state.recipe.comments.length,
           itemBuilder: (context, index) {
             return CommentRow(

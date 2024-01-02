@@ -21,7 +21,7 @@ class RecipeCard extends StatelessWidget {
           onTap: () {
             GoRouter.of(context).go(
                 '/${AppTabs.recipes}/${RecipesRouteNames.recipe}/${recipe.id}',
-                extra: recipe);
+                extra: {ExtraKeys.recipe: recipe});
           },
           child: DecoratedBox(
             decoration: BoxDecoration(
@@ -41,7 +41,7 @@ class RecipeCard extends StatelessWidget {
                 Expanded(
                   flex: 8,
                   child: Image.memory(
-                    recipe.photoBytes!,
+                    recipe.photoBytes,
                     fit: BoxFit.cover,
                     height: MediaQuery.of(context).size.longestSide * 0.15,
                   ),
