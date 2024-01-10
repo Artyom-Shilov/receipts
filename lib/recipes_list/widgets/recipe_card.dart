@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:receipts/authentication/controllers/auth_state.dart';
+import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/navigation/app_router.dart';
+import 'package:receipts/common/widgets/bookmark.dart';
 import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 import 'package:receipts/recipes_list/controllers/recipe_list_state.dart';
 
@@ -40,10 +43,25 @@ class RecipeCard extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 8,
-                  child: Image.memory(
-                    recipe.photoBytes,
-                    fit: BoxFit.cover,
-                    height: MediaQuery.of(context).size.longestSide * 0.15,
+                  child: BlocBuilder<BaseAuthCubit, AuthState>(
+                    builder: (context, state) => Stack(children: [
+                      Image.memory(
+                        recipe.photoBytes,
+                        fit: BoxFit.cover,
+                        height: MediaQuery.of(context).size.longestSide * 0.15,
+                      ),
+                      if (recipe.favouriteStatus.isFavourite  &&
+                          state.status == AuthStatus.loggedIn)
+                        Positioned(
+                          bottom: 10,
+                          right: 0,
+                          child: Bookmark(
+                              color: AppColors.accent,
+                              number: recipe.likesNumber,
+                              height: 17,
+                              width: 40),
+                        )
+                    ]),
                   ),
                 ),
                 const Spacer(flex: 1),

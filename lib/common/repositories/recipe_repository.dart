@@ -3,6 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:receipts/common/exceptions/exceptions.dart';
 import 'package:receipts/common/local_storage/base_storage_recipe_client.dart';
 import 'package:receipts/common/local_storage/storage_models/local_recipe.dart';
+import 'package:receipts/common/models/favourite_status.dart';
 import 'package:receipts/common/models/models.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/repositories/model_converter.dart';
@@ -23,10 +24,14 @@ class RecipeRepository implements BaseRecipeRepository {
 
   final _recipeListStreamController = BehaviorSubject<List<Recipe>>();
 
-  StreamSink<List<Recipe>> get _recipeListSink => _recipeListStreamController.sink;
+  StreamSink<List<Recipe>> get _recipeListSink =>
+      _recipeListStreamController.sink;
 
   @override
-  Stream<List<Recipe>> get recipes => _recipeListStreamController.stream;
+  Stream<List<Recipe>> get recipesStream => _recipeListStreamController.stream;
+
+  @override
+  List<Recipe> get currentRecipes => _recipeListStreamController.value;
 
   @override
   Future<void> loadRecipes() async {
@@ -68,8 +73,9 @@ class RecipeRepository implements BaseRecipeRepository {
   Future<void> saveRecipeInfo(Recipe recipe) async {
     List<Recipe> recipeList;
     try {
-      await _storageClient.updateRecipe(_converter.appRecipeToLocalRecipe(recipe));
-      recipeList = [..._recipeListStreamController.value];
+      await _storageClient
+          .updateRecipe(_converter.appRecipeToLocalRecipe(recipe));
+      recipeList = [...currentRecipes];
       int index = recipeList.indexWhere((element) => element.id == recipe.id);
       recipeList[index] = recipe;
     } catch (e) {
@@ -77,5 +83,31 @@ class RecipeRepository implements BaseRecipeRepository {
       return;
     }
     _recipeListSink.add(recipeList);
+  }
+
+  @override
+  Future<void> setLoggedUserFavouriteRecipes(User user) async {
+    List<Recipe> recipesInfo;
+    try {
+      final userFavourites = (await _networkClient.getFavourites())
+          .where((element) => element.user.id == user.id);
+      final favouritesMap = {
+        for (final favourite in userFavourites)
+          favourite.recipe.id: favourite.id
+      };
+      recipesInfo = [...currentRecipes];
+      for (int i = 0; i < recipesInfo.length; i++) {
+        if (favouritesMap.keys.contains(recipesInfo[i].id)) {
+          recipesInfo[i] = recipesInfo[i].copyWith(
+              favouriteStatus: FavouriteStatus(
+                  isFavourite: true,
+                  favouriteId: favouritesMap[recipesInfo[i].id]));
+        }
+      }
+    } catch (e) {
+      _recipeListSink.addError(SetFavouriteRecipesException(e));
+      return;
+    }
+    _recipeListSink.add(recipesInfo);
   }
 }

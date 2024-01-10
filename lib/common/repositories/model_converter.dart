@@ -131,7 +131,8 @@ class ModelsConverter {
         steps: steps,
         comments: comments,
         userPhotos: userPhotos,
-        isFavourite: localRecipe.isFavourite);
+        likesNumber: localRecipe.likesNumber,
+    );
   }
 
   LocalRecipe appRecipeToLocalRecipe(Recipe recipe) {
@@ -154,7 +155,8 @@ class ModelsConverter {
         comments: localComments,
         photoBytes: recipe.photoBytes,
         userPhotos: userPhotos,
-        isFavourite: recipe.isFavourite);
+        likesNumber: recipe.likesNumber
+    );
   }
 
   Future<CookingStep> _netCookingStepToAppCookingStep(
@@ -214,9 +216,11 @@ class ModelsConverter {
     List<Recipe> recipes = [];
     final ingredientsLinks = await _networkClient.getRecipeIngredientsLinks();
     final stepLinks = await _networkClient.getRecipeStepLinks();
+    final favourites = await _networkClient.getFavourites();
     for (final networkRecipe in networkRecipes) {
       final steps = <CookingStep>[];
       final ingredients = <Ingredient>[];
+      final likesNumber = favourites.where((element) => element.recipe.id == networkRecipe.id).length;
       final filteredIngredientsLinks = ingredientsLinks
           .where((element) => element.recipe.id == networkRecipe.id);
       final filteredStepLinks =
@@ -242,7 +246,9 @@ class ModelsConverter {
           ingredients: ingredients,
           photoBytes: photoBytes,
           comments: [],
-          userPhotos: userPhotos));
+          userPhotos: userPhotos,
+          likesNumber: likesNumber,
+      ));
     }
     return recipes;
   }

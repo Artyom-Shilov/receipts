@@ -8,6 +8,7 @@ import 'package:receipts/camera/controllers/base_camera_cubit.dart';
 import 'package:receipts/camera/controllers/camera_cubit.dart';
 import 'package:receipts/camera/pages/camera_global_screen.dart';
 import 'package:receipts/common/models/models.dart';
+import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/pages/home_screen.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/favourite/pages/favourite_page.dart';
@@ -70,6 +71,8 @@ class AppRouter {
                                 create: (context) => RecipeInfoCubit(
                                     repository: GetIt.instance
                                         .get<BaseRecipeRepository>(),
+                                    networkClient: GetIt.instance
+                                        .get<BaseNetworkRecipeClient>(),
                                     recipe: recipe),
                                 child: const RecipeInfoScreen(),
                               ),
@@ -109,6 +112,8 @@ class AppRouter {
                                     child: BlocProvider<BaseRecipeInfoCubit>(
                                         create: (context) => RecipeInfoCubit(
                                             recipe: recipe,
+                                            networkClient: GetIt.instance
+                                                .get<BaseNetworkRecipeClient>(),
                                             repository: GetIt.instance
                                                 .get<BaseRecipeRepository>()),
                                         child: const RecipePhotoGridPage()),

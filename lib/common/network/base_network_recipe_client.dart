@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:receipts/common/network/network_models/network_favourite.dart';
 import 'package:receipts/common/network/network_models/network_models.dart';
 
 
@@ -12,4 +13,8 @@ abstract interface class BaseNetworkRecipeClient {
   Future<NetworkIngredient> getIngredientById(int id);
   Future<NetworkMeasureUnit> getMeasureUnitById(int id);
   Future<Uint8List> getImage(String imageUrl);
+  Future<List<NetworkFavourite>> getFavourites();
+  Future<int> markAsFavourite(int recipeId, int userId);
+  Future<void> unmarkFavourite(int favouriteId);
+  Future<NetworkComment> sendComment();
 }

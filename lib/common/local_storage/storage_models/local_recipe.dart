@@ -23,8 +23,8 @@ class LocalRecipe with _$LocalRecipe {
       @HiveField(5) required List<LocalIngredient> ingredients,
       @HiveField(6) required List<LocalCookingStep> steps,
       @HiveField(7) required List<LocalComment> comments,
-      @HiveField(8, defaultValue: false) @Default(false) bool isFavourite,
       @HiveField(9) required Uint8List photoBytes,
       @HiveField(10) required List<LocalUserRecipePhoto> userPhotos,
+      @HiveField(11) required int likesNumber,
       }) = _Recipe;
 }

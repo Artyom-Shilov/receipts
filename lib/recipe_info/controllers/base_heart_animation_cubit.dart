@@ -7,4 +7,6 @@ abstract interface class BaseHeartAnimationCubit extends Cubit<HeartAnimationSta
 
   void startTransition();
   void initTransitionDirection(SMIInput<bool>? transitionDirection);
+  void setIsCompleted(bool isCompleted);
+  bool isCompleted();
 }

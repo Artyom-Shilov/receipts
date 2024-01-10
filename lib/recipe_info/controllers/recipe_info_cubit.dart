@@ -4,8 +4,11 @@ import 'package:bloc/bloc.dart';
 import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/models/comment.dart';
 import 'package:receipts/common/models/cooking_step.dart';
+import 'package:receipts/common/models/favourite_status.dart';
 import 'package:receipts/common/models/recipe.dart';
+import 'package:receipts/common/models/user.dart';
 import 'package:receipts/common/models/user_recipe_photo.dart';
+import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 
@@ -13,29 +16,53 @@ import 'recipe_info_state.dart';
 
 class RecipeInfoCubit extends Cubit<RecipeInfoState>
     implements BaseRecipeInfoCubit {
-
-  RecipeInfoCubit({required BaseRecipeRepository repository, required Recipe recipe})
+  RecipeInfoCubit(
+      {required BaseRecipeRepository repository,
+      required BaseNetworkRecipeClient networkClient,
+      required Recipe recipe})
       : _repository = repository,
-        super(RecipeInfoState(status: RecipeInfoStatus.success, recipe: recipe)) {
-    _recipeSubscription = _repository.recipes.listen((event) {
-      if (event.firstWhere((element) => element.id == state.recipe.id) != state.recipe) {
-        emit(state.copyWith(recipe: event.firstWhere((element) => element.id == state.recipe.id)));
+        _networkClient = networkClient,
+        super(
+            RecipeInfoState(status: RecipeInfoStatus.success, recipe: recipe)) {
+    _recipeSubscription = _repository.recipesStream.listen((event) {
+      if (event.firstWhere((element) => element.id == state.recipe.id) !=
+          state.recipe) {
+        emit(state.copyWith(
+            recipe:
+                event.firstWhere((element) => element.id == state.recipe.id)));
       }
     });
   }
 
   final BaseRecipeRepository _repository;
+  final BaseNetworkRecipeClient _networkClient;
   StreamSubscription<List<Recipe>>? _recipeSubscription;
 
-
   @override
-  Future<void> changeFavouriteStatus() async {
+  Future<void> changeFavouriteStatus(
+      {required Recipe recipe, required User user}) async {
     Recipe changedInfo;
     try {
-      bool newValue = !state.recipe.isFavourite;
-      changedInfo = state.recipe.copyWith(isFavourite: newValue);
+      bool newValue = !state.recipe.favouriteStatus.isFavourite;
+      int likesNumber = state.recipe.likesNumber;
+      if (newValue) {
+        final favouriteId =
+            await _networkClient.markAsFavourite(recipe.id, user.id);
+        changedInfo = state.recipe.copyWith(
+            favouriteStatus: FavouriteStatus(
+                isFavourite: newValue, favouriteId: favouriteId),
+            likesNumber: ++likesNumber);
+      } else {
+        await _networkClient
+            .unmarkFavourite(recipe.favouriteStatus.favouriteId!);
+        changedInfo = state.recipe.copyWith(
+            favouriteStatus: FavouriteStatus(isFavourite: newValue),
+            likesNumber: --likesNumber);
+      }
     } catch (e) {
-      emit(state.copyWith(status: RecipeInfoStatus.error));
+      emit(state.copyWith(
+          status: RecipeInfoStatus.error,
+          message: ErrorMessages.changeRecipeInfo));
       return;
     }
     emit(state.copyWith(recipe: changedInfo));
@@ -83,7 +110,7 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
   List<Comment> get comments => state.recipe.comments;
 
   @override
-  bool get isFavourite => state.recipe.isFavourite;
+  bool get isFavourite => state.recipe.favouriteStatus.isFavourite;
 
   @override
   Recipe get recipe => state.recipe;

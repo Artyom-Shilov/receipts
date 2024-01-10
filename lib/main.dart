@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:receipts/authentication/controllers/auth_cubit.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/local_storage/hive_recipe_client.dart';
+import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/network/dio_recipe_client.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/common/repositories/recipe_repository.dart';
@@ -21,11 +22,14 @@ void main() async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
   final storageClient = HiveRecipeClient();
   await storageClient.init(directory.path);
-  GetIt.instance.registerSingleton<BaseRecipeRepository>(RecipeRepository(
-      storageClient: storageClient, networkClient: DioRecipeClient()));
-  GetIt.instance.registerSingleton<AppRouter>(AppRouter());
+  GetIt.I.registerSingleton<BaseNetworkRecipeClient>(DioRecipeClient());
+  GetIt.I.registerSingleton<BaseRecipeRepository>(RecipeRepository(
+      storageClient: storageClient,
+      networkClient: GetIt.I.get<BaseNetworkRecipeClient>()));
+  GetIt.I.registerSingleton<AppRouter>(AppRouter());
   runApp(MultiBlocProvider(providers: [
-    BlocProvider<BaseAuthCubit>(create: (context) => AuthCubit()),
+    BlocProvider<BaseAuthCubit>(
+        create: (context) => AuthCubit(GetIt.I.get<BaseRecipeRepository>())),
     BlocProvider<BaseRecipeListCubit>(
         create: (context) =>
             RecipeListCubit(GetIt.instance.get<BaseRecipeRepository>()))

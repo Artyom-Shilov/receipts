@@ -12,7 +12,7 @@ class RecipeListCubit extends Cubit<RecipeListState>
     implements BaseRecipeListCubit {
   RecipeListCubit(this.recipeRepository) : super(const RecipeListState(
             status: RecipeListStatus.initial, recipes: [])) {
-    _recipeSubscription = recipeRepository.recipes.listen((recipeChanges) {
+    _recipeSubscription = recipeRepository.recipesStream.listen((recipeChanges) {
       emit(state.copyWith(recipes: recipeChanges, status: RecipeListStatus.success));
     }, onError: (e) {
       switch (e.runtimeType) {

@@ -1,3 +1,0 @@
-class UserAlreadyExistsException implements Exception {
-
-}

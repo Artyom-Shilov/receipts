@@ -2,24 +2,33 @@ import 'package:bloc/bloc.dart';
 import 'package:receipts/authentication/controllers/auth_state.dart';
 import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/models/user.dart';
+import 'package:receipts/common/repositories/base_recipe_repository.dart';
 
 import 'base_auth_cubit.dart';
 
 class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
-  AuthCubit() : super(const AuthState(status: AuthStatus.loggedOut));
+  AuthCubit(BaseRecipeRepository recipeRepository)
+      : _recipeRepository = recipeRepository,
+      super(const AuthState(status: AuthStatus.loggedOut));
+
+  final BaseRecipeRepository _recipeRepository;
+
+  final _userId = 4;
 
   @override
   Future<void> logIn({required String login, required String password}) async {
     emit(state.copyWith(status: AuthStatus.inProgress));
+    final user = User(
+        id: _userId,
+        login: login,
+        password: password,
+        token: 'testToken',
+        avatar: 'assets/sample_data/user_sample_avatar.png');
+    _recipeRepository.setLoggedUserFavouriteRecipes(user);
     await Future.delayed(const Duration(seconds: 2));
     emit(state.copyWith(
         status: AuthStatus.loggedIn,
-        user: User(
-            id: 1.toString(),
-            login: login,
-            password: password,
-            token: 'testToken',
-            avatar: 'assets/sample_data/user_sample_avatar.png')));
+        user: user));
   }
 
   @override
@@ -35,7 +44,7 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
     emit(state.copyWith(
         status: AuthStatus.loggedIn,
         user: User(
-            id: 1.toString(),
+            id: _userId,
             login: login,
             password: password,
             token: 'testToken',
