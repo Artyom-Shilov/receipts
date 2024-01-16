@@ -8,4 +8,5 @@ abstract interface class BaseRecipeRepository {
   Stream<List<Recipe>> get recipesStream;
   List<Recipe> get currentRecipes;
   Future<void> setLoggedUserFavouriteRecipes(User user);
+  Future<void> loadComments();
 }

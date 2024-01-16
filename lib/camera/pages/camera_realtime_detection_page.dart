@@ -14,9 +14,16 @@ class CameraRealtimeDetectionPage extends StatelessWidget {
     final cameraCubit = BlocProvider.of<BaseCameraCubit>(context);
     return Stack(children: [
       SizedBox(
-          height: double.infinity,
-          width: double.infinity,
-          child: CameraPreview(cameraCubit.state.cameraController!)
+        height: double.infinity,
+        width: double.infinity,
+        child: FittedBox(
+          fit: BoxFit.cover,
+          child: ConstrainedBox(
+              constraints: BoxConstraints(
+                  maxWidth: MediaQuery.sizeOf(context).width,
+                  maxHeight: MediaQuery.sizeOf(context).height),
+              child: CameraPreview(cameraCubit.state.cameraController!)),
+        ),
       ),
       SizedBox(
           width: double.infinity,
@@ -40,9 +47,10 @@ class CameraRealtimeDetectionPage extends StatelessWidget {
                     color: AppColors.accent,
                   ),
                   onPressed: () async {
+                    final size = MediaQuery.sizeOf(context);
+                    await cameraCubit.stopImageStream();
                     await cameraCubit
-                        .takePhotoAndFindDetections(MediaQuery.sizeOf(context));
-                    await cameraCubit.stopRealtimeDetection();
+                        .takePhotoAndFindDetections(size);
                     await cameraCubit.viewPhoto();
                   },
                 ),

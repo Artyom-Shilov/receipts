@@ -7,12 +7,10 @@ import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/widgets/common_persistent_header.dart';
 import 'package:receipts/common/widgets/control_button.dart';
-import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
-import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
 import 'package:receipts/recipe_info/widgets/widgets.dart';
 
-class RecipeInfoScreenBody extends StatelessWidget {
-  const RecipeInfoScreenBody({Key? key, required this.recipe})
+class RecipePage extends StatelessWidget {
+  const RecipePage({Key? key, required this.recipe})
       : super(key: key);
   final Recipe recipe;
 
@@ -80,12 +78,7 @@ class RecipeInfoScreenBody extends StatelessWidget {
                 height: Insets.vertical1,
               ),
             ),
-            BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
-                buildWhen: (prev, next) => prev.status != next.status,
-                builder: (context, state) =>
-                    state.status == RecipeInfoStatus.success
-                        ? const CommentsList()
-                        : const Center(child: CircularProgressIndicator())),
+            const CommentsList(),
             const SliverToBoxAdapter(
               child: SizedBox(
                 height: Insets.vertical1,

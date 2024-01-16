@@ -1,10 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:receipts/common/exceptions/exceptions.dart';
-import 'package:receipts/common/exceptions/object_not_found_exception.dart';
-import 'package:receipts/common/exceptions/unknown_code_exception.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:dio/dio.dart';
+import 'package:receipts/common/network/network_models/network_comment.dart';
 import 'package:receipts/common/network/network_models/network_favourite.dart';
 
 import 'network_models/network_models.dart';
@@ -14,7 +13,7 @@ class DioRecipeClient implements BaseNetworkRecipeClient {
 
   DioRecipeClient() {
     _dio.options =
-        BaseOptions(baseUrl: baseUrl, contentType: Headers.jsonContentType);
+        BaseOptions(baseUrl: baseUrl, contentType: Headers.jsonContentType, validateStatus: (_) => true);
   }
 
   final Dio _dio = Dio();
@@ -152,6 +151,58 @@ class DioRecipeClient implements BaseNetworkRecipeClient {
     }
     if (response.statusCode == 404) {
       throw ObjectNotFoundException();
+    } else {
+      throw UnknownCodeException(code: response.statusCode);
+    }
+  }
+
+  @override
+  Future<List<NetworkComment>> getComments() async {
+    final response = await _dio.get<List>('/comment');
+    if (response.statusCode == 200) {
+      return response.data!.map((e) => NetworkComment.fromJson(e)).toList();
+    }
+    if (response.statusCode == 400) {
+      throw InvalidRequestException();
+    } else {
+      throw UnknownCodeException(code: response.statusCode);
+    }
+  }
+
+  @override
+  Future<NetworkUser> getUserById(int id) async {
+    final response = await _dio.get('/user/$id');
+    if (response.statusCode == 200) {
+      return NetworkUser.fromJson(response.data);
+    } else {
+      throw UnknownCodeException(code: response.statusCode);
+    }
+  }
+
+  @override
+  Future<int> sendComment(
+      {required String text,
+      required String photo,
+      required String datetime,
+      required int userId,
+      required int recipeId}) async {
+    final json = NetworkComment(
+            id: -1,
+            text: text,
+            photo: photo,
+            datetime: datetime,
+            user: LinkedToCommentUser(id: userId),
+            recipe: LinkedToCommentRecipe(id: recipeId))
+        .toJson();
+    json.remove('id');
+    final response = await _dio.post('/comment', data: json);
+    if (response.statusCode == 200) {
+      return NetworkComment.fromJson(response.data).id;
+    }
+    if (response.statusCode == 400) {
+      throw InvalidRequestException();
+    } else if (response.statusCode == 409) {
+      throw ObjectAlreadyExistsException();
     } else {
       throw UnknownCodeException(code: response.statusCode);
     }

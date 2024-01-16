@@ -17,13 +17,13 @@ class Recipe with _$Recipe {
           required int id,
           required String name,
           required String duration,
-          required String photoUrl,
           required List<Ingredient> ingredients,
           required List<CookingStep> steps,
           required List<Comment> comments,
           @Default(FavouriteStatus(isFavourite: false)) FavouriteStatus favouriteStatus,
           required Uint8List photoBytes,
           required List<UserRecipePhoto> userPhotos,
-          required int likesNumber
+          required int likesNumber,
+          Uint8List? photoToSendComment
       }) = _Recipe;
 }

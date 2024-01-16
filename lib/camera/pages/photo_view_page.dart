@@ -20,7 +20,7 @@ class PhotoViewPage extends StatelessWidget {
                 image: DecorationImage(
                     alignment: Alignment.topCenter,
                     image: MemoryImage(cameraCubit.state.viewingPhoto!),
-                    fit: BoxFit.fill))),
+                    fit: BoxFit.cover))),
         if (state.detections.isNotEmpty &&
             state.status == CameraStatus.viewingWithDetections)
           DetectionStack(

@@ -6,7 +6,8 @@ import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
-import 'package:receipts/recipe_info/widgets/recipe_info_screen_body.dart';
+import 'package:receipts/recipe_info/pages/recipe_error_page.dart';
+import 'package:receipts/recipe_info/pages/recipe_page.dart';
 
 class RecipeInfoScreen extends StatelessWidget {
   const RecipeInfoScreen({Key? key}) : super(key: key);
@@ -25,20 +26,19 @@ class RecipeInfoScreen extends StatelessWidget {
               title: const Text(RecipeInfoTexts.mainAppBarTitle),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.campaign),
-                  onPressed: () {
-                    log('campaign tapped');
-                  }
-                )
+                    icon: const Icon(Icons.campaign),
+                    onPressed: () {
+                      log('campaign tapped');
+                    })
               ],
             ),
             body: BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
               buildWhen: (prev, next) => prev.status != next.status,
               builder: (context, state) {
                 return switch (state.status) {
-                  RecipeInfoStatus.success =>
-                    RecipeInfoScreenBody(recipe: state.recipe),
-                  RecipeInfoStatus.error => Center(child: Text(state.message)),
+                  RecipeInfoStatus.success || RecipeInfoStatus.commentProgress => RecipePage(recipe: state.recipe),
+                  RecipeInfoStatus.error =>
+                    RecipeErrorPage(recipe: state.recipe),
                 };
               },
             )));

@@ -13,12 +13,10 @@ import 'package:receipts/common/pages/home_screen.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/favourite/pages/favourite_page.dart';
 import 'package:receipts/freezer/pages/freezer_page.dart';
-import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
-import 'package:receipts/recipe_info/controllers/recipe_info_cubit.dart';
-import 'package:receipts/recipe_info/pages/recipe_info_screen.dart';
-import 'package:receipts/recipe_info/pages/recipe_photo_carousel_page.dart';
-import 'package:receipts/recipe_info/pages/recipe_photo_grid_page.dart';
-import 'package:receipts/recipes_list/pages/recipes_page.dart';
+import 'package:receipts/recipe_info/controllers/controllers.dart';
+import 'package:receipts/recipe_info/pages/pages.dart';
+import 'package:receipts/recipes_list/pages/recipes_screen.dart';
+
 
 class AppRouter {
   final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -57,7 +55,7 @@ class AppRouter {
             StatefulShellBranch(navigatorKey: _recipeListKey, routes: [
               GoRoute(
                   path: '/${AppTabs.recipes}',
-                  builder: (context, state) => const RecipesPage(),
+                  builder: (context, state) => const RecipesScreen(),
                   routes: [
                     GoRoute(
                         path:
@@ -108,31 +106,73 @@ class AppRouter {
                               pageBuilder: (context, state) {
                                 final recipe = (state.extra as Map<ExtraKeys,
                                     dynamic>)[ExtraKeys.recipe] as Recipe;
+                                final mode = (state.extra as Map<ExtraKeys,
+                                        dynamic>)[ExtraKeys.recipePhotoViewMode]
+                                    as RecipePhotoViewStatus;
                                 return CustomTransitionPage(
-                                    child: BlocProvider<BaseRecipeInfoCubit>(
-                                        create: (context) => RecipeInfoCubit(
-                                            recipe: recipe,
-                                            networkClient: GetIt.instance
-                                                .get<BaseNetworkRecipeClient>(),
-                                            repository: GetIt.instance
-                                                .get<BaseRecipeRepository>()),
+                                    child: BlocProvider<
+                                            BaseRecipePhotoViewCubit>(
+                                        create: (context) =>
+                                            RecipePhotoViewCubit(
+                                                status: mode,
+                                                recipe: recipe,
+                                                recipeRepository:
+                                                    GetIt.instance.get<
+                                                        BaseRecipeRepository>()),
                                         child: const RecipePhotoGridPage()),
-                                    transitionsBuilder:
-                                        (context, animation, _, child) =>
-                                            animation.status ==
-                                                    AnimationStatus.forward
-                                                ? SlideTransition(
-                                                    position: animation
-                                                        .drive(Tween<Offset>(
-                                                      begin: const Offset(1, 0),
-                                                      end: Offset.zero,
-                                                    )),
-                                                    child: child)
-                                                : FadeTransition(
-                                                    opacity: animation,
-                                                    child: child));
+                                    transitionsBuilder: (context, animation, _,
+                                            child) =>
+                                        animation.status ==
+                                                AnimationStatus.forward
+                                            ? SlideTransition(
+                                                position: animation
+                                                    .drive(Tween<Offset>(
+                                                  begin: const Offset(1, 0),
+                                                  end: Offset.zero,
+                                                )),
+                                                child: child)
+                                            : FadeTransition(
+                                                opacity: animation,
+                                                child: child));
                               },
                               routes: [
+                                GoRoute(
+                                    path: '${RecipesRouteNames.photoCommenting}',
+                                    parentNavigatorKey: _rootNavigatorKey,
+                                    pageBuilder: (context, state) {
+                                      final recipe = (state.extra as Map<
+                                          ExtraKeys,
+                                          dynamic>)[ExtraKeys.recipe] as Recipe;
+                                      final photo = (state.extra
+                                      as Map<ExtraKeys, dynamic>)[
+                                      ExtraKeys.photo]
+                                      as UserRecipePhoto;
+                                      return CustomTransitionPage(
+                                          child: BlocProvider<BaseRecipeInfoCubit>(
+                                                  create: (context) => RecipeInfoCubit(
+                                                      repository: GetIt.instance
+                                                          .get<
+                                                          BaseRecipeRepository>(),
+                                                      networkClient:
+                                                      GetIt.instance.get<
+                                                          BaseNetworkRecipeClient>(),
+                                                      recipe: recipe),
+
+                                              child: RecipePhotoCommentingPage(
+                                                photo: photo,
+                                              )),
+                                          transitionsBuilder: (context,
+                                              animation, _, child) =>
+                                          animation.status ==
+                                              AnimationStatus.forward
+                                              ? ScaleTransition(
+                                              scale: animation,
+                                              child: child)
+                                              : FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          ));
+                                    }),
                                 GoRoute(
                                     path: '${RecipesRouteNames.carousel}',
                                     parentNavigatorKey: _rootNavigatorKey,
@@ -140,16 +180,38 @@ class AppRouter {
                                       final recipe = (state.extra as Map<
                                           ExtraKeys,
                                           dynamic>)[ExtraKeys.recipe] as Recipe;
+                                      final mode = (state.extra
+                                                  as Map<ExtraKeys, dynamic>)[
+                                              ExtraKeys.recipePhotoViewMode]
+                                          as RecipePhotoViewStatus;
                                       final photos = recipe.userPhotos;
                                       final initIndex = (state.extra
                                               as Map<ExtraKeys, dynamic>)[
                                           ExtraKeys.recipePhotoIndex] as int;
                                       return CustomTransitionPage(
-                                          child: BlocProvider<BaseCameraCubit>(
-                                              create: (context) => CameraCubit(
-                                                  recipe: recipe,
-                                                  repository: GetIt.instance.get<
-                                                      BaseRecipeRepository>()),
+                                          child: MultiBlocProvider(
+                                              providers: [
+                                                BlocProvider<
+                                                        BaseRecipePhotoViewCubit>(
+                                                    create: (context) =>
+                                                        RecipePhotoViewCubit(
+                                                            recipe: recipe,
+                                                            status: mode,
+                                                            recipeRepository:
+                                                                GetIt.instance.get<
+                                                                    BaseRecipeRepository>())),
+                                                BlocProvider<
+                                                    BaseRecipeInfoCubit>(
+                                                  create: (context) => RecipeInfoCubit(
+                                                      repository: GetIt.instance
+                                                          .get<
+                                                              BaseRecipeRepository>(),
+                                                      networkClient:
+                                                          GetIt.instance.get<
+                                                              BaseNetworkRecipeClient>(),
+                                                      recipe: recipe),
+                                                )
+                                              ],
                                               child: RecipePhotoCarouselPage(
                                                 photos: photos,
                                                 initIndex: initIndex,
@@ -214,6 +276,7 @@ enum RecipesRouteNames {
   recipe,
   camera,
   carousel,
+  photoCommenting,
   photoView;
 
   @override
@@ -233,7 +296,9 @@ enum PathParameters {
 
 enum ExtraKeys {
   recipe,
-  recipePhotoIndex;
+  recipePhotoIndex,
+  photo,
+  recipePhotoViewMode;
 
   @override
   String toString() {

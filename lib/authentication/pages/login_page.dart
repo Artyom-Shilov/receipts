@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:receipts/authentication/controllers/auth_state.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
@@ -8,34 +9,24 @@ import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/widgets/control_button.dart';
 import 'package:receipts/navigation/app_router.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends HookWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  late TextEditingController loginController;
-  late TextEditingController passwordController;
-  final _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-    loginController = TextEditingController();
-    passwordController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    loginController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    late final GlobalKey<FormState> formKey;
+    late final TextEditingController loginController;
+    late final TextEditingController passwordController;
+    final goRouter = GoRouter.of(context);
+    useEffect(() {
+      loginController = TextEditingController();
+      passwordController = TextEditingController();
+      formKey = GlobalKey<FormState>();
+      return ()  {
+        loginController.dispose();
+        passwordController.dispose();
+      };
+    });
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -50,12 +41,10 @@ class _LoginPageState extends State<LoginPage> {
                       child: SizedBox(
                         width: 230,
                         child: Form(
-                          key: _formKey,
+                          key: formKey,
                           child: Column(
                             children: [
-                              const SizedBox(
-                                height: 230,
-                              ),
+                              const SizedBox(height: 230),
                               const Text(
                                 LoginPageTexts.appName,
                                 style: TextStyle(
@@ -95,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                                 borderColor: AppColors.main,
                                 onPressed: () async {
                                   FocusManager.instance.primaryFocus?.unfocus();
-                                  if (_formKey.currentState!.validate()) {
+                                  if (formKey.currentState!.validate()) {
                                     await BlocProvider.of<BaseAuthCubit>(
                                             context)
                                         .logIn(
@@ -103,12 +92,10 @@ class _LoginPageState extends State<LoginPage> {
                                             password: passwordController.text);
                                     loginController.clear();
                                     passwordController.clear();
-                                    if (mounted) {
-                                      GoRouter.of(context)
-                                          .go('/${AppTabs.recipes}');
+                                    goRouter.go('/${AppTabs.recipes}');
                                     }
                                   }
-                                },
+                                ,
                               ),
                               const SizedBox(height: 100),
                               MaterialButton(

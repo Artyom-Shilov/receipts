@@ -12,9 +12,13 @@ class CameraPage extends StatelessWidget {
     final cameraCubit = BlocProvider.of<BaseCameraCubit>(context);
     return Stack(children: [
       SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: CameraPreview(cameraCubit.state.cameraController!)),
+          width: MediaQuery.sizeOf(context).width,
+          height: MediaQuery.sizeOf(context).height,
+          child: FittedBox(
+              fit: BoxFit.cover,
+              child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width, maxHeight: MediaQuery.sizeOf(context).height),
+                  child: CameraPreview(cameraCubit.state.cameraController!)))),
       Align(
         alignment: Alignment.bottomCenter,
         child: Padding(

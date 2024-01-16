@@ -6,8 +6,8 @@ part 'network_user.g.dart';
 @freezed
 class NetworkUser with _$NetworkUser {
   const factory NetworkUser(
-    String avatar,
-    String token, {
+    String? avatar,
+    String? token, {
     required int id,
     required String login,
     required String password,

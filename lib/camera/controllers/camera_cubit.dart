@@ -102,6 +102,7 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
     final photo = await state.cameraController!.takePicture();
     await findDetectionsOnPhoto(photo, screenSize);
     emit(state.copyWith(viewingPhoto: await photo.readAsBytes()));
+
   }
 
   @override
@@ -145,13 +146,12 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
     final modelY = modelResult["rect"]["y"];
     final modelHeight = modelResult["rect"]["h"];
 
-    final screenHeight = screenSize.height;
     final screenWidth = screenSize.width;
 
     double widthScale, heightScale, x, y, width, height;
 
     widthScale = screenWidth;
-    heightScale = screenHeight;
+    heightScale =  state.imageHeight / screenWidth * screenWidth;
     x = modelX * widthScale;
     width = modelWidth * widthScale;
     y = modelY * heightScale;
@@ -181,5 +181,10 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
   @override
   Future<void> viewPhoto() async {
     emit(state.copyWith(status: CameraStatus.viewing));
+  }
+
+  @override
+  Future<void> stopImageStream() async {
+    await state.cameraController!.stopImageStream();
   }
 }

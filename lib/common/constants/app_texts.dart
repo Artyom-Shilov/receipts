@@ -58,6 +58,10 @@ abstract class ErrorMessages {
   static const loadRecipesNet = 'Ошибка при загрузке рецепта по сети';
   static const loadRecipesLocal = 'Ошибка при загрузке локальных рецептов';
   static const emptyRecipeStorage = 'Нет доступа к сети. Не найдено локальных рецептов';
+  static const loadFavouriteInfo = 'Ошибка получения информации о любимых рецептах';
+  static const loadComments = 'Ошибка получения комментариев пользователей';
+  static const changeFavouriteStatus = 'Ошибка при изменении статуса рецепта';
+  static const sendComment = 'Ошибка при отправке комментария';
 
   static const photoViewError = 'Не удалось отобразить фото';
   static const cameraInitError = 'Ошибка инициализации камеры';

@@ -6,8 +6,6 @@ import 'package:receipts/common/local_storage/storage_models/local_cooking_step.
 import 'package:receipts/common/local_storage/storage_models/local_ingredient.dart';
 import 'package:receipts/common/local_storage/storage_models/local_user_recipe_photo.dart';
 
-import 'local_comment.dart';
-
 part 'local_recipe.freezed.dart';
 part 'local_recipe.g.dart';
 
@@ -19,12 +17,10 @@ class LocalRecipe with _$LocalRecipe {
       {@HiveField(1) required int id,
       @HiveField(2) required String name,
       @HiveField(3) required String duration,
-      @HiveField(4) required String photoUrl,
-      @HiveField(5) required List<LocalIngredient> ingredients,
-      @HiveField(6) required List<LocalCookingStep> steps,
-      @HiveField(7) required List<LocalComment> comments,
-      @HiveField(9) required Uint8List photoBytes,
-      @HiveField(10) required List<LocalUserRecipePhoto> userPhotos,
-      @HiveField(11) required int likesNumber,
+      @HiveField(4) required List<LocalIngredient> ingredients,
+      @HiveField(5) required List<LocalCookingStep> steps,
+      @HiveField(6) required Uint8List photoBytes,
+      @HiveField(7) required List<LocalUserRecipePhoto> userPhotos,
+      @HiveField(8) required int likesNumber,
       }) = _Recipe;
 }

@@ -7,12 +7,9 @@ import 'package:receipts/common/constants/insets.dart';
 import 'package:receipts/common/constants/size_break_points.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/navigation/app_router.dart';
-import 'package:receipts/recipe_info/controllers/base_heart_animation_cubit.dart';
-import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
-import 'package:receipts/recipe_info/controllers/heart_animation_cubit.dart';
-import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
-import 'package:receipts/recipe_info/widgets/animated_bookmark.dart';
-import 'package:receipts/recipe_info/widgets/animated_heart.dart';
+import 'package:receipts/recipe_info/controllers/controllers.dart';
+import 'package:receipts/recipe_info/widgets/widgets.dart';
+
 
 class RecipeTopColumn extends StatelessWidget {
   const RecipeTopColumn({
@@ -86,6 +83,7 @@ class RecipeTopColumn extends StatelessWidget {
                       '/${RecipesRouteNames.photoView}',
                       extra: {
                         ExtraKeys.recipe: state.recipe,
+                        ExtraKeys.recipePhotoViewMode : RecipePhotoViewStatus.viewing
                       },
                     );
                   },

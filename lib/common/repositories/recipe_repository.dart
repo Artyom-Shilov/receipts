@@ -3,7 +3,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:receipts/common/exceptions/exceptions.dart';
 import 'package:receipts/common/local_storage/base_storage_recipe_client.dart';
 import 'package:receipts/common/local_storage/storage_models/local_recipe.dart';
-import 'package:receipts/common/models/favourite_status.dart';
 import 'package:receipts/common/models/models.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/repositories/model_converter.dart';
@@ -87,7 +86,7 @@ class RecipeRepository implements BaseRecipeRepository {
 
   @override
   Future<void> setLoggedUserFavouriteRecipes(User user) async {
-    List<Recipe> recipesInfo;
+    List<Recipe> actualRecipes;
     try {
       final userFavourites = (await _networkClient.getFavourites())
           .where((element) => element.user.id == user.id);
@@ -95,19 +94,41 @@ class RecipeRepository implements BaseRecipeRepository {
         for (final favourite in userFavourites)
           favourite.recipe.id: favourite.id
       };
-      recipesInfo = [...currentRecipes];
-      for (int i = 0; i < recipesInfo.length; i++) {
-        if (favouritesMap.keys.contains(recipesInfo[i].id)) {
-          recipesInfo[i] = recipesInfo[i].copyWith(
+      actualRecipes = [...currentRecipes];
+      for (int i = 0; i < actualRecipes.length; i++) {
+        if (favouritesMap.keys.contains(actualRecipes[i].id)) {
+          actualRecipes[i] = actualRecipes[i].copyWith(
               favouriteStatus: FavouriteStatus(
                   isFavourite: true,
-                  favouriteId: favouritesMap[recipesInfo[i].id]));
+                  favouriteId: favouritesMap[actualRecipes[i].id]));
         }
       }
     } catch (e) {
-      _recipeListSink.addError(SetFavouriteRecipesException(e));
+      _recipeListSink.addError(FetchFavouriteInfoException(e));
       return;
     }
-    _recipeListSink.add(recipesInfo);
+    _recipeListSink.add(actualRecipes);
+  }
+
+  @override
+  Future<void> loadComments() async {
+    List<Recipe> actualRecipes;
+    try {
+      final netComments = await _networkClient.getComments();
+      actualRecipes = [...currentRecipes];
+      for (int i = 0; i < actualRecipes.length; i++) {
+        final comments = <Comment>[];
+        final filteredNetComments = netComments.where((element) =>
+        element.recipe.id == actualRecipes[i].id);
+        for (final netComment in filteredNetComments) {
+          comments.add(await _converter.netCommentToAppComment(netComment));
+        }
+        actualRecipes[i] = actualRecipes[i].copyWith(comments: comments);
+      }
+    } catch (e) {
+      _recipeListSink.addError(FetchCommentsException(e));
+      return;
+    }
+    _recipeListSink.add(actualRecipes);
   }
 }

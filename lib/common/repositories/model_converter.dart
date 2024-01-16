@@ -4,7 +4,9 @@ import 'package:receipts/common/local_storage/base_storage_recipe_client.dart';
 import 'package:receipts/common/local_storage/storage_models/storage_models.dart';
 import 'package:receipts/common/models/models.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
+import 'package:receipts/common/network/network_models/network_comment.dart';
 import 'package:receipts/common/network/network_models/network_models.dart';
+import 'package:receipts/common/util/util_logic.dart';
 
 class ModelsConverter {
   const ModelsConverter(BaseStorageRecipeClient storageRecipeClient,
@@ -36,6 +38,7 @@ class ModelsConverter {
         id: localCookingStep.id,
         number: localCookingStep.number,
         description: localCookingStep.description,
+        isDone: localCookingStep.isDone,
         duration: localCookingStep.duration);
   }
 
@@ -44,31 +47,8 @@ class ModelsConverter {
         id: cookingStep.id,
         number: cookingStep.number,
         description: cookingStep.description,
-        duration: cookingStep.duration);
-  }
-
-  Comment localCommentToAppComment(LocalComment localComment) {
-    return Comment(
-        text: localComment.text,
-        photo: localComment.photo,
-        datetime: localComment.datetime,
-        user: User(
-            id: localComment.user.id,
-            login: localComment.user.login,
-            password: '',
-            token: '',
-            avatar: localComment.user.avatar));
-  }
-
-  LocalComment appCommentToLocalComment(Comment comment) {
-    return LocalComment(
-        text: comment.text,
-        photo: comment.photo,
-        datetime: comment.datetime,
-        user: LocalUser(
-            id: comment.user.id,
-            login: comment.user.login,
-            avatar: comment.user.avatar));
+        duration: cookingStep.duration,
+        isDone: cookingStep.isDone);
   }
 
   LocalDetection appDetectionToLocalDetection(Detection appDetection) {
@@ -116,8 +96,6 @@ class ModelsConverter {
         .map((e) => localIngredientToAppIngredient(e))
         .toList();
     final steps = localRecipe.steps.map((e) => localStepToAppStep(e)).toList();
-    final comments =
-        localRecipe.comments.map((e) => localCommentToAppComment(e)).toList();
     final userPhotos = localRecipe.userPhotos
         .map((e) => localRecipePhotoToAppRecipePhoto(e))
         .toList();
@@ -125,11 +103,10 @@ class ModelsConverter {
         id: localRecipe.id,
         name: localRecipe.name,
         duration: localRecipe.duration,
-        photoUrl: localRecipe.photoUrl,
         ingredients: ingredients,
         photoBytes: localRecipe.photoBytes,
         steps: steps,
-        comments: comments,
+        comments: [],
         userPhotos: userPhotos,
         likesNumber: localRecipe.likesNumber,
     );
@@ -140,8 +117,6 @@ class ModelsConverter {
         .map((e) => appIngredientToLocalIngredient(e))
         .toList();
     final localSteps = recipe.steps.map((e) => appStepToLocalStep(e)).toList();
-    final localComments =
-        recipe.comments.map((e) => appCommentToLocalComment(e)).toList();
     final userPhotos = recipe.userPhotos
         .map((e) => appRecipePhotoToLocalRecipePhoto(e))
         .toList();
@@ -149,10 +124,8 @@ class ModelsConverter {
         id: recipe.id,
         name: recipe.name,
         duration: recipe.duration,
-        photoUrl: recipe.photoUrl,
         ingredients: localIngredients,
         steps: localSteps,
-        comments: localComments,
         photoBytes: recipe.photoBytes,
         userPhotos: userPhotos,
         likesNumber: recipe.likesNumber
@@ -185,6 +158,27 @@ class ModelsConverter {
         measureUnit: _calcMeasureUnit(ingredientLink.count, loadedMeasureUnit));
   }
 
+  Future<Comment> netCommentToAppComment(NetworkComment networkComment) async {
+    final networkUser = await _networkClient.getUserById(networkComment.user.id);
+    return Comment(
+        text: networkComment.text,
+        photo: UtilLogic.stringToUInt8List(networkComment.photo),
+        datetime: DateFormat('dd.MM.yyyy').format(DateTime.parse(networkComment.datetime)),
+        user: _netUserToAppUser(networkUser),
+        id: networkComment.id
+    );
+  }
+
+  User _netUserToAppUser(NetworkUser networkUser) {
+    return User(
+        id: networkUser.id,
+        login: networkUser.login,
+        token: networkUser.token,
+        password: networkUser.password,
+        avatar: UtilLogic.stringToUInt8List(networkUser.avatar)
+    );
+  }
+
   String _calcMeasureUnit(int count, NetworkMeasureUnit unit) {
     if (count % 10 == 1) {
       return unit.one;
@@ -214,32 +208,37 @@ class ModelsConverter {
   Future<List<Recipe>> netRecipesToAppRecipes(
       List<NetworkRecipe> networkRecipes) async {
     List<Recipe> recipes = [];
-    final ingredientsLinks = await _networkClient.getRecipeIngredientsLinks();
-    final stepLinks = await _networkClient.getRecipeStepLinks();
-    final favourites = await _networkClient.getFavourites();
+    final netIngredientsLinks = await _networkClient.getRecipeIngredientsLinks();
+    final netStepLinks = await _networkClient.getRecipeStepLinks();
+    final netFavourites = await _networkClient.getFavourites();
     for (final networkRecipe in networkRecipes) {
       final steps = <CookingStep>[];
       final ingredients = <Ingredient>[];
-      final likesNumber = favourites.where((element) => element.recipe.id == networkRecipe.id).length;
-      final filteredIngredientsLinks = ingredientsLinks
+      final likesNumber = netFavourites.where((element) => element.recipe.id == networkRecipe.id).length;
+      final filteredNetIngredientsLinks = netIngredientsLinks
           .where((element) => element.recipe.id == networkRecipe.id);
-      final filteredStepLinks =
-          stepLinks.where((element) => element.recipe.id == networkRecipe.id);
-      for (final stepLink in filteredStepLinks) {
-        steps.add(await _netCookingStepToAppCookingStep(stepLink));
+      final filteredNetStepLinks =
+          netStepLinks.where((element) => element.recipe.id == networkRecipe.id);
+      for (final netStepLink in filteredNetStepLinks) {
+        steps.add(await _netCookingStepToAppCookingStep(netStepLink));
       }
-      for (final ingredientLink in filteredIngredientsLinks) {
-        ingredients.add(await _netIngredientToAppIngredient(ingredientLink));
+      for (final netIngredientLink in filteredNetIngredientsLinks) {
+        ingredients.add(await _netIngredientToAppIngredient(netIngredientLink));
       }
       final photoBytes = await _networkClient.getImage(networkRecipe.photo);
       final userPhotos = (await _storageClient
               .getLocalUserRecipePhotosByRecipeId(networkRecipe.id))
           .map((e) => localRecipePhotoToAppRecipePhoto(e))
           .toList();
+      final localDoneStatuses = await _storageClient.getDoneStatusesByRecipeId(networkRecipe.id);
+      if (localDoneStatuses.length == steps.length && steps.isNotEmpty) {
+        for (int i = 0; i < localDoneStatuses.length; i++) {
+          steps[i] = steps[i].copyWith(isDone: localDoneStatuses[i]);
+        }
+      }
       recipes.add(Recipe(
           id: networkRecipe.id,
           name: networkRecipe.name,
-          photoUrl: networkRecipe.photo,
           duration:
               '${networkRecipe.duration} ${_calcRecipeDurationForm(networkRecipe.duration)}',
           steps: steps,

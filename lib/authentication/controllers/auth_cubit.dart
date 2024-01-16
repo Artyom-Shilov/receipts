@@ -22,10 +22,10 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
         id: _userId,
         login: login,
         password: password,
-        token: 'testToken',
-        avatar: 'assets/sample_data/user_sample_avatar.png');
-    _recipeRepository.setLoggedUserFavouriteRecipes(user);
-    await Future.delayed(const Duration(seconds: 2));
+        token: '',
+        avatar: null);
+    await _recipeRepository.setLoggedUserFavouriteRecipes(user);
+    await _recipeRepository.loadComments();
     emit(state.copyWith(
         status: AuthStatus.loggedIn,
         user: user));
@@ -48,7 +48,7 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
             login: login,
             password: password,
             token: 'testToken',
-            avatar: 'assets/sample_data/user_sample_avatar.png')));
+            avatar: null)));
   }
 
   @override

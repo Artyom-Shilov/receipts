@@ -1,13 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:intl/intl.dart';
 import 'package:receipts/common/constants/app_texts.dart';
-import 'package:receipts/common/models/comment.dart';
-import 'package:receipts/common/models/cooking_step.dart';
-import 'package:receipts/common/models/favourite_status.dart';
-import 'package:receipts/common/models/recipe.dart';
-import 'package:receipts/common/models/user.dart';
-import 'package:receipts/common/models/user_recipe_photo.dart';
+import 'package:receipts/common/models/models.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
@@ -29,7 +28,8 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
           state.recipe) {
         emit(state.copyWith(
             recipe:
-                event.firstWhere((element) => element.id == state.recipe.id)));
+                event.firstWhere((element) => element.id == state.recipe.id),
+            status: RecipeInfoStatus.success));
       }
     });
   }
@@ -62,27 +62,48 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
     } catch (e) {
       emit(state.copyWith(
           status: RecipeInfoStatus.error,
-          message: ErrorMessages.changeRecipeInfo));
+          message: ErrorMessages.changeFavouriteStatus));
       return;
     }
-    emit(state.copyWith(recipe: changedInfo));
     await _repository.saveRecipeInfo(changedInfo);
   }
 
   @override
-  Future<void> saveComment(Comment comment) async {
+  Future<void> saveComment(
+      {required User user,
+      required Recipe recipe,
+      required String text,
+      required Uint8List? photo}) async {
     Recipe changedInfo;
+    emit(state.copyWith(status: RecipeInfoStatus.commentProgress));
+    final image = photo == null
+        ? ''
+        : const Base64Encoder().convert(
+            await FlutterImageCompress.compressWithList(photo, quality: 75));
+    final datetime = DateTime.now().toString();
     try {
+      final commentId = await _networkClient.sendComment(
+          text: text,
+          userId: user.id,
+          datetime: datetime,
+          recipeId: recipe.id,
+          photo: image);
+      final appComment = Comment(
+        id: commentId,
+        text: text,
+        photo: photo,
+        datetime: DateFormat('dd.MM.yyyy').format(DateTime.parse(datetime)),
+        user: user,
+      );
       List<Comment> commentList = [...comments];
-      commentList.add(comment);
-      changedInfo = state.recipe.copyWith(comments: commentList);
+      commentList.add(appComment);
+      changedInfo = state.recipe
+          .copyWith(comments: commentList, photoToSendComment: null);
     } catch (e) {
       emit(state.copyWith(
-          status: RecipeInfoStatus.error,
-          message: ErrorMessages.changeRecipeInfo));
+          status: RecipeInfoStatus.error, message: ErrorMessages.sendComment));
       return;
     }
-    emit(state.copyWith(recipe: changedInfo));
     await _repository.saveRecipeInfo(changedInfo);
   }
 
@@ -102,7 +123,6 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
           message: ErrorMessages.changeRecipeInfo));
       return;
     }
-    emit(state.copyWith(recipe: changedInfo));
     await _repository.saveRecipeInfo(changedInfo);
   }
 
