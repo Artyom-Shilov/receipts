@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:receipts/authentication/pages/login_page.dart';
-import 'package:receipts/authentication/pages/profile_page.dart';
+import 'package:receipts/profile/profile_screen.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
 import 'package:receipts/camera/controllers/camera_cubit.dart';
 import 'package:receipts/camera/pages/camera_global_screen.dart';
@@ -11,8 +11,7 @@ import 'package:receipts/common/models/models.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/pages/home_screen.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
-import 'package:receipts/favourite/pages/favourite_page.dart';
-import 'package:receipts/freezer/pages/freezer_page.dart';
+import 'package:receipts/favourite/pages/favourite_screen.dart';
 import 'package:receipts/recipe_info/controllers/controllers.dart';
 import 'package:receipts/recipe_info/pages/pages.dart';
 import 'package:receipts/recipes_list/pages/recipes_screen.dart';
@@ -49,7 +48,7 @@ class AppRouter {
     routes: [
       StatefulShellRoute.indexedStack(
           builder: (context, state, shell) {
-            return HomeScreen(navigationShell: shell);
+            return HomeScreen();
           },
           branches: [
             StatefulShellBranch(navigatorKey: _recipeListKey, routes: [
@@ -232,20 +231,15 @@ class AppRouter {
                         ]),
                   ])
             ]),
-            StatefulShellBranch(navigatorKey: _freezerKey, routes: [
-              GoRoute(
-                  path: '/${AppTabs.freezer}',
-                  builder: (context, state) => const FreezerPage())
-            ]),
             StatefulShellBranch(navigatorKey: _favouriteKey, routes: [
               GoRoute(
                   path: '/${AppTabs.favourite}',
-                  builder: (context, state) => const FavouritePage())
+                  builder: (context, state) => const FavouriteScreen())
             ]),
             StatefulShellBranch(navigatorKey: _profileKey, routes: [
               GoRoute(
                   path: '/${AppTabs.profile}',
-                  builder: (context, state) => const ProfilePage())
+                  builder: (context, state) => const ProfileScreen())
             ]),
             StatefulShellBranch(navigatorKey: _loginKey, routes: [
               GoRoute(

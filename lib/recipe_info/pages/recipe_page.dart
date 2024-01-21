@@ -53,7 +53,7 @@ class RecipePage extends StatelessWidget {
               child: ControlButton(
                 backgroundColor: AppColors.main,
                 borderColor: AppColors.main,
-                text: const Text(
+                child: const Text(
                   RecipeInfoTexts.startCookingButton,
                   style: TextStyle(
                       fontSize: 16,

@@ -25,13 +25,17 @@ abstract class LoginPageTexts {
   static const passwordHint = 'пароль';
   static const appName = 'Otus.Food';
   static const doLogin = 'Войти';
-  static const doRegister = 'Зарегистрироваться';
+  static const doRegister = 'Регистрация';
+  static const toRegisterToggle = 'Зарегестрироваться';
+  static const toLoginToggle = 'Войти в приложение';
+
   static const loginValidatorMessage = 'Введите логин';
   static const passwordValidatorMessage = 'Введите пароль';
 }
 
 abstract class ProfilePageTexts {
 
+  static const login = 'Логин';
   static const doLogout = 'Выход';
 }
 
@@ -49,6 +53,11 @@ abstract class DetectionTexts {
 
   static const couldNotReliableFindDetections = 'Не удалось найти объекты с высокой достоверностью';
   static const undoSnackBar = 'Убрать';
+}
+
+abstract class FavouriteTexts {
+
+  static const noFavouriteRecipes = 'Нет избранных рецептов';
 }
 
 abstract class ErrorMessages {

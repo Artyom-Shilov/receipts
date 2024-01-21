@@ -10,11 +10,17 @@ enum AuthStatus {
   error
 }
 
+enum Process {
+  login,
+  registration
+}
+
 @freezed
 class AuthState with _$AuthState {
   const factory AuthState({
     required AuthStatus status,
     User? user,
-    @Default('') String message
+    @Default('') String message,
+    @Default(Process.login) Process process
   }) = _AuthState;
 }

@@ -20,23 +20,29 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
 
   @override
   Future<void> initCamera() async {
-    emit(state.copyWith(status: CameraStatus.loading));
-    List<CameraDescription> cameras;
-    try {
-      cameras = await availableCameras();
-      await Tflite.loadModel(
-          model: "assets/detection/ssd_mobilenet.tflite",
-          labels: "assets/detection/ssd_mobilenet.txt");
-    } catch (e) {
-      emit(state.copyWith(
-          status: CameraStatus.error, message: ErrorMessages.cameraInitError));
-      return;
-    }
-    CameraController controller =
-        CameraController(cameras[0], ResolutionPreset.high);
-    await controller.initialize();
-    emit(state.copyWith(
-        status: CameraStatus.ready, cameraController: controller));
+      emit(state.copyWith(status: CameraStatus.loading));
+      List<CameraDescription> cameras;
+      try {
+        cameras = await availableCameras();
+        await Tflite.loadModel(
+            model: "assets/detection/ssd_mobilenet.tflite",
+            labels: "assets/detection/ssd_mobilenet.txt");
+      } catch (e) {
+        emit(state.copyWith(
+            status: CameraStatus.error,
+            message: ErrorMessages.cameraInitError));
+        return;
+      }
+      CameraController controller =
+      CameraController(cameras[0], ResolutionPreset.high);
+      await controller.initialize();
+      if (!isClosed) {
+        emit(state.copyWith(
+            status: CameraStatus.ready, cameraController: controller));
+      } else {
+        await controller.dispose();
+        await Tflite.close();
+      }
   }
 
   @override
@@ -186,5 +192,11 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
   @override
   Future<void> stopImageStream() async {
     await state.cameraController!.stopImageStream();
+  }
+
+  @override
+  Future<void> close() async {
+    await state.cameraController?.dispose();
+    return super.close();
   }
 }

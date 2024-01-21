@@ -23,6 +23,7 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
         _networkClient = networkClient,
         super(
             RecipeInfoState(status: RecipeInfoStatus.success, recipe: recipe)) {
+    print('infoSub');
     _recipeSubscription = _repository.recipesStream.listen((event) {
       if (event.firstWhere((element) => element.id == state.recipe.id) !=
           state.recipe) {
@@ -140,6 +141,7 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
 
   @override
   Future<void> close() {
+    print('infoClose');
     _recipeSubscription?.cancel();
     return super.close();
   }

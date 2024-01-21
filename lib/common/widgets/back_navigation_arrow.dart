@@ -8,11 +8,13 @@ class BackNavigationArrow extends StatelessWidget {
     return Align(
         alignment: Alignment.topLeft,
         child: Padding(
-          padding: const EdgeInsets.only(top: 30),
+          padding: const EdgeInsets.only(top: 40),
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              Navigator.pop(context);
+            onPressed: () async {
+              print(Navigator.of(context).widget.pages);
+              await Router.of(context).routerDelegate.popRoute();
+              print(Navigator.of(context).widget.pages);
             },
           ),
         ));

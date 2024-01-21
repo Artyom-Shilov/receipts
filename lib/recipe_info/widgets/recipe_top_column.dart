@@ -7,6 +7,7 @@ import 'package:receipts/common/constants/insets.dart';
 import 'package:receipts/common/constants/size_break_points.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/navigation/app_router.dart';
+import 'package:receipts/navigation/base_navigation_cubit.dart';
 import 'package:receipts/recipe_info/controllers/controllers.dart';
 import 'package:receipts/recipe_info/widgets/widgets.dart';
 
@@ -63,13 +64,7 @@ class RecipeTopColumn extends StatelessWidget {
                   size: 20,
                 ),
                 onTap: () {
-                  GoRouter.of(context).go(
-                    '/${AppTabs.recipes}'
-                    '/${RecipesRouteNames.recipe}'
-                    '/${recipe.id}'
-                    '/${RecipesRouteNames.camera}',
-                    extra: {ExtraKeys.recipe: state.recipe},
-                  );
+                  BlocProvider.of<BaseNavigationCubit>(context).toCamera(recipe);
                 },
               ),
               if (state.recipe.userPhotos.isNotEmpty) ...[

@@ -8,9 +8,14 @@ import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/local_storage/hive_recipe_client.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/network/dio_recipe_client.dart';
+import 'package:receipts/common/pages/home_screen.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/common/repositories/recipe_repository.dart';
+import 'package:receipts/favourite/controllers/base_favourite_recipes_cubit.dart';
+import 'package:receipts/favourite/controllers/favourite_recipes_cubit.dart';
 import 'package:receipts/navigation/app_router.dart';
+import 'package:receipts/navigation/base_navigation_cubit.dart';
+import 'package:receipts/navigation/navigation_cubit.dart';
 import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 import 'package:receipts/recipes_list/controllers/recipe_list_cubit.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -32,7 +37,13 @@ void main() async {
         create: (context) => AuthCubit(GetIt.I.get<BaseRecipeRepository>())),
     BlocProvider<BaseRecipeListCubit>(
         create: (context) =>
-            RecipeListCubit(GetIt.instance.get<BaseRecipeRepository>()))
+            RecipeListCubit(GetIt.instance.get<BaseRecipeRepository>())),
+    BlocProvider<BaseNavigationCubit>(
+        create: (context) =>
+            NavigationCubit()),
+    BlocProvider<BaseFavouriteRecipesCubit>(
+        create: (context) =>
+            FavouriteRecipesCubit(GetIt.instance.get<BaseRecipeRepository>())),
   ], child: const MyApp()));
 }
 
@@ -52,11 +63,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final appRouter = GetIt.instance.get<AppRouter>();
-    return MaterialApp.router(
-      routeInformationParser: appRouter.router.routeInformationParser,
-      routeInformationProvider: appRouter.router.routeInformationProvider,
-      routerDelegate: appRouter.router.routerDelegate,
+    return MaterialApp(
       title: 'Otus Food',
       theme: ThemeData(
           useMaterial3: true,
@@ -64,6 +71,7 @@ class _MyAppState extends State<MyApp> {
               color: Colors.white, surfaceTintColor: Colors.white),
           scaffoldBackgroundColor: Colors.white,
           textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme)),
+      home: const HomeScreen(),
     );
   }
 }

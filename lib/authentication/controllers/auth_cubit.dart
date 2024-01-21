@@ -9,7 +9,7 @@ import 'base_auth_cubit.dart';
 class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
   AuthCubit(BaseRecipeRepository recipeRepository)
       : _recipeRepository = recipeRepository,
-      super(const AuthState(status: AuthStatus.loggedOut));
+      super(const AuthState(status: AuthStatus.loggedOut, process: Process.login));
 
   final BaseRecipeRepository _recipeRepository;
 
@@ -67,4 +67,16 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
   @override
   String? Function(String? passowrd) get passwordValidation => (value) =>
       value!.isNotEmpty ? null : LoginPageTexts.passwordValidatorMessage;
+
+  @override
+  void startRegistration() {
+    emit(state.copyWith(process: Process.registration));
+  }
+
+  @override
+  void startLogin() {
+    emit(state.copyWith(process: Process.login));
+  }
+
+
 }
