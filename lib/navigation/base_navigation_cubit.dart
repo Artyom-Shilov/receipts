@@ -15,11 +15,10 @@ abstract interface class BaseNavigationCubit extends Cubit<AppNavigationState>{
   void toCamera(Recipe recipe);
   void toUserPhotoGrid(Recipe recipe, RecipePhotoViewStatus mode);
   void toPhotoCarousel(List<UserRecipePhoto> photos, int initIndex);
-  void toPhotoCommenting(UserRecipePhoto photo);
-  void toRegistration();
-  void toLogin();
+  void toPhotoCommenting(UserRecipePhoto photo, Recipe recipe);
 
   int findAppBarIndexByBranch();
   void navigateToBranchByAppBarIndex(bool isLoggedIn, int index);
-  void changeStateOnPop();
+  bool isShowingBottomAppBar();
+  void changeOnPop();
 }

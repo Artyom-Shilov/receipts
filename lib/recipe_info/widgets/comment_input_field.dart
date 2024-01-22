@@ -39,7 +39,7 @@ class CommentInputField extends HookWidget {
               prev.recipe.userPhotos.length != next.recipe.userPhotos.length,
           builder: (context, state) => GestureDetector(
             onTap: () {
-              GoRouter.of(context).go(
+              /*GoRouter.of(context).go(
                 '/${AppTabs.recipes}'
                 '/${RecipesRouteNames.recipe}'
                 '/${state.recipe.id}'
@@ -48,7 +48,7 @@ class CommentInputField extends HookWidget {
                   ExtraKeys.recipe: state.recipe,
                   ExtraKeys.recipePhotoViewMode : RecipePhotoViewStatus.choosingCommentPhoto
                 },
-              );
+              );*/
             },
             child: const Padding(
                 padding: EdgeInsets.only(bottom: 15),

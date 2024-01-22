@@ -31,7 +31,6 @@ void main() async {
   GetIt.I.registerSingleton<BaseRecipeRepository>(RecipeRepository(
       storageClient: storageClient,
       networkClient: GetIt.I.get<BaseNetworkRecipeClient>()));
-  GetIt.I.registerSingleton<AppRouter>(AppRouter());
   runApp(MultiBlocProvider(providers: [
     BlocProvider<BaseAuthCubit>(
         create: (context) => AuthCubit(GetIt.I.get<BaseRecipeRepository>())),

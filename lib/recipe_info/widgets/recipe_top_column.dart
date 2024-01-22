@@ -23,6 +23,7 @@ class RecipeTopColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authCubit = BlocProvider.of<BaseAuthCubit>(context);
+    final navigator = BlocProvider.of<BaseNavigationCubit>(context);
     return BlocProvider<BaseHeartAnimationCubit>(
       create: (context) => HeartAnimationCubit(),
       child: Column(
@@ -64,23 +65,15 @@ class RecipeTopColumn extends StatelessWidget {
                   size: 20,
                 ),
                 onTap: () {
-                  BlocProvider.of<BaseNavigationCubit>(context).toCamera(recipe);
+                  navigator.toCamera(recipe);
                 },
               ),
               if (state.recipe.userPhotos.isNotEmpty) ...[
                 const SizedBox(width: 10),
                 GestureDetector(
                   onTap: () {
-                    GoRouter.of(context).go(
-                      '/${AppTabs.recipes}'
-                      '/${RecipesRouteNames.recipe}'
-                      '/${recipe.id}'
-                      '/${RecipesRouteNames.photoView}',
-                      extra: {
-                        ExtraKeys.recipe: state.recipe,
-                        ExtraKeys.recipePhotoViewMode : RecipePhotoViewStatus.viewing
-                      },
-                    );
+                    navigator.toUserPhotoGrid(
+                        state.recipe, RecipePhotoViewStatus.viewing);
                   },
                   child: const Icon(
                     Icons.view_comfy_alt,

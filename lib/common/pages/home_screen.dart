@@ -40,11 +40,8 @@ class HomeScreen extends StatelessWidget {
         bool isLoggedIn = BlocProvider.of<BaseAuthCubit>(context).isLoggedIn;
         return BlocBuilder<BaseNavigationCubit, AppNavigationState>(
             builder: (context, state) {
-          return state.currentPage == Pages.camera ||
-                  state.currentPage == Pages.userPhotosCarousel ||
-                  state.currentPage == Pages.userPhotoCommenting
-              ? const SizedBox.shrink()
-              : BottomNavigationBar(
+          return navigationCubit.isShowingBottomAppBar()
+              ? BottomNavigationBar(
                   type: BottomNavigationBarType.fixed,
                   currentIndex: navigationCubit.findAppBarIndexByBranch(),
                   backgroundColor: Colors.white,
@@ -57,7 +54,8 @@ class HomeScreen extends StatelessWidget {
                     navigationCubit.navigateToBranchByAppBarIndex(
                         isLoggedIn, index);
                   },
-                );
+                )
+              :const SizedBox.shrink();
         });
       }),
     );

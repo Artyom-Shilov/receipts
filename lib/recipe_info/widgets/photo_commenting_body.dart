@@ -77,11 +77,11 @@ class PhotoCommentingBody extends HookWidget {
                               recipe: recipe,
                               text: text,
                               photo: photo.photoBites);
-                          router.go(
+                         /* router.go(
                               '/${AppTabs.recipes}'
                               '/${RecipesRouteNames.recipe}'
                               '/${recipe.id}',
-                              extra: {ExtraKeys.recipe: recipe});
+                              extra: {ExtraKeys.recipe: recipe});*/
                         },
                       ),
                     ),

@@ -29,10 +29,10 @@ class RecipeErrorPage extends HookWidget {
                   IconButton(
                     icon: const Icon(Icons.done, color: AppColors.accent),
                     onPressed: () {
-                      final router = GoRouter.of(context);
+                      /*final router = GoRouter.of(context);
                       router.pop();
                       BlocProvider.of<BaseAuthCubit>(context).logOut();
-                      router.go('/${AppTabs.recipes}');
+                      router.go('/${AppTabs.recipes}');*/
                     },
                   ),
                 ],

@@ -14,8 +14,6 @@ class FavouriteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<BaseFavouriteRecipesCubit, FavouriteRecipesState>(
         builder: (context, state) {
-          print('rebuild');
-          print(state.favouriteRecipes.length);
           return switch (state.status) {
             FavouriteRecipesStatus.inStock || FavouriteRecipesStatus.init =>
               RecipesListPage(sliverList: FavouriteRecipeSliverList(recipes: state.favouriteRecipes)),

@@ -1,8 +1,9 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:receipts/authentication/pages/login_page.dart';
+import 'package:receipts/authentication/pages/auth_screen.dart';
 import 'package:receipts/profile/profile_screen.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
 import 'package:receipts/camera/controllers/camera_cubit.dart';
@@ -15,7 +16,6 @@ import 'package:receipts/favourite/pages/favourite_screen.dart';
 import 'package:receipts/recipe_info/controllers/controllers.dart';
 import 'package:receipts/recipe_info/pages/pages.dart';
 import 'package:receipts/recipes_list/pages/recipes_screen.dart';
-
 
 class AppRouter {
   final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -136,41 +136,40 @@ class AppRouter {
                               },
                               routes: [
                                 GoRoute(
-                                    path: '${RecipesRouteNames.photoCommenting}',
+                                    path:
+                                        '${RecipesRouteNames.photoCommenting}',
                                     parentNavigatorKey: _rootNavigatorKey,
                                     pageBuilder: (context, state) {
                                       final recipe = (state.extra as Map<
                                           ExtraKeys,
                                           dynamic>)[ExtraKeys.recipe] as Recipe;
-                                      final photo = (state.extra
-                                      as Map<ExtraKeys, dynamic>)[
-                                      ExtraKeys.photo]
-                                      as UserRecipePhoto;
+                                      final photo = (state.extra as Map<
+                                              ExtraKeys,
+                                              dynamic>)[ExtraKeys.photo]
+                                          as UserRecipePhoto;
                                       return CustomTransitionPage(
-                                          child: BlocProvider<BaseRecipeInfoCubit>(
-                                                  create: (context) => RecipeInfoCubit(
-                                                      repository: GetIt.instance
-                                                          .get<
-                                                          BaseRecipeRepository>(),
-                                                      networkClient:
-                                                      GetIt.instance.get<
-                                                          BaseNetworkRecipeClient>(),
-                                                      recipe: recipe),
-
+                                          child: BlocProvider<
+                                                  BaseRecipeInfoCubit>(
+                                              create: (context) => RecipeInfoCubit(
+                                                  repository: GetIt.instance.get<
+                                                      BaseRecipeRepository>(),
+                                                  networkClient: GetIt.instance.get<
+                                                      BaseNetworkRecipeClient>(),
+                                                  recipe: recipe),
                                               child: RecipePhotoCommentingPage(
                                                 photo: photo,
                                               )),
                                           transitionsBuilder: (context,
-                                              animation, _, child) =>
-                                          animation.status ==
-                                              AnimationStatus.forward
-                                              ? ScaleTransition(
-                                              scale: animation,
-                                              child: child)
-                                              : FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          ));
+                                                  animation, _, child) =>
+                                              animation.status ==
+                                                      AnimationStatus.forward
+                                                  ? ScaleTransition(
+                                                      scale: animation,
+                                                      child: child)
+                                                  : FadeTransition(
+                                                      opacity: animation,
+                                                      child: child,
+                                                    ));
                                     }),
                                 GoRoute(
                                     path: '${RecipesRouteNames.carousel}',
@@ -245,7 +244,7 @@ class AppRouter {
               GoRoute(
                   path: '/${AppTabs.login}',
                   builder: (context, state) {
-                    return const LoginPage();
+                    return AuthScreen();
                   })
             ]),
           ])
@@ -299,3 +298,4 @@ enum ExtraKeys {
     return name;
   }
 }
+*/

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:receipts/common/models/user.dart';
 
@@ -10,17 +11,11 @@ enum AuthStatus {
   error
 }
 
-enum Process {
-  login,
-  registration
-}
-
 @freezed
 class AuthState with _$AuthState {
   const factory AuthState({
     required AuthStatus status,
     User? user,
     @Default('') String message,
-    @Default(Process.login) Process process
   }) = _AuthState;
 }

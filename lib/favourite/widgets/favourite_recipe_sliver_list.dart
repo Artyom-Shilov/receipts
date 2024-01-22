@@ -12,8 +12,6 @@ class FavouriteRecipeSliverList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('1111111111111111');
-    print(recipes.length);
     return SliverList.separated(
         itemCount: recipes.length,
         itemBuilder: (context, index) {

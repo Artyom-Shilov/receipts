@@ -23,14 +23,17 @@ abstract class LoginPageTexts {
 
   static const loginHint = 'логин';
   static const passwordHint = 'пароль';
+  static const repeatPasswordHint = 'пароль ещё раз';
   static const appName = 'Otus.Food';
   static const doLogin = 'Войти';
   static const doRegister = 'Регистрация';
   static const toRegisterToggle = 'Зарегестрироваться';
   static const toLoginToggle = 'Войти в приложение';
 
-  static const loginValidatorMessage = 'Введите логин';
-  static const passwordValidatorMessage = 'Введите пароль';
+  static const inputLoginValidatorMessage = 'Введите логин';
+  static const inputPasswordValidatorMessage = 'Введите пароль';
+  static const inputRepeatPasswordValidatorMessage = 'Повторите пароль';
+  static const invalidRepeatPasswordValidatorMessage = 'Пароли не совпадают';
 }
 
 abstract class ProfilePageTexts {

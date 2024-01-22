@@ -21,7 +21,6 @@ class RecipePhotoGridPage extends HookWidget {
     });
     final recipePhotoCubit = BlocProvider.of<BaseRecipePhotoViewCubit>(context);
     final status = recipePhotoCubit.state.status;
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -37,7 +36,7 @@ class RecipePhotoGridPage extends HookWidget {
             itemCount: recipePhotoCubit.recipe.userPhotos.length,
             itemBuilder: (context, index) {
               return GestureDetector(
-                  onTap: status == RecipePhotoViewStatus.viewing
+                  onTap: (){},/*status == RecipePhotoViewStatus.viewing
                       ? () => GoRouter.of(context).go(
                             '/${AppTabs.recipes}'
                             '/${RecipesRouteNames.recipe}'
@@ -63,7 +62,7 @@ class RecipePhotoGridPage extends HookWidget {
                                   recipePhotoCubit.state.status,
                               ExtraKeys.photo: recipePhotoCubit.recipe.userPhotos[index]
                             },
-                          ),
+                          ),*/
                   child: Image.memory(
                       recipePhotoCubit.recipe.userPhotos[index].photoBites,
                       width: MediaQuery.sizeOf(context).width / 4,

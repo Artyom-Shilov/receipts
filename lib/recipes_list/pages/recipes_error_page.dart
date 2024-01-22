@@ -30,7 +30,7 @@ class RecipesErrorPage extends HookWidget {
                       final router = GoRouter.of(context);
                       router.pop();
                       BlocProvider.of<BaseAuthCubit>(context).logOut();
-                      router.go('/${AppTabs.recipes}');
+                      //router.go('/${AppTabs.recipes}');
                     },
                   ),
                 ],
