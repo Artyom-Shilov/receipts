@@ -66,6 +66,7 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
     Recipe changedInfo;
     try {
       UserRecipePhoto photo = UserRecipePhoto(
+          index: state.recipe.userPhotos.length + 1,
           photoBites: state.viewingPhoto!, detections: state.detections);
       List<UserRecipePhoto> userPhotoList = [...state.recipe.userPhotos];
       userPhotoList.add(photo);

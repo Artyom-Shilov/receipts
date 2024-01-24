@@ -78,6 +78,7 @@ class ModelsConverter {
         .toList();
     return UserRecipePhoto(
       photoBites: localPhoto.photoBites,
+      index: localPhoto.index,
       detections: appDetections,
     );
   }
@@ -88,7 +89,7 @@ class ModelsConverter {
         .map((e) => appDetectionToLocalDetection(e))
         .toList();
     return LocalUserRecipePhoto(
-        photoBites: appPhoto.photoBites, detections: localDetections);
+        photoBites: appPhoto.photoBites, detections: localDetections, index: appPhoto.index);
   }
 
   Recipe localRecipeToAppRecipe(LocalRecipe localRecipe) {

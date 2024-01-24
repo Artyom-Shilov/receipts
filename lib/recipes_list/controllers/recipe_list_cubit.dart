@@ -66,7 +66,6 @@ class RecipeListCubit extends Cubit<RecipeListState>
 
   @override
   Future<void> close() {
-    print('listClose');
     _recipeSubscription?.cancel();
     return super.close();
   }

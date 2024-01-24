@@ -13,9 +13,8 @@ import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/common/repositories/recipe_repository.dart';
 import 'package:receipts/favourite/controllers/base_favourite_recipes_cubit.dart';
 import 'package:receipts/favourite/controllers/favourite_recipes_cubit.dart';
-import 'package:receipts/navigation/app_router.dart';
-import 'package:receipts/navigation/base_navigation_cubit.dart';
-import 'package:receipts/navigation/navigation_cubit.dart';
+import 'package:receipts/navigation/controllers/base_navigation_cubit.dart';
+import 'package:receipts/navigation/controllers/navigation_cubit.dart';
 import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 import 'package:receipts/recipes_list/controllers/recipe_list_cubit.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -38,8 +37,7 @@ void main() async {
         create: (context) =>
             RecipeListCubit(GetIt.instance.get<BaseRecipeRepository>())),
     BlocProvider<BaseNavigationCubit>(
-        create: (context) =>
-            NavigationCubit()),
+        create: (context) => NavigationCubit()),
     BlocProvider<BaseFavouriteRecipesCubit>(
         create: (context) =>
             FavouriteRecipesCubit(GetIt.instance.get<BaseRecipeRepository>())),

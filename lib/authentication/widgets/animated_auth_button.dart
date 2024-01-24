@@ -7,7 +7,7 @@ import 'package:receipts/authentication/controllers/base_auth_process_cubit.dart
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/widgets/control_button.dart';
-import 'package:receipts/navigation/base_navigation_cubit.dart';
+import 'package:receipts/navigation/controllers/base_navigation_cubit.dart';
 
 class AnimatedAuthButton extends HookWidget {
   const AnimatedAuthButton({Key? key, required this.formKey}) : super(key: key);

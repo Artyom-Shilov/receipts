@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:receipts/authentication/controllers/auth_state.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/constants/constants.dart';
-import 'package:receipts/navigation/app_navigation_state.dart';
+import 'package:receipts/favourite/controllers/base_favourite_recipes_cubit.dart';
+import 'package:receipts/navigation/app_information_parser.dart';
+import 'package:receipts/navigation/controllers/app_navigation_state.dart';
 import 'package:receipts/navigation/app_router_delegate.dart';
-import 'package:receipts/navigation/base_navigation_cubit.dart';
+import 'package:receipts/navigation/controllers/base_navigation_cubit.dart';
+import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -34,6 +36,12 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: AppColors.greyBackground,
       body: Router(
         routerDelegate: AppRouterDelegate(),
+        routeInformationParser: AppInformationParser(
+          recipeListCubit: BlocProvider.of<BaseRecipeListCubit>(context),
+          favouriteRecipesCubit: BlocProvider.of<BaseFavouriteRecipesCubit>(context),
+          authCubit: BlocProvider.of<BaseAuthCubit>(context),
+          navigationCubit: BlocProvider.of<BaseNavigationCubit>(context)
+        ),
       ),
       bottomNavigationBar:
           BlocBuilder<BaseAuthCubit, AuthState>(builder: (context, state) {

@@ -2,128 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:receipts/authentication/pages/auth_screen.dart';
-import 'package:receipts/navigation/recipe_branch_page.dart';
-import 'package:receipts/navigation/favourite_branch_page.dart';
+import 'package:receipts/common/network/base_network_recipe_client.dart';
+import 'package:receipts/common/pages/page_not_found_screen.dart';
+import 'package:receipts/navigation/custom_pages/favourite_branch_page.dart';
+import 'package:receipts/navigation/custom_pages/recipe_branch_page.dart';
 import 'package:receipts/profile/profile_screen.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
 import 'package:receipts/camera/controllers/camera_cubit.dart';
 import 'package:receipts/camera/pages/camera_global_screen.dart';
-import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'package:receipts/favourite/pages/favourite_screen.dart';
-import 'package:receipts/navigation/app_navigation_state.dart';
-import 'package:receipts/navigation/base_navigation_cubit.dart';
+import 'package:receipts/navigation/controllers/app_navigation_state.dart';
+import 'package:receipts/navigation/controllers/base_navigation_cubit.dart';
 import 'package:receipts/navigation/transition_delegate.dart';
-import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
-import 'package:receipts/recipe_info/controllers/base_recipe_photo_view_cubit.dart';
 import 'package:receipts/recipe_info/controllers/controllers.dart';
-import 'package:receipts/recipe_info/controllers/recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/pages/pages.dart';
-import 'package:receipts/recipe_info/pages/recipe_info_screen.dart';
 import 'package:receipts/recipes_list/pages/recipes_screen.dart';
 
-import 'custom_page.dart';
+import 'custom_pages/custom_page.dart';
 
-class AppRouterDelegate extends RouterDelegate
+class AppRouterDelegate extends RouterDelegate<AppNavigationState>
     with PopNavigatorRouterDelegateMixin, ChangeNotifier {
   @override
   Widget build(BuildContext context) {
     final navigationCubit = BlocProvider.of<BaseNavigationCubit>(context);
     return BlocBuilder<BaseNavigationCubit, AppNavigationState>(
         builder: (context, state) {
-          return Navigator(
+      return Navigator(
           transitionDelegate: CustomTransitionDelegate(state.isBranchChanged),
           key: navigatorKey,
           pages: [
-            if (state.currentBranch == Branches.recipes) ...[
-              if (state.recipeBranchState.currentPage == Pages.recipeList
-              || state.recipeBranchState.currentPage == Pages.recipeInfo
-              || state.recipeBranchState.currentPage == Pages.camera
-              || state.recipeBranchState.currentPage == Pages.userPhotosGrid
-              )
-                const MaterialPage(child: RecipesScreen()),
-              if ((state.recipeBranchState.currentPage == Pages.recipeInfo ||
-                  state.recipeBranchState.currentPage == Pages.camera ||
-                  state.recipeBranchState.currentPage == Pages.userPhotosGrid) &&
-                  state.recipeBranchState.selectedRecipe != null)
-                RecipeBranchPage(
-                  forward: Transitions.slide,
-                  back: Transitions.fade,
-                  child: RecipeInfoScreen(recipe: state.recipeBranchState.selectedRecipe!)),
-              if (state.recipeBranchState.currentPage == Pages.camera &&
-                  state.recipeBranchState.selectedRecipe != null)
-                RecipeBranchPage(
-                    forward: Transitions.slide,
-                    back: Transitions.fade,
-                    child: BlocProvider<BaseCameraCubit>(
-                        create: (context) => CameraCubit(
-                            recipe: navigationCubit.state.recipeBranchState.selectedRecipe!,
-                            repository:
-                                GetIt.instance.get<BaseRecipeRepository>()),
-                        child: const CameraGlobalScreen())),
-              if(state.recipeBranchState.currentPage == Pages.userPhotosGrid &&
-                  state.recipeBranchState.selectedRecipe != null &&
-                  state.recipeBranchState.photoViewMode != null)
-                RecipeBranchPage(
-                    forward: Transitions.slide,
-                    back: Transitions.fade,
-                    child: BlocProvider<BaseRecipePhotoViewCubit>(
-                        create: (context) => RecipePhotoViewCubit(
-                            status: state.recipeBranchState.photoViewMode!,
-                            recipe: navigationCubit.state.recipeBranchState.selectedRecipe!,
-                            recipeRepository:
-                            GetIt.instance.get<BaseRecipeRepository>()),
-                        child: const RecipePhotoGridPage()))
-            ] else if (state.currentBranch == Branches.login) ...[
-                const MaterialPage(child: AuthScreen()),
-            ] else if (state.currentBranch == Branches.favourite) ...[
-              if (state.favouriteBranchState.currentPage == Pages.favouriteList
-                  || state.favouriteBranchState.currentPage == Pages.recipeInfo
-                  || state.favouriteBranchState.currentPage == Pages.camera
-                  || state.favouriteBranchState.currentPage == Pages.userPhotosGrid
-              )
-                const MaterialPage(child: FavouriteScreen()),
-              if ((state.favouriteBranchState.currentPage == Pages.recipeInfo
-                  || state.favouriteBranchState.currentPage == Pages.camera
-                  ||state.favouriteBranchState.currentPage == Pages.userPhotosGrid)
-                  && state.favouriteBranchState.selectedRecipe != null)
-                FavouriteBranchPage(
-                  forward: Transitions.slide,
-                  back: Transitions.fade,
-                  child: RecipeInfoScreen(recipe: state.favouriteBranchState.selectedRecipe!)),
-              if (state.favouriteBranchState.currentPage == Pages.camera &&
-                  navigationCubit.state.favouriteBranchState.selectedRecipe != null)
-                FavouriteBranchPage(
-                    forward: Transitions.slide,
-                    back: Transitions.fade,
-                    child: BlocProvider<BaseCameraCubit>(
-                        create: (context) => CameraCubit(
-                            recipe: state.favouriteBranchState.selectedRecipe!,
-                            repository:
-                            GetIt.instance.get<BaseRecipeRepository>()),
-                        child: const CameraGlobalScreen())),
-              if(state.favouriteBranchState.currentPage == Pages.userPhotosGrid &&
-                  state.favouriteBranchState.selectedRecipe != null &&
-                  state.favouriteBranchState.photoViewMode != null)
-                FavouriteBranchPage(
-                    forward: Transitions.slide,
-                    back: Transitions.fade,
-                    child: BlocProvider<BaseRecipePhotoViewCubit>(
-                        create: (context) => RecipePhotoViewCubit(
-                            status: state.favouriteBranchState.photoViewMode!,
-                            recipe: state.favouriteBranchState.selectedRecipe!,
-                            recipeRepository:
-                            GetIt.instance.get<BaseRecipeRepository>()),
-                        child: const RecipePhotoGridPage()))
-            ] else if (state.currentBranch == Branches.profile) ...[
-                const MaterialPage(child: ProfileScreen())
+            if (state.currentBranch == Branches.recipes)
+              ..._recipeBranchPages(state)
+            else if (state.currentBranch == Branches.login) ...[
+              const MaterialPage(child: AuthScreen()),
+            ] else if (state.currentBranch == Branches.favourite)
+              ..._favouriteBranchPages(state)
+            else if (state.currentBranch == Branches.profile) ...[
+              const MaterialPage(child: ProfileScreen())
             ]
+            else if (state.currentBranch == Branches.pageNotFound)
+              ...[
+                const MaterialPage(child: PageNotFoundScreen())
+              ]
           ],
           onPopPage: (route, result) {
-                navigationCubit.changeOnPop();
-                return route.didPop(result);
-              });
-        });
+            navigationCubit.changeOnPop();
+            return route.didPop(result);
+          });
+    });
   }
 
   final _key = GlobalKey<NavigatorState>();
@@ -132,8 +59,172 @@ class AppRouterDelegate extends RouterDelegate
   GlobalKey<NavigatorState>? get navigatorKey => _key;
 
   @override
-  Future<void> setNewRoutePath(configuration) {
-    // TODO: implement setNewRoutePath
-    throw UnimplementedError();
+  Future<void> setNewRoutePath(configuration) async {
+
+  }
+
+
+ /* @override
+  AppNavigationState get currentConfiguration => (){},
+  */
+
+  List<Page> _recipeBranchPages(AppNavigationState state) {
+    return [
+      if (state.recipeBranchState.currentPage == Pages.recipeList ||
+          state.recipeBranchState.currentPage == Pages.recipeInfo ||
+          state.recipeBranchState.currentPage == Pages.camera ||
+          state.recipeBranchState.currentPage == Pages.userPhotos ||
+          state.recipeBranchState.currentPage == Pages.carousel ||
+          state.recipeBranchState.currentPage == Pages.commenting_photo)
+        const MaterialPage(child: RecipesScreen()),
+      if ((state.recipeBranchState.currentPage == Pages.recipeInfo ||
+              state.recipeBranchState.currentPage == Pages.camera ||
+              state.recipeBranchState.currentPage == Pages.userPhotos ||
+              state.recipeBranchState.currentPage == Pages.carousel ||
+              state.recipeBranchState.currentPage == Pages.commenting_photo) &&
+          state.recipeBranchState.selectedRecipe != null)
+        RecipeBranchPage(
+            forward: Transitions.slide,
+            back: Transitions.fade,
+            child: BlocProvider<BaseRecipeInfoCubit>(
+                create: (context) => RecipeInfoCubit(
+                    repository: GetIt.instance.get<BaseRecipeRepository>(),
+                    networkClient:
+                        GetIt.instance.get<BaseNetworkRecipeClient>(),
+                    recipe: state.recipeBranchState.selectedRecipe!),
+                child: const RecipeInfoScreen())),
+      if ((state.recipeBranchState.currentPage == Pages.userPhotos ||
+              state.recipeBranchState.currentPage == Pages.carousel ||
+              state.recipeBranchState.currentPage == Pages.commenting_photo) &&
+          state.recipeBranchState.selectedRecipe != null &&
+          state.recipeBranchState.photoViewMode != null)
+        RecipeBranchPage(
+            forward: Transitions.slide,
+            back: Transitions.fade,
+            child: BlocProvider<BaseRecipePhotoViewCubit>(
+                create: (context) => RecipePhotoViewCubit(
+                    status: state.recipeBranchState.photoViewMode!,
+                    recipe: state.recipeBranchState.selectedRecipe!,
+                    recipeRepository:
+                        GetIt.instance.get<BaseRecipeRepository>()),
+                child: const RecipePhotoGridPage())),
+      if ((state.recipeBranchState.currentPage == Pages.carousel) &&
+          state.recipeBranchState.selectedRecipe != null &&
+          state.recipeBranchState.photoViewMode != null &&
+          state.recipeBranchState.initIndexInCarousel != null)
+        RecipeBranchPage(
+            forward: Transitions.slide,
+            back: Transitions.fade,
+            child: BlocProvider<BaseRecipePhotoViewCubit>(
+              create: (context) => RecipePhotoViewCubit(
+                  status: state.recipeBranchState.photoViewMode!,
+                  recipe: state.recipeBranchState.selectedRecipe!,
+                  recipeRepository: GetIt.instance.get<BaseRecipeRepository>()),
+              child: RecipePhotoCarouselPage(
+                  photos: state.recipeBranchState.selectedRecipe!.userPhotos,
+                  initIndex: state.recipeBranchState.initIndexInCarousel!),
+            )),
+      if ((state.recipeBranchState.currentPage == Pages.commenting_photo) &&
+          state.recipeBranchState.selectedRecipe != null &&
+          state.recipeBranchState.photoViewMode != null &&
+          state.recipeBranchState.photoToComment != null)
+        RecipeBranchPage(
+            forward: Transitions.slide,
+            back: Transitions.fade,
+            child: RecipePhotoCommentingPage(
+              photo: state.recipeBranchState.photoToComment!,
+            )),
+      if (state.recipeBranchState.currentPage == Pages.camera &&
+          state.recipeBranchState.selectedRecipe != null)
+        RecipeBranchPage(
+            forward: Transitions.slide,
+            back: Transitions.fade,
+            child: BlocProvider<BaseCameraCubit>(
+                create: (context) => CameraCubit(
+                    recipe: state.recipeBranchState.selectedRecipe!,
+                    repository: GetIt.instance.get<BaseRecipeRepository>()),
+                child: const CameraGlobalScreen())),
+    ];
+  }
+
+  List<Page> _favouriteBranchPages(AppNavigationState state) {
+    return [
+      if (state.favouriteBranchState.currentPage == Pages.favouriteList ||
+          state.favouriteBranchState.currentPage == Pages.recipeInfo ||
+          state.favouriteBranchState.currentPage == Pages.camera ||
+          state.favouriteBranchState.currentPage == Pages.userPhotos ||
+          state.favouriteBranchState.currentPage == Pages.carousel ||
+          state.favouriteBranchState.currentPage == Pages.commenting_photo)
+        const MaterialPage(child: FavouriteScreen()),
+      if ((state.favouriteBranchState.currentPage == Pages.recipeInfo ||
+              state.favouriteBranchState.currentPage == Pages.camera ||
+              state.favouriteBranchState.currentPage == Pages.userPhotos ||
+              state.favouriteBranchState.currentPage == Pages.carousel ||
+              state.favouriteBranchState.currentPage ==
+                  Pages.commenting_photo) &&
+          state.favouriteBranchState.selectedRecipe != null)
+        FavouriteBranchPage(
+            forward: Transitions.slide,
+            back: Transitions.fade,
+            child: BlocProvider<BaseRecipeInfoCubit>(
+                create: (context) => RecipeInfoCubit(
+                    repository: GetIt.instance.get<BaseRecipeRepository>(),
+                    networkClient:
+                        GetIt.instance.get<BaseNetworkRecipeClient>(),
+                    recipe: state.favouriteBranchState.selectedRecipe!),
+                child: const RecipeInfoScreen())),
+      if ((state.favouriteBranchState.currentPage == Pages.userPhotos ||
+              state.favouriteBranchState.currentPage == Pages.carousel ||
+              state.favouriteBranchState.currentPage == Pages.commenting_photo) &&
+          state.favouriteBranchState.selectedRecipe != null &&
+          state.favouriteBranchState.photoViewMode != null)
+        FavouriteBranchPage(
+            forward: Transitions.slide,
+            back: Transitions.fade,
+            child: BlocProvider<BaseRecipePhotoViewCubit>(
+                create: (context) => RecipePhotoViewCubit(
+                    status: state.favouriteBranchState.photoViewMode!,
+                    recipe: state.favouriteBranchState.selectedRecipe!,
+                    recipeRepository:
+                        GetIt.instance.get<BaseRecipeRepository>()),
+                child: const RecipePhotoGridPage())),
+      if ((state.favouriteBranchState.currentPage ==
+              Pages.carousel) &&
+          state.favouriteBranchState.selectedRecipe != null &&
+          state.favouriteBranchState.photoViewMode != null &&
+          state.favouriteBranchState.initIndexInCarousel != null)
+        FavouriteBranchPage(
+            forward: Transitions.slide,
+            back: Transitions.fade,
+            child: BlocProvider<BaseRecipePhotoViewCubit>(
+              create: (context) => RecipePhotoViewCubit(
+                  status: state.favouriteBranchState.photoViewMode!,
+                  recipe: state.favouriteBranchState.selectedRecipe!,
+                  recipeRepository: GetIt.instance.get<BaseRecipeRepository>()),
+              child: RecipePhotoCarouselPage(
+                  photos: state.favouriteBranchState.selectedRecipe!.userPhotos,
+                  initIndex: state.favouriteBranchState.initIndexInCarousel!),
+            )),
+      if ((state.favouriteBranchState.currentPage == Pages.commenting_photo) &&
+          state.favouriteBranchState.selectedRecipe != null &&
+          state.favouriteBranchState.photoViewMode != null &&
+          state.favouriteBranchState.photoToComment != null)
+        RecipeBranchPage(
+            forward: Transitions.slide,
+            back: Transitions.fade,
+            child: RecipePhotoCommentingPage(
+              photo: state.favouriteBranchState.photoToComment!,
+            )),
+      if (state.favouriteBranchState.currentPage == Pages.camera &&
+          state.favouriteBranchState.selectedRecipe != null)
+        FavouriteBranchPage(
+            forward: Transitions.slide,
+            back: Transitions.fade,
+            child: BlocProvider<BaseCameraCubit>(
+                create: (context) => CameraCubit(
+                    recipe: state.favouriteBranchState.selectedRecipe!,
+                    repository: GetIt.instance.get<BaseRecipeRepository>()),
+                child: const CameraGlobalScreen())),
+    ];
   }
 }

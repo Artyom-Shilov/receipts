@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/constants/insets.dart';
 import 'package:receipts/common/constants/size_break_points.dart';
 import 'package:receipts/common/models/recipe.dart';
-import 'package:receipts/navigation/app_router.dart';
-import 'package:receipts/navigation/base_navigation_cubit.dart';
+import 'package:receipts/navigation/controllers/base_navigation_cubit.dart';
 import 'package:receipts/recipe_info/controllers/controllers.dart';
 import 'package:receipts/recipe_info/widgets/widgets.dart';
 
@@ -60,10 +58,7 @@ class RecipeTopColumn extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               GestureDetector(
-                child: const Icon(
-                  Icons.add_a_photo,
-                  size: 20,
-                ),
+                child: const Icon(Icons.add_a_photo, size: 20),
                 onTap: () {
                   navigator.toCamera(recipe);
                 },
@@ -75,17 +70,12 @@ class RecipeTopColumn extends StatelessWidget {
                     navigator.toUserPhotoGrid(
                         state.recipe, RecipePhotoViewStatus.viewing);
                   },
-                  child: const Icon(
-                    Icons.view_comfy_alt,
-                    size: 20,
-                  ),
+                  child: const Icon(Icons.view_comfy_alt, size: 20),
                 )
               ]
             ]),
           ),
-          const SizedBox(
-            height: Insets.vertical1,
-          ),
+          const SizedBox(height: Insets.vertical1),
           LayoutBuilder(builder: (context, constraints) {
             return Stack(children: [
                   SizedBox(

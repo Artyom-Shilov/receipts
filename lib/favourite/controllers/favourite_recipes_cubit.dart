@@ -16,7 +16,6 @@ class FavouriteRecipesCubit extends Cubit<FavouriteRecipesState>
       final favourite = recipes
           .where((element) => element.favouriteStatus.isFavourite)
           .toList();
-      print(favourite.length);
       favourite.isNotEmpty
           ? emit(state.copyWith(
               favouriteRecipes: favourite,

@@ -21,11 +21,7 @@ class RecipeInfoCubit extends Cubit<RecipeInfoState>
       required Recipe recipe})
       : _repository = repository,
         _networkClient = networkClient,
-        super(
-            RecipeInfoState(status: RecipeInfoStatus.success, recipe: recipe)) {
-    print('cubit');
-    print(recipe.name);
-    print('cubit');
+        super(RecipeInfoState(status: RecipeInfoStatus.success, recipe: recipe)) {
     _recipeSubscription = _repository.recipesStream.listen((event) {
       if (event.firstWhere((element) => element.id == state.recipe.id) !=
           state.recipe) {

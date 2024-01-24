@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/common/models/models.dart';
-import 'package:receipts/common/models/recipe.dart';
-import 'package:receipts/navigation/app_navigation_state.dart';
+import 'package:receipts/navigation/controllers/app_navigation_state.dart';
 import 'package:receipts/recipe_info/controllers/controllers.dart';
 
 abstract interface class BaseNavigationCubit extends Cubit<AppNavigationState>{
@@ -10,11 +9,12 @@ abstract interface class BaseNavigationCubit extends Cubit<AppNavigationState>{
   void toBranch(Branches branch);
 
   void toRecipeList();
+  void toLogin();
 
   void toRecipeInfo(Recipe recipe);
   void toCamera(Recipe recipe);
   void toUserPhotoGrid(Recipe recipe, RecipePhotoViewStatus mode);
-  void toPhotoCarousel(List<UserRecipePhoto> photos, int initIndex);
+  void toPhotoCarousel(Recipe recipe, int initIndex);
   void toPhotoCommenting(UserRecipePhoto photo, Recipe recipe);
 
   int findAppBarIndexByBranch();

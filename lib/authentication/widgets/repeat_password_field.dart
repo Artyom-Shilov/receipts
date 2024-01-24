@@ -18,7 +18,6 @@ class RepeatPasswordField extends HookWidget {
     return BlocConsumer<BaseAuthProcessCubit, AuthProcessState>(
         listenWhen: (prev, next) => prev.process != next.process,
         listener: (context, state) {
-      print(state.process);
       state.process == ProcessStatus.registration
           ? animationController.forward()
           : animationController.reverse();

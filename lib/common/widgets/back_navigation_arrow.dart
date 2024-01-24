@@ -12,9 +12,7 @@ class BackNavigationArrow extends StatelessWidget {
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () async {
-              print(Navigator.of(context).widget.pages);
               await Router.of(context).routerDelegate.popRoute();
-              print(Navigator.of(context).widget.pages);
             },
           ),
         ));

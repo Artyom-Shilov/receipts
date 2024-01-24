@@ -5,7 +5,7 @@ import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/widgets/bookmark.dart';
-import 'package:receipts/navigation/base_navigation_cubit.dart';
+import 'package:receipts/navigation/controllers/base_navigation_cubit.dart';
 
 class RecipeCard extends StatelessWidget {
   const RecipeCard({Key? key, required this.recipe}) : super(key: key);

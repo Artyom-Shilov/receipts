@@ -1,10 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/models/user_recipe_photo.dart';
-import 'package:receipts/navigation/app_navigation_state.dart';
-import 'package:receipts/navigation/base_navigation_cubit.dart';
-import 'package:receipts/navigation/favourite_branch_state.dart';
-import 'package:receipts/navigation/recipe_branch_state.dart';
+import 'package:receipts/navigation/controllers/app_navigation_state.dart';
+import 'package:receipts/navigation/controllers/base_navigation_cubit.dart';
+import 'package:receipts/navigation/controllers/nested_branch_state.dart';
 import 'package:receipts/recipe_info/controllers/recipe_photo_view_state.dart';
 
 class NavigationCubit extends Cubit<AppNavigationState>
@@ -12,8 +11,8 @@ class NavigationCubit extends Cubit<AppNavigationState>
   NavigationCubit()
       : super(const AppNavigationState(
       currentBranch: Branches.recipes,
-      recipeBranchState: RecipeBranchState(),
-      favouriteBranchState: FavouriteBranchState()
+      recipeBranchState: NestedBranchState(currentPage: Pages.recipeList),
+      favouriteBranchState: NestedBranchState(currentPage: Pages.favouriteList)
   ));
 
   @override
@@ -27,6 +26,8 @@ class NavigationCubit extends Cubit<AppNavigationState>
         return 2;
       case Branches.favourite:
         return 1;
+      case Branches.pageNotFound:
+        return 0;
     }
   }
 
@@ -95,28 +96,51 @@ class NavigationCubit extends Cubit<AppNavigationState>
   }
 
   @override
-  void toPhotoCarousel(List<UserRecipePhoto> photos, int initIndex) {
-    // TODO: implement toPhotoCarousel
-  }
-
-  @override
-  void toPhotoCommenting(UserRecipePhoto photo, Recipe recipe) {
-/*    if(state.currentBranch == Branches.recipes) {
+  void toPhotoCarousel(Recipe recipe, int initIndex) {
+    if(state.currentBranch == Branches.recipes) {
       emit(state.copyWith(
-          currentRecipeBranchPage: Pages.userPhotosGrid,
-          selectedRecipeRecipeBranch: recipe,
-          photoViewModeRecipeBranch: mode,
-          isBranchChanged: false));
+          isBranchChanged: false,
+          recipeBranchState: state.recipeBranchState.copyWith(
+            currentPage: Pages.carousel,
+            selectedRecipe: recipe,
+            initIndexInCarousel: initIndex
+          )));
       return;
     }
     if(state.currentBranch == Branches.favourite) {
       emit(state.copyWith(
-          currentFavouriteBranchPage: Pages.recipeInfo,
-          selectedRecipeFavouriteBranch: recipe,
-          photoViewModeFavouriteBranch: mode,
-          isBranchChanged: false));
+          isBranchChanged: false,
+          favouriteBranchState: state.favouriteBranchState.copyWith(
+              currentPage: Pages.carousel,
+              selectedRecipe: recipe,
+              initIndexInCarousel: initIndex
+          )));
       return;
-    }*/
+    }
+  }
+
+  @override
+  void toPhotoCommenting(UserRecipePhoto photo, Recipe recipe) {
+    if(state.currentBranch == Branches.recipes) {
+      emit(state.copyWith(
+          isBranchChanged: false,
+          recipeBranchState: state.recipeBranchState.copyWith(
+            currentPage: Pages.commenting_photo,
+            photoToComment: photo,
+          )
+      ));
+      return;
+    }
+    if(state.currentBranch == Branches.favourite) {
+      emit(state.copyWith(
+          isBranchChanged: false,
+          favouriteBranchState: state.recipeBranchState.copyWith(
+            currentPage: Pages.commenting_photo,
+            photoToComment: photo,
+          )
+      ));
+      return;
+    }
   }
 
   @override
@@ -126,7 +150,7 @@ class NavigationCubit extends Cubit<AppNavigationState>
         state.copyWith(
             isBranchChanged: false,
             recipeBranchState: state.recipeBranchState.copyWith(
-              currentPage: Pages.userPhotosGrid,
+              currentPage: Pages.userPhotos,
               selectedRecipe: recipe,
               photoViewMode: mode,
             )),
@@ -138,7 +162,7 @@ class NavigationCubit extends Cubit<AppNavigationState>
         state.copyWith(
             isBranchChanged: false,
             favouriteBranchState: state.favouriteBranchState.copyWith(
-              currentPage: Pages.userPhotosGrid,
+              currentPage: Pages.userPhotos,
               selectedRecipe: recipe,
               photoViewMode: mode,
             )),
@@ -162,6 +186,11 @@ class NavigationCubit extends Cubit<AppNavigationState>
         currentPage: Pages.recipeList,
         )
     ));
+  }
+
+  @override
+  void toLogin() {
+    emit(state.copyWith(isBranchChanged: true, currentBranch: Branches.login));
   }
 
   @override
@@ -194,11 +223,29 @@ class NavigationCubit extends Cubit<AppNavigationState>
           )));
       return;
     }
-    if (state.recipeBranchState.currentPage == Pages.userPhotosGrid) {
+    if (state.recipeBranchState.currentPage == Pages.userPhotos) {
       emit(state.copyWith(
           isBranchChanged: false,
           recipeBranchState: state.recipeBranchState.copyWith(
             currentPage: Pages.recipeInfo,
+          )));
+      return;
+    }
+    if (state.recipeBranchState.currentPage == Pages.carousel) {
+      emit(state.copyWith(
+          isBranchChanged: false,
+          recipeBranchState: state.recipeBranchState.copyWith(
+            currentPage: Pages.userPhotos,
+            initIndexInCarousel: null,
+          )));
+      return;
+    }
+    if (state.recipeBranchState.currentPage == Pages.commenting_photo) {
+      emit(state.copyWith(
+          isBranchChanged: false,
+          recipeBranchState: state.favouriteBranchState.copyWith(
+              currentPage: Pages.userPhotos,
+              photoToComment: null
           )));
       return;
     }
@@ -222,7 +269,7 @@ class NavigationCubit extends Cubit<AppNavigationState>
           )));
       return;
     }
-    if (state.favouriteBranchState.currentPage == Pages.userPhotosGrid) {
+    if (state.favouriteBranchState.currentPage == Pages.userPhotos) {
       emit(state.copyWith(
           isBranchChanged: false,
           favouriteBranchState: state.favouriteBranchState.copyWith(
@@ -230,15 +277,35 @@ class NavigationCubit extends Cubit<AppNavigationState>
           )));
       return;
     }
+    if (state.favouriteBranchState.currentPage == Pages.carousel) {
+      emit(state.copyWith(
+          isBranchChanged: false,
+          favouriteBranchState: state.favouriteBranchState.copyWith(
+            currentPage: Pages.userPhotos,
+            initIndexInCarousel: null,
+          )));
+      return;
+    }
+    if (state.favouriteBranchState.currentPage == Pages.commenting_photo) {
+      emit(state.copyWith(
+          isBranchChanged: false,
+          favouriteBranchState: state.favouriteBranchState.copyWith(
+            currentPage: Pages.userPhotos,
+            photoToComment: null
+          )));
+      return;
+    }
   }
 
   @override
   bool isShowingBottomAppBar() {
-    return !(state.recipeBranchState.currentPage == Pages.camera ||
-        state.recipeBranchState.currentPage == Pages.userPhotosCarousel ||
-        state.recipeBranchState.currentPage == Pages.userPhotoCommenting ||
+    return !(
+        state.currentBranch == Branches.pageNotFound ||
+        state.recipeBranchState.currentPage == Pages.camera ||
+        state.recipeBranchState.currentPage == Pages.carousel ||
+        state.recipeBranchState.currentPage == Pages.commenting_photo ||
         state.favouriteBranchState.currentPage == Pages.camera ||
-        state.favouriteBranchState.currentPage == Pages.userPhotosCarousel ||
-        state.favouriteBranchState.currentPage == Pages.userPhotoCommenting);
+        state.favouriteBranchState.currentPage == Pages.carousel ||
+        state.favouriteBranchState.currentPage == Pages.commenting_photo);
   }
 }

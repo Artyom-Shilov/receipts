@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/models/recipe.dart';
-import 'package:receipts/navigation/app_router.dart';
+import 'package:receipts/navigation/controllers/base_navigation_cubit.dart';
 import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
 import 'package:receipts/recipe_info/pages/recipe_page.dart';
 
@@ -29,10 +28,8 @@ class RecipeErrorPage extends HookWidget {
                   IconButton(
                     icon: const Icon(Icons.done, color: AppColors.accent),
                     onPressed: () {
-                      /*final router = GoRouter.of(context);
-                      router.pop();
                       BlocProvider.of<BaseAuthCubit>(context).logOut();
-                      router.go('/${AppTabs.recipes}');*/
+                      BlocProvider.of<BaseNavigationCubit>(context).toLogin();
                     },
                   ),
                 ],
