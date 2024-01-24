@@ -24,7 +24,7 @@ class CameraRealtimeDetectionPage extends StatelessWidget {
                   maxWidth: MediaQuery.sizeOf(context).width,
                   maxHeight: MediaQuery.sizeOf(context).height),
               child: CameraPreview((cameraCubit.cameraService as CameraService).controller!)
-      ),
+      ))),
       SizedBox(
           width: double.infinity,
           height: double.infinity,

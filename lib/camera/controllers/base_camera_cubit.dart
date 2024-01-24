@@ -7,7 +7,6 @@ import 'package:receipts/camera/controllers/camera_state.dart';
 abstract interface class BaseCameraCubit extends Cubit<CameraState> {
   BaseCameraCubit(super.initialState);
   Future<void> startRealtimeDetection(Size screenSize);
-  Future<void> stopImageStream();
   Future<void> stopRealtimeDetection();
   Future<void> initCamera();
   Future<void> disposeCamera();

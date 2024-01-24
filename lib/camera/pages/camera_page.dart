@@ -19,7 +19,7 @@ class CameraPage extends StatelessWidget {
               fit: BoxFit.cover,
               child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width, maxHeight: MediaQuery.sizeOf(context).height),
-                  child: CameraPreview((cameraCubit.cameraService as CameraService).controller!)),
+                  child: CameraPreview((cameraCubit.cameraService as CameraService).controller!)))),
       Align(
         alignment: Alignment.bottomCenter,
         child: Padding(
