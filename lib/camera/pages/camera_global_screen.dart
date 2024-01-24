@@ -32,8 +32,7 @@ class CameraGlobalScreen extends HookWidget {
             buildWhen: (prev, next) => prev.status != next.status,
             builder: (context, state) {
               return switch (state.status) {
-                CameraStatus.init ||
-                CameraStatus.loading =>
+                CameraStatus.initializing || CameraStatus.closing =>
                   const Center(child: CircularProgressIndicator()),
                 CameraStatus.ready => const CameraPage(),
                 CameraStatus.streaming => const CameraRealtimeDetectionPage(),

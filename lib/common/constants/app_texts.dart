@@ -64,7 +64,7 @@ abstract class ErrorMessages {
   static const sendComment = 'Ошибка при отправке комментария';
 
   static const photoViewError = 'Не удалось отобразить фото';
-  static const cameraInitError = 'Ошибка инициализации камеры';
+  static const photoProcessInitError = 'Ошибка инициализации процесса съёмки';
 }
 
 
