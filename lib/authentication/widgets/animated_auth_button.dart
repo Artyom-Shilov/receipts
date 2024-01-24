@@ -24,6 +24,7 @@ class AnimatedAuthButton extends HookWidget {
       TweenSequenceItem(tween: Tween<double>(begin: 0, end: 1.0), weight: 30),
     ]).animate(controller);
     final authProcessCubit = BlocProvider.of<BaseAuthProcessCubit>(context);
+    final authCubit = BlocProvider.of<BaseAuthCubit>(context);
     final navigator = BlocProvider.of<BaseNavigationCubit>(context);
     return BlocConsumer<BaseAuthProcessCubit, AuthProcessState>(
         listenWhen: (prev, next) => prev.process != next.process,
@@ -44,20 +45,25 @@ class AnimatedAuthButton extends HookWidget {
                 child: ControlButton(
                   backgroundColor: AppColors.main,
                   borderColor: AppColors.main,
-                  onPressed: () async {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    if (formKey.currentState!.validate()) {
-                      await BlocProvider.of<BaseAuthCubit>(context).logIn(
-                          login: authProcessCubit.loginController.text,
-                          password: authProcessCubit.passwordController.text);
-                      authProcessCubit.clearTextControllers();
-                      navigator.toRecipeList();
-                    } else {
-                      BlocProvider.of<BaseAuthProcessCubit>(context)
-                          .setFieldValidationErrorFlag();
-                    }
-                  },
-                  child: Opacity(
+                      onPressed: () async {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        if (formKey.currentState!.validate()) {
+                          final login = authProcessCubit.loginController.text;
+                          final password =
+                              authProcessCubit.passwordController.text;
+                          state.process == ProcessStatus.login
+                              ? await authCubit.logIn(
+                                  login: login, password: password)
+                              : await authCubit.registerUser(
+                                  login: login, password: password);
+                          authProcessCubit.clearTextControllers();
+                          navigator.toRecipeList();
+                        } else {
+                          BlocProvider.of<BaseAuthProcessCubit>(context)
+                              .setFieldValidationErrorFlag();
+                        }
+                      },
+                      child: Opacity(
                     opacity: buttonTextAnimation.value,
                     child: Text(
                       controller.value < 0.5

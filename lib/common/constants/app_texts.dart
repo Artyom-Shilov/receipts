@@ -77,6 +77,10 @@ abstract class ErrorMessages {
 
   static const photoViewError = 'Не удалось отобразить фото';
   static const cameraInitError = 'Ошибка инициализации камеры';
+
+  static const credentials = 'Неверный логин или пароль';
+  static const userAlreadyExists = 'Пользователь уже существует';
+  static const authBaseError = 'Ошибка при авторизации';
 }
 
 

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:receipts/common/exceptions/exceptions.dart';
+import 'package:receipts/common/exceptions/user_already_exists_exception.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:dio/dio.dart';
 import 'package:receipts/common/network/network_models/network_comment.dart';
@@ -203,6 +204,44 @@ class DioRecipeClient implements BaseNetworkRecipeClient {
       throw InvalidRequestException();
     } else if (response.statusCode == 409) {
       throw ObjectAlreadyExistsException();
+    } else {
+      throw UnknownCodeException(code: response.statusCode);
+    }
+  }
+
+  @override
+  Future<String> loginUser({required String login, required String password}) async {
+    final json =
+    NetworkUser(null, null, id: -1, login: login, password: password).toJson();
+    json.remove('id');
+    json.remove('avatar');
+    json.remove('token');
+    final response = await _dio.put<String>('/user', data: json);
+    if (response.statusCode == 200) {
+      return response.data!;
+    }
+    if (response.statusCode == 400) {
+      throw InvalidRequestException();
+    } else if (response.statusCode == 403) {
+      throw InvalidCredentialsException();
+    } else {
+      throw UnknownCodeException(code: response.statusCode);
+    }
+  }
+
+  @override
+  Future<String> registerUser({required String login, required String password}) async {
+    final json =
+        NetworkUser(null, null, id: -1, login: login, password: password).toJson();
+    json.remove('id');
+    final response = await _dio.post<String>('/user', data: json);
+    if (response.statusCode == 200) {
+      return response.data!;
+    }
+    if (response.statusCode == 400) {
+      throw InvalidRequestException();
+    } else if (response.statusCode == 409) {
+      throw UserAlreadyExistsException();
     } else {
       throw UnknownCodeException(code: response.statusCode);
     }
