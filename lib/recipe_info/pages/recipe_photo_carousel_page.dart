@@ -73,9 +73,9 @@ class RecipePhotoCarouselPage extends HookWidget {
                                               onPressed: () {},
                                             )));
                                   }
-                                  await cameraCubit.viewPhotoWithDetections();
+                                  cameraCubit.viewPhotoWithDetections();
                                 } else {
-                                  await cameraCubit.viewPhoto();
+                                  cameraCubit.viewPhoto();
                                 }
                               },
                               child: Icon(

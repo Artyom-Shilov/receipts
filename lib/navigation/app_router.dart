@@ -6,6 +6,8 @@ import 'package:receipts/authentication/pages/login_page.dart';
 import 'package:receipts/authentication/pages/profile_page.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
 import 'package:receipts/camera/controllers/camera_cubit.dart';
+import 'package:receipts/camera/controllers/camera_service.dart';
+import 'package:receipts/camera/controllers/recognition_service.dart';
 import 'package:receipts/camera/pages/camera_global_screen.dart';
 import 'package:receipts/common/models/models.dart';
 import 'package:receipts/common/pages/home_screen.dart';
@@ -95,6 +97,8 @@ class AppRouter {
                                     dynamic>)[ExtraKeys.recipe] as Recipe;
                                 return BlocProvider<BaseCameraCubit>(
                                     create: (context) => CameraCubit(
+                                        cameraService: CameraService(),
+                                        recognitionService: RecognitionService(),
                                         recipe: recipe,
                                         repository: GetIt.instance
                                             .get<BaseRecipeRepository>()),
@@ -143,6 +147,8 @@ class AppRouter {
                                           child: BlocProvider<BaseCameraCubit>(
                                               create: (context) => CameraCubit(
                                                   recipe: recipe,
+                                                  cameraService: CameraService(),
+                                                  recognitionService: RecognitionService(),
                                                   repository: GetIt.instance.get<
                                                       BaseRecipeRepository>()),
                                               child: RecipePhotoCarouselPage(

@@ -35,7 +35,7 @@ class PhotoViewPage extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () async {
-                    await cameraCubit.declinePhoto();
+                    cameraCubit.declinePhoto();
                   },
                   child: const Icon(
                     Icons.cancel,
@@ -64,9 +64,9 @@ class PhotoViewPage extends StatelessWidget {
                                 onPressed: () {},
                               )));
                         }
-                        await cameraCubit.viewPhotoWithDetections();
+                        cameraCubit.viewPhotoWithDetections();
                       } else {
-                        await cameraCubit.viewPhoto();
+                        cameraCubit.viewPhoto();
                       }
                     },
                     child: Icon(

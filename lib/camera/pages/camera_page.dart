@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
+import 'package:receipts/camera/controllers/camera_service.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 
 class CameraPage extends StatelessWidget {
@@ -14,7 +15,7 @@ class CameraPage extends StatelessWidget {
       SizedBox(
           width: double.infinity,
           height: double.infinity,
-          child: CameraPreview(cameraCubit.state.cameraController!)),
+          child: CameraPreview((cameraCubit.cameraService as CameraService).controller!)),
       Align(
         alignment: Alignment.bottomCenter,
         child: Padding(
@@ -31,7 +32,7 @@ class CameraPage extends StatelessWidget {
                   onPressed: () async {
                     await cameraCubit
                         .takePhotoAndFindDetections(MediaQuery.sizeOf(context));
-                    await cameraCubit.viewPhoto();
+                    cameraCubit.viewPhoto();
                   },
                 ),
               ),

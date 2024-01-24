@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/models/cooking_step.dart';
-import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
-import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
 import 'package:receipts/recipe_info/widgets/animated_checkbox.dart';
 
 class CookingStepRow extends StatelessWidget {

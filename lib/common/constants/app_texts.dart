@@ -60,7 +60,7 @@ abstract class ErrorMessages {
   static const emptyRecipeStorage = 'Нет доступа к сети. Не найдено локальных рецептов';
 
   static const photoViewError = 'Не удалось отобразить фото';
-  static const cameraInitError = 'Ошибка инициализации камеры';
+  static const photoProcessInitError = 'Ошибка инициализации процесса съёмки';
 }
 
 

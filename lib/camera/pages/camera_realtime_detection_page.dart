@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
+import 'package:receipts/camera/controllers/camera_service.dart';
 import 'package:receipts/camera/controllers/camera_state.dart';
 import 'package:receipts/camera/widgets/detections_stack.dart';
 import 'package:receipts/common/constants/constants.dart';
@@ -16,7 +17,7 @@ class CameraRealtimeDetectionPage extends StatelessWidget {
       SizedBox(
           height: double.infinity,
           width: double.infinity,
-          child: CameraPreview(cameraCubit.state.cameraController!)
+          child: CameraPreview((cameraCubit.cameraService as CameraService).controller!)
       ),
       SizedBox(
           width: double.infinity,
@@ -40,10 +41,11 @@ class CameraRealtimeDetectionPage extends StatelessWidget {
                     color: AppColors.accent,
                   ),
                   onPressed: () async {
-                    await cameraCubit
-                        .takePhotoAndFindDetections(MediaQuery.sizeOf(context));
+                    final size = MediaQuery.sizeOf(context);
                     await cameraCubit.stopRealtimeDetection();
-                    await cameraCubit.viewPhoto();
+                    await cameraCubit
+                        .takePhotoAndFindDetections(size);
+                    cameraCubit.viewPhoto();
                   },
                 ),
               ),
