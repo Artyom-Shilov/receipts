@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:receipts/authentication/controllers/auth_process_state.dart';
+import 'package:receipts/authentication/controllers/base_auth_process_cubit.dart';
 import 'package:receipts/authentication/widgets/widgets.dart';
 import 'package:receipts/common/constants/constants.dart';
 
@@ -19,25 +22,28 @@ class AuthPage extends HookWidget {
           alignment: Alignment.topCenter,
           child: SizedBox(
             width: 230,
-            child: Form(
-              key: formKey,
-              child: const Column(
-                children: [
-                  SizedBox(height: 200),
-                  Text(
-                    LoginPageTexts.appName,
-                    style: TextStyle(
-                        fontSize: 30, color: Colors.white),
-                  ),
-                  SizedBox(height: 80),
-                  LoginInputField(),
-                  SizedBox(height: 16),
-                  PasswordInputField(),
-                  SizedBox(height: 16),
-                  RepeatPasswordField(),
-                  SizedBox(height: 150),
-                  ProcessSwitchButton(),
-                ],
+            child: BlocBuilder<BaseAuthProcessCubit, AuthProcessState>(
+              buildWhen: (prev, next) => prev.process != next.process,
+              builder: (context, state) => Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 200),
+                    const Text(
+                      LoginPageTexts.appName,
+                      style: TextStyle(
+                          fontSize: 30, color: Colors.white),
+                    ),
+                    const SizedBox(height: 80),
+                    const LoginInputField(),
+                    const SizedBox(height: 16),
+                    const PasswordInputField(),
+                    const SizedBox(height: 16),
+                    const RepeatPasswordField(),
+                    const SizedBox(height: 150),
+                    ProcessSwitchButton(formKey: formKey),
+                  ],
+                ),
               ),
             ),
           ),

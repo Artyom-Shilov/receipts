@@ -67,13 +67,13 @@ class PhotoCommentingBody extends HookWidget {
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: AppColors.main)),
                           ),
-                          onSubmitted: (text) {
+                          onSubmitted: (text) async {
                             final navigation =
                                 BlocProvider.of<BaseNavigationCubit>(context);
                             final user = BlocProvider.of<BaseAuthCubit>(context).state.user!;
                             final recipe = BlocProvider.of<BaseRecipeInfoCubit>(context).recipe;
                             textController.clear();
-                            BlocProvider.of<BaseRecipeInfoCubit>(context)
+                            await BlocProvider.of<BaseRecipeInfoCubit>(context)
                                 .saveComment(
                                     user: user,
                                     recipe: recipe,

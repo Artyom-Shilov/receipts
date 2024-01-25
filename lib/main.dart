@@ -5,6 +5,10 @@ import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receipts/authentication/controllers/auth_cubit.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
+import 'package:receipts/camera/controllers/base_camera_service.dart';
+import 'package:receipts/camera/controllers/base_recognition_service.dart';
+import 'package:receipts/camera/controllers/camera_service.dart';
+import 'package:receipts/camera/controllers/recognition_service.dart';
 import 'package:receipts/common/local_storage/hive_recipe_client.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/network/dio_recipe_client.dart';
@@ -27,17 +31,20 @@ void main() async {
   final storageClient = HiveRecipeClient();
   await storageClient.init(directory.path);
   GetIt.I.registerSingleton<BaseNetworkRecipeClient>(DioRecipeClient());
+  GetIt.I.registerSingleton<BaseCameraService>(CameraService());
+  GetIt.I.registerSingleton<BaseRecognitionService>(RecognitionService());
   GetIt.I.registerSingleton<BaseRecipeRepository>(RecipeRepository(
       storageClient: storageClient,
       networkClient: GetIt.I.get<BaseNetworkRecipeClient>()));
   runApp(MultiBlocProvider(providers: [
     BlocProvider<BaseAuthCubit>(
-        create: (context) => AuthCubit(GetIt.I.get<BaseRecipeRepository>())),
+        create: (context) => AuthCubit(
+            recipeRepository: GetIt.I.get<BaseRecipeRepository>(),
+            networkRecipeClient: GetIt.I.get<BaseNetworkRecipeClient>())),
     BlocProvider<BaseRecipeListCubit>(
         create: (context) =>
             RecipeListCubit(GetIt.instance.get<BaseRecipeRepository>())),
-    BlocProvider<BaseNavigationCubit>(
-        create: (context) => NavigationCubit()),
+    BlocProvider<BaseNavigationCubit>(create: (context) => NavigationCubit()),
     BlocProvider<BaseFavouriteRecipesCubit>(
         create: (context) =>
             FavouriteRecipesCubit(GetIt.instance.get<BaseRecipeRepository>())),

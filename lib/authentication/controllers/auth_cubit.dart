@@ -10,8 +10,8 @@ import 'package:receipts/common/repositories/base_recipe_repository.dart';
 import 'base_auth_cubit.dart';
 
 class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
-  AuthCubit(BaseRecipeRepository recipeRepository,
-      BaseNetworkRecipeClient networkRecipeClient)
+  AuthCubit({required BaseRecipeRepository recipeRepository,
+      required BaseNetworkRecipeClient networkRecipeClient})
       : _recipeRepository = recipeRepository,
         _networkClient = networkRecipeClient,
         super(const AuthState(status: AuthStatus.loggedOut));
@@ -19,7 +19,9 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
   final BaseRecipeRepository _recipeRepository;
   final BaseNetworkRecipeClient _networkClient;
 
-  //we will need user id to send user dependent info such as comments on server, but I don't see  possibility to gain it via network
+  //we will need user id to send and receive user dependent info such as comments,
+  // but it seems there is no reasonable possibility to gain it using api, at least right now
+  // so its hardcoded
   final _userId = 4;
 
   @override
@@ -28,7 +30,6 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
     String token;
     try {
       token = await _networkClient.loginUser(login: login, password: password);
-      print(token);
     } on InvalidCredentialsException {
       emit(state.copyWith(
           status: AuthStatus.error, message: ErrorMessages.credentials));
@@ -60,9 +61,8 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
     emit(state.copyWith(status: AuthStatus.inProgress));
     String token;
     try {
-      _networkClient.registerUser(login: login, password: password);
+      await _networkClient.registerUser(login: login, password: password);
       token = await _networkClient.loginUser(login: login, password: password);
-      print(token);
     } on UserAlreadyExistsException {
       emit(state.copyWith(
           status: AuthStatus.error, message: ErrorMessages.userAlreadyExists));

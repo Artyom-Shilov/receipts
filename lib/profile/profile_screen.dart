@@ -49,10 +49,12 @@ class ProfileScreen extends StatelessWidget {
                               fontWeight: FontWeight.w400)),
                       Text(
                           authCubit.state.user?.login ?? '',
+                          maxLines: 1,
                           style: const TextStyle(
                               fontSize: 20,
+                              overflow: TextOverflow.ellipsis,
                               color: AppColors.accent,
-                              fontWeight: FontWeight.w500)),
+                              fontWeight: FontWeight.w500,)),
                     ],
                   ),
                 ),

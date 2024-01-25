@@ -35,12 +35,12 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.greyBackground,
       body: Router(
-        routerDelegate: AppRouterDelegate(),
+        routerDelegate: AppRouterDelegate(navigationCubit),
         routeInformationParser: AppInformationParser(
           recipeListCubit: BlocProvider.of<BaseRecipeListCubit>(context),
           favouriteRecipesCubit: BlocProvider.of<BaseFavouriteRecipesCubit>(context),
           authCubit: BlocProvider.of<BaseAuthCubit>(context),
-          navigationCubit: BlocProvider.of<BaseNavigationCubit>(context)
+          navigationCubit: navigationCubit
         ),
       ),
       bottomNavigationBar:

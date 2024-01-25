@@ -145,10 +145,4 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
     await _recognitionService.disposeRecognitionService();
     return super.close();
   }
-
-  @override
-  Future<void> close() async {
-    await state.cameraController?.dispose();
-    return super.close();
-  }
 }

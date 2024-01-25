@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:receipts/authentication/controllers/auth_process_state.dart';
+import 'package:receipts/authentication/controllers/auth_state.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/authentication/controllers/base_auth_process_cubit.dart';
 import 'package:receipts/common/constants/app_colors.dart';
@@ -26,8 +27,12 @@ class AnimatedAuthButton extends HookWidget {
     final authProcessCubit = BlocProvider.of<BaseAuthProcessCubit>(context);
     final authCubit = BlocProvider.of<BaseAuthCubit>(context);
     final navigator = BlocProvider.of<BaseNavigationCubit>(context);
+    bool? isFromErrorValidation;
     return BlocConsumer<BaseAuthProcessCubit, AuthProcessState>(
-        listenWhen: (prev, next) => prev.process != next.process,
+        listenWhen: (prev, next) {
+          isFromErrorValidation = prev.isFormValidationError;
+          return prev.process != next.process;
+        },
         listener: (context, state) {
       state.process == ProcessStatus.registration
           ? controller.forward()
@@ -35,7 +40,16 @@ class AnimatedAuthButton extends HookWidget {
     }, builder: (context, state) {
       final paddingAnimation = state.isFormValidationError
           ? Tween<double>(begin: 550, end: 630).animate(controller)
-          : Tween<double>(begin: 500, end: 580).animate(controller);
+          : Tween<double>(
+                  begin: (isFromErrorValidation == true &&
+                          state.process == ProcessStatus.registration)
+                      ? 550
+                      : 500,
+                  end: isFromErrorValidation == true &&
+                          state.process == ProcessStatus.login
+                      ? 630
+                      : 580)
+              .animate(controller);
       return AnimatedBuilder(
           animation: controller,
           builder: (context, _) {
@@ -57,7 +71,9 @@ class AnimatedAuthButton extends HookWidget {
                               : await authCubit.registerUser(
                                   login: login, password: password);
                           authProcessCubit.clearTextControllers();
-                          navigator.toRecipeList();
+                          authCubit.status == AuthStatus.loggedIn
+                              ? navigator.toRecipeList()
+                              : null;
                         } else {
                           BlocProvider.of<BaseAuthProcessCubit>(context)
                               .setFieldValidationErrorFlag();

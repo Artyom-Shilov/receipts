@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:receipts/authentication/pages/auth_screen.dart';
+import 'package:receipts/camera/controllers/base_camera_service.dart';
+import 'package:receipts/camera/controllers/base_recognition_service.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/pages/page_not_found_screen.dart';
 import 'package:receipts/navigation/custom_pages/favourite_branch_page.dart';
@@ -23,11 +27,16 @@ import 'custom_pages/custom_page.dart';
 
 class AppRouterDelegate extends RouterDelegate<AppNavigationState>
     with PopNavigatorRouterDelegateMixin, ChangeNotifier {
+
+  AppRouterDelegate(this.navigationCubit);
+
+  BaseNavigationCubit navigationCubit;
+
   @override
   Widget build(BuildContext context) {
-    final navigationCubit = BlocProvider.of<BaseNavigationCubit>(context);
     return BlocBuilder<BaseNavigationCubit, AppNavigationState>(
         builder: (context, state) {
+        log('branch: ${state.currentBranch}');
       return Navigator(
           transitionDelegate: CustomTransitionDelegate(state.isBranchChanged),
           key: navigatorKey,
@@ -41,7 +50,7 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
             else if (state.currentBranch == Branches.profile) ...[
               const MaterialPage(child: ProfileScreen())
             ]
-            else if (state.currentBranch == Branches.pageNotFound)
+            else if (state.currentBranch == Branches.page_not_found)
               ...[
                 const MaterialPage(child: PageNotFoundScreen())
               ]
@@ -60,14 +69,13 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
 
   @override
   Future<void> setNewRoutePath(configuration) async {
-
+    navigationCubit.onSetNewRoutePath(configuration);
   }
 
+  @override
+  AppNavigationState get currentConfiguration => navigationCubit.state;
 
- /* @override
-  AppNavigationState get currentConfiguration => (){},
-  */
-
+  //We won't have information updates for BlocProvider without different classes for pages in favourite and recipe branches when scrolling branches between similar pages
   List<Page> _recipeBranchPages(AppNavigationState state) {
     return [
       if (state.recipeBranchState.currentPage == Pages.recipeList ||
@@ -131,8 +139,14 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
         RecipeBranchPage(
             forward: Transitions.slide,
             back: Transitions.fade,
-            child: RecipePhotoCommentingPage(
-              photo: state.recipeBranchState.photoToComment!,
+            child: BlocProvider<BaseRecipeInfoCubit>(
+              create: (context) => RecipeInfoCubit(
+                  repository: GetIt.I.get<BaseRecipeRepository>(),
+                  networkClient: GetIt.I.get<BaseNetworkRecipeClient>(),
+                  recipe: state.recipeBranchState.selectedRecipe!),
+              child: RecipePhotoCommentingPage(
+                photo: state.recipeBranchState.photoToComment!,
+              ),
             )),
       if (state.recipeBranchState.currentPage == Pages.camera &&
           state.recipeBranchState.selectedRecipe != null)
@@ -141,6 +155,8 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
             back: Transitions.fade,
             child: BlocProvider<BaseCameraCubit>(
                 create: (context) => CameraCubit(
+                    cameraService: GetIt.I.get<BaseCameraService>(),
+                    recognitionService: GetIt.I.get<BaseRecognitionService>(),
                     recipe: state.recipeBranchState.selectedRecipe!,
                     repository: GetIt.instance.get<BaseRecipeRepository>()),
                 child: const CameraGlobalScreen())),
@@ -160,8 +176,7 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
               state.favouriteBranchState.currentPage == Pages.camera ||
               state.favouriteBranchState.currentPage == Pages.userPhotos ||
               state.favouriteBranchState.currentPage == Pages.carousel ||
-              state.favouriteBranchState.currentPage ==
-                  Pages.commenting_photo) &&
+              state.favouriteBranchState.currentPage == Pages.commenting_photo) &&
           state.favouriteBranchState.selectedRecipe != null)
         FavouriteBranchPage(
             forward: Transitions.slide,
@@ -209,11 +224,17 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
           state.favouriteBranchState.selectedRecipe != null &&
           state.favouriteBranchState.photoViewMode != null &&
           state.favouriteBranchState.photoToComment != null)
-        RecipeBranchPage(
+        FavouriteBranchPage(
             forward: Transitions.slide,
             back: Transitions.fade,
-            child: RecipePhotoCommentingPage(
-              photo: state.favouriteBranchState.photoToComment!,
+            child: BlocProvider<BaseRecipeInfoCubit>(
+              create: (context) => RecipeInfoCubit(
+                  repository: GetIt.I.get<BaseRecipeRepository>(),
+                  networkClient: GetIt.I.get<BaseNetworkRecipeClient>(),
+                  recipe: state.favouriteBranchState.selectedRecipe!),
+              child: RecipePhotoCommentingPage(
+                photo: state.favouriteBranchState.photoToComment!,
+              ),
             )),
       if (state.favouriteBranchState.currentPage == Pages.camera &&
           state.favouriteBranchState.selectedRecipe != null)
@@ -222,6 +243,8 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
             back: Transitions.fade,
             child: BlocProvider<BaseCameraCubit>(
                 create: (context) => CameraCubit(
+                    cameraService: GetIt.I.get<BaseCameraService>(),
+                    recognitionService: GetIt.I.get<BaseRecognitionService>(),
                     recipe: state.favouriteBranchState.selectedRecipe!,
                     repository: GetIt.instance.get<BaseRecipeRepository>()),
                 child: const CameraGlobalScreen())),

@@ -24,11 +24,11 @@ enum Branches {
   login,
   profile,
   favourite,
-  pageNotFound;
+  page_not_found;
 
   static Branches fromString(String string) {
     return Branches.values.firstWhere((element) => element.name == string);
-}
+  }
 }
 
 @freezed

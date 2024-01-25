@@ -43,15 +43,9 @@ class AppInformationParser extends RouteInformationParser<AppNavigationState> {
       if (segments.length == 4) {
         return _fourthLayerParser(segments);
       }
-      return AppNavigationState(
-          currentBranch: Branches.pageNotFound,
-          favouriteBranchState: navigationCubit.state.favouriteBranchState,
-          recipeBranchState: navigationCubit.state.recipeBranchState);
+      return _toPageNotFound(navigationCubit);
     } catch (e) {
-      return AppNavigationState(
-          currentBranch: Branches.pageNotFound,
-          favouriteBranchState: navigationCubit.state.favouriteBranchState,
-          recipeBranchState: navigationCubit.state.recipeBranchState);
+      return _toPageNotFound(navigationCubit);
     }
   }
 
@@ -67,10 +61,7 @@ class AppInformationParser extends RouteInformationParser<AppNavigationState> {
           recipeBranchState:
               const NestedBranchState(currentPage: Pages.favouriteList));
     }
-    return AppNavigationState(
-        currentBranch: Branches.pageNotFound,
-        favouriteBranchState: navigationCubit.state.favouriteBranchState,
-        recipeBranchState: navigationCubit.state.recipeBranchState);
+    return _toPageNotFound(navigationCubit);
   }
 
   AppNavigationState _secondLayerParser(List<String> segments) {
@@ -78,24 +69,19 @@ class AppInformationParser extends RouteInformationParser<AppNavigationState> {
     final index = int.parse(segments[1]);
     if (branch == Branches.recipes) {
       final recipe = recipeListCubit.recipes[index];
-      return AppNavigationState(
-          currentBranch: Branches.recipes,
-          favouriteBranchState: navigationCubit.state.favouriteBranchState,
+      return _changeRecipeBranchPreservingFavouriteBranch(
           recipeBranchState: NestedBranchState(
-              currentPage: Pages.recipeInfo, selectedRecipe: recipe));
+              currentPage: Pages.recipeInfo, selectedRecipe: recipe),
+          navigationCubit: navigationCubit);
     }
     if (branch == Branches.favourite && authCubit.isLoggedIn) {
       final recipe = favouriteRecipesCubit.favouriteRecipes[index];
-      return AppNavigationState(
-          currentBranch: Branches.favourite,
+      return _changeFavouriteBranchPreservingRecipeBranch(
           favouriteBranchState: NestedBranchState(
               currentPage: Pages.recipeInfo, selectedRecipe: recipe),
-          recipeBranchState: navigationCubit.state.recipeBranchState);
+          navigationCubit: navigationCubit);
     }
-    return AppNavigationState(
-        currentBranch: Branches.pageNotFound,
-        favouriteBranchState: navigationCubit.state.favouriteBranchState,
-        recipeBranchState: navigationCubit.state.recipeBranchState);
+    return _toPageNotFound(navigationCubit);
   }
 
   AppNavigationState _thirdLayerParser(List<String> segments) {
@@ -104,19 +90,17 @@ class AppInformationParser extends RouteInformationParser<AppNavigationState> {
     if (segments[2] == Pages.camera.name) {
       if (branch == Branches.recipes) {
         final recipe = recipeListCubit.recipes[index];
-        return AppNavigationState(
-            currentBranch: Branches.recipes,
-            favouriteBranchState: navigationCubit.state.favouriteBranchState,
+        return _changeRecipeBranchPreservingFavouriteBranch(
             recipeBranchState: NestedBranchState(
-                currentPage: Pages.camera, selectedRecipe: recipe));
+                currentPage: Pages.camera, selectedRecipe: recipe),
+            navigationCubit: navigationCubit);
       }
       if (branch == Branches.favourite && authCubit.isLoggedIn) {
         final recipe = favouriteRecipesCubit.favouriteRecipes[index];
-        return AppNavigationState(
-            currentBranch: Branches.favourite,
+        return _changeFavouriteBranchPreservingRecipeBranch(
             favouriteBranchState: NestedBranchState(
                 currentPage: Pages.camera, selectedRecipe: recipe),
-            recipeBranchState: navigationCubit.state.recipeBranchState);
+            navigationCubit: navigationCubit);
       }
     }
     if (segments[2] == RecipePhotoViewStatus.viewing.name ||
@@ -124,31 +108,26 @@ class AppInformationParser extends RouteInformationParser<AppNavigationState> {
       final mode = RecipePhotoViewStatus.fromString(segments[2]);
       if (branch == Branches.recipes) {
         final recipe = recipeListCubit.recipes[index];
-        return AppNavigationState(
-            currentBranch: Branches.recipes,
-            favouriteBranchState: navigationCubit.state.favouriteBranchState,
+        return _changeRecipeBranchPreservingFavouriteBranch(
             recipeBranchState: NestedBranchState(
               currentPage: Pages.userPhotos,
               selectedRecipe: recipe,
               photoViewMode: mode,
-            ));
+            ),
+            navigationCubit: navigationCubit);
       }
       if (branch == Branches.favourite && authCubit.isLoggedIn) {
         final recipe = favouriteRecipesCubit.favouriteRecipes[index];
-        return AppNavigationState(
-            currentBranch: Branches.favourite,
+        return _changeFavouriteBranchPreservingRecipeBranch(
             favouriteBranchState: NestedBranchState(
               currentPage: Pages.userPhotos,
               selectedRecipe: recipe,
               photoViewMode: mode,
             ),
-            recipeBranchState: navigationCubit.state.recipeBranchState);
+            navigationCubit: navigationCubit);
       }
     }
-    return AppNavigationState(
-        currentBranch: Branches.pageNotFound,
-        favouriteBranchState: navigationCubit.state.favouriteBranchState,
-        recipeBranchState: navigationCubit.state.recipeBranchState);
+    return _toPageNotFound(navigationCubit);
   }
 
   AppNavigationState _fourthLayerParser(List<String> segments) {
@@ -158,56 +137,74 @@ class AppInformationParser extends RouteInformationParser<AppNavigationState> {
       final photoIndex = int.parse(segments[3]);
       if (branch == Branches.recipes) {
         final recipe = recipeListCubit.recipes[index];
-        return AppNavigationState(
-            currentBranch: branch,
-            favouriteBranchState: navigationCubit.state.favouriteBranchState,
+        return _changeRecipeBranchPreservingFavouriteBranch(
             recipeBranchState: NestedBranchState(
                 currentPage: Pages.commenting_photo,
                 photoViewMode: RecipePhotoViewStatus.commenting,
                 selectedRecipe: recipe,
-                photoToComment: recipe.userPhotos[photoIndex]));
+                photoToComment: recipe.userPhotos[photoIndex]),
+            navigationCubit: navigationCubit);
       }
       if (branch == Branches.favourite && authCubit.isLoggedIn) {
         final recipe = favouriteRecipesCubit.favouriteRecipes[index];
-        return AppNavigationState(
-            currentBranch: branch,
+        return _changeFavouriteBranchPreservingRecipeBranch(
             favouriteBranchState: NestedBranchState(
                 currentPage: Pages.commenting_photo,
                 photoViewMode: RecipePhotoViewStatus.commenting,
                 selectedRecipe: recipe,
                 photoToComment: recipe.userPhotos[photoIndex]),
-            recipeBranchState: navigationCubit.state.recipeBranchState);
+            navigationCubit: navigationCubit);
       }
     }
     if (segments[2] == Pages.carousel.name) {
       final initIndex = int.parse(segments[3]);
       if (branch == Branches.recipes) {
         final recipe = recipeListCubit.recipes[index];
-        return AppNavigationState(
-            currentBranch: branch,
-            favouriteBranchState: navigationCubit.state.favouriteBranchState,
+        return _changeRecipeBranchPreservingFavouriteBranch(
             recipeBranchState: NestedBranchState(
                 currentPage: Pages.commenting_photo,
                 photoViewMode: RecipePhotoViewStatus.viewing,
                 selectedRecipe: recipe,
-                initIndexInCarousel: initIndex));
+                initIndexInCarousel: initIndex),
+            navigationCubit: navigationCubit);
       }
       if (branch == Branches.favourite && authCubit.isLoggedIn) {
         final recipe = favouriteRecipesCubit.favouriteRecipes[index];
-        return AppNavigationState(
-            currentBranch: branch,
+        return _changeFavouriteBranchPreservingRecipeBranch(
             favouriteBranchState: NestedBranchState(
                 currentPage: Pages.commenting_photo,
                 photoViewMode: RecipePhotoViewStatus.viewing,
                 selectedRecipe: recipe,
                 initIndexInCarousel: initIndex),
-            recipeBranchState: navigationCubit.state.recipeBranchState);
+            navigationCubit: navigationCubit);
       }
     }
+    return _toPageNotFound(navigationCubit);
+  }
+
+  AppNavigationState _toPageNotFound(BaseNavigationCubit navigationCubit) {
     return AppNavigationState(
-        currentBranch: Branches.pageNotFound,
+        currentBranch: Branches.page_not_found,
         favouriteBranchState: navigationCubit.state.favouriteBranchState,
         recipeBranchState: navigationCubit.state.recipeBranchState);
+  }
+
+  AppNavigationState _changeFavouriteBranchPreservingRecipeBranch({
+    required NestedBranchState favouriteBranchState,
+    required BaseNavigationCubit navigationCubit}) {
+    return AppNavigationState(
+        currentBranch: Branches.favourite,
+        favouriteBranchState: favouriteBranchState,
+        recipeBranchState: navigationCubit.state.recipeBranchState);
+  }
+
+  AppNavigationState _changeRecipeBranchPreservingFavouriteBranch({
+    required NestedBranchState recipeBranchState,
+    required BaseNavigationCubit navigationCubit}) {
+    return AppNavigationState(
+        currentBranch: Branches.favourite,
+        favouriteBranchState: navigationCubit.state.favouriteBranchState,
+        recipeBranchState: recipeBranchState);
   }
 
   @override
@@ -219,20 +216,20 @@ class AppInformationParser extends RouteInformationParser<AppNavigationState> {
       return RouteInformation(uri: Uri.parse('/${Branches.profile.name}'));
     }
     if (configuration.currentBranch == Branches.recipes) {
-      _informationInNestedBranchBranch(
+      _informationInNestedBranch(
           configuration.recipeBranchState, Branches.recipes);
     }
     if (configuration.currentBranch == Branches.favourite) {
-      _informationInNestedBranchBranch(
+      _informationInNestedBranch(
           configuration.favouriteBranchState, Branches.favourite);
     }
-    if (configuration.currentBranch == Branches.pageNotFound) {
-      return RouteInformation(uri: Uri.parse('/404'));
+    if (configuration.currentBranch == Branches.page_not_found) {
+      return RouteInformation(uri: Uri.parse(Branches.page_not_found.name));
     }
     return null;
   }
 
-  RouteInformation? _informationInNestedBranchBranch(
+  RouteInformation? _informationInNestedBranch(
       NestedBranchState state, Branches branch) {
     if (branch == Branches.recipes && state.currentPage == Pages.recipeList) {
       return RouteInformation(uri: Uri.parse('/${Branches.recipes.name}'));

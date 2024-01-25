@@ -216,9 +216,9 @@ class DioRecipeClient implements BaseNetworkRecipeClient {
     json.remove('id');
     json.remove('avatar');
     json.remove('token');
-    final response = await _dio.put<String>('/user', data: json);
+    final response = await _dio.put<Map<String, dynamic>>('/user', data: json);
     if (response.statusCode == 200) {
-      return response.data!;
+      return response.data!['token'];
     }
     if (response.statusCode == 400) {
       throw InvalidRequestException();
@@ -234,9 +234,9 @@ class DioRecipeClient implements BaseNetworkRecipeClient {
     final json =
         NetworkUser(null, null, id: -1, login: login, password: password).toJson();
     json.remove('id');
-    final response = await _dio.post<String>('/user', data: json);
+    final response = await _dio.post<Map<String, dynamic>>('/user', data: json);
     if (response.statusCode == 200) {
-      return response.data!;
+      return response.data!['status'];
     }
     if (response.statusCode == 400) {
       throw InvalidRequestException();

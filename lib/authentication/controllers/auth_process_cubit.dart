@@ -21,12 +21,12 @@ class AuthProcessCubit extends Cubit<AuthProcessState>
 
   @override
   void startRegistration() {
-    emit(state.copyWith(process: ProcessStatus.registration));
+    emit(state.copyWith(process: ProcessStatus.registration, isFormValidationError: false));
   }
 
   @override
   void startLogin() {
-    emit(state.copyWith(process: ProcessStatus.login));
+    emit(state.copyWith(process: ProcessStatus.login, isFormValidationError: false));
   }
 
   @override

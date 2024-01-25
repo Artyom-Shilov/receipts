@@ -26,7 +26,7 @@ class NavigationCubit extends Cubit<AppNavigationState>
         return 2;
       case Branches.favourite:
         return 1;
-      case Branches.pageNotFound:
+      case Branches.page_not_found:
         return 0;
     }
   }
@@ -300,12 +300,17 @@ class NavigationCubit extends Cubit<AppNavigationState>
   @override
   bool isShowingBottomAppBar() {
     return !(
-        state.currentBranch == Branches.pageNotFound ||
+        state.currentBranch == Branches.page_not_found ||
         state.recipeBranchState.currentPage == Pages.camera ||
         state.recipeBranchState.currentPage == Pages.carousel ||
         state.recipeBranchState.currentPage == Pages.commenting_photo ||
         state.favouriteBranchState.currentPage == Pages.camera ||
         state.favouriteBranchState.currentPage == Pages.carousel ||
         state.favouriteBranchState.currentPage == Pages.commenting_photo);
+  }
+
+  @override
+  void onSetNewRoutePath(AppNavigationState newState) {
+    emit(newState);
   }
 }

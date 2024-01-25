@@ -21,4 +21,5 @@ abstract interface class BaseNavigationCubit extends Cubit<AppNavigationState>{
   void navigateToBranchByAppBarIndex(bool isLoggedIn, int index);
   bool isShowingBottomAppBar();
   void changeOnPop();
+  void onSetNewRoutePath(AppNavigationState newStat);
 }
