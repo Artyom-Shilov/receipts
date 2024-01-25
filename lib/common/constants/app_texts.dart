@@ -63,6 +63,11 @@ abstract class FavouriteTexts {
   static const noFavouriteRecipes = 'Нет избранных рецептов';
 }
 
+abstract class PageNotFoundTexts {
+  static const title = 'Страница не найдена';
+  static const toMain = 'На главную';
+}
+
 abstract class ErrorMessages {
 
   static const common = 'Возникла непредвиденная ошибка';
