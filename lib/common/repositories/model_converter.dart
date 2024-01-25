@@ -181,26 +181,28 @@ class ModelsConverter {
   }
 
   String _calcMeasureUnit(int count, NetworkMeasureUnit unit) {
-    if (count % 10 == 1) {
+    final countEnding = count % 10;
+    if (countEnding == 1) {
       return unit.one;
     }
-    if (count % 10 == 0) {
+    if (countEnding == 0) {
       return unit.many;
     }
-    if (count % 10 <= 4) {
+    if (countEnding <= 4) {
       return unit.few;
     }
     return unit.many;
   }
 
   String _calcRecipeDurationForm(int duration) {
-    if (duration % 10 == 1) {
+    final durationEnding = duration % 10;
+    if (durationEnding == 1) {
       return TimeUnits.minutesOne;
     }
-    if (duration % 10 == 0) {
+    if (durationEnding == 0) {
       return TimeUnits.minutesOne;
     }
-    if (duration % 10 <= 4) {
+    if (durationEnding <= 4) {
       return TimeUnits.minutesFew;
     }
     return TimeUnits.minutesMany;
