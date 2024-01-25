@@ -80,6 +80,7 @@ abstract class ErrorMessages {
   static const credentials = 'Неверный логин или пароль';
   static const userAlreadyExists = 'Пользователь уже существует';
   static const authBaseError = 'Ошибка при авторизации';
+  static const noConnection = 'Нет соединения с сетью';
   
   static const photoProcessInitError = 'Ошибка инициализации процесса съёмки';
 }

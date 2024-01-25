@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:receipts/authentication/controllers/auth_state.dart';
 import 'package:receipts/common/constants/app_texts.dart';
 import 'package:receipts/common/exceptions/exceptions.dart';
@@ -26,6 +27,10 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
 
   @override
   Future<void> logIn({required String login, required String password}) async {
+    if (!await _isConnected()) {
+      emit(state.copyWith(status: AuthStatus.error, message: ErrorMessages.noConnection));
+      return;
+    }
     emit(state.copyWith(status: AuthStatus.inProgress));
     String token;
     try {
@@ -56,8 +61,11 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
   }
 
   @override
-  Future<void> registerUser(
-      {required String login, required String password}) async {
+  Future<void> registerUser({required String login, required String password}) async {
+    if (!await _isConnected()) {
+      emit(state.copyWith(status: AuthStatus.error, message: ErrorMessages.noConnection));
+      return;
+    }
     emit(state.copyWith(status: AuthStatus.inProgress));
     String token;
     try {
@@ -84,6 +92,12 @@ class AuthCubit extends Cubit<AuthState> implements BaseAuthCubit {
             password: password,
             token: token,
             avatar: null)));
+  }
+
+  Future<bool> _isConnected() async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    return connectivityResult == ConnectivityResult.wifi ||
+        connectivityResult == ConnectivityResult.mobile;
   }
 
   @override

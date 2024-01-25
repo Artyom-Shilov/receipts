@@ -16,14 +16,18 @@ class AuthErrorPage extends HookWidget {
     useEffect(() {
       Future.delayed(
           Duration.zero,
-              () => showDialog(
+          () => showDialog(
               context: context,
               barrierDismissible: false,
               builder: (context) => AlertDialog(
-                content: Text(authCubit.state.message),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.done, color: AppColors.accent),
+                    title: Center(
+                        child: Text(
+                      authCubit.state.message,
+                      style: const TextStyle(fontSize: 14),
+                    )),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.done, color: AppColors.accent),
                     onPressed: () {
                       authCubit.logOut();
                       Navigator.of(context).pop();

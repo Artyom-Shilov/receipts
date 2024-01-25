@@ -19,20 +19,23 @@ class RecipeErrorPage extends HookWidget {
     useEffect(() {
       Future.delayed(
           Duration.zero,
-              () => showDialog(
+          () => showDialog(
               context: context,
               barrierDismissible: false,
               builder: (context) => AlertDialog(
-                content: Text(recipesInfoCubit.state.message),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.done, color: AppColors.accent),
-                    onPressed: () {
-                      BlocProvider.of<BaseAuthCubit>(context).logOut();
-                      BlocProvider.of<BaseNavigationCubit>(context).toLogin();
-                    },
-                  ),
-                ],
+                    title: Center(
+                        child: Text(recipesInfoCubit.state.message,
+                            style: const TextStyle(fontSize: 14))),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.done, color: AppColors.accent),
+                        onPressed: () {
+                          BlocProvider.of<BaseAuthCubit>(context).logOut();
+                          BlocProvider.of<BaseNavigationCubit>(context)
+                              .toLogin();
+                        },
+                      ),
+                    ],
               )));
       return null;
     });
