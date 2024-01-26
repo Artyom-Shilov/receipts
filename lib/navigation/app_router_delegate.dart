@@ -92,6 +92,7 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
         CustomPage(
             forward: Transitions.slide,
             back: Transitions.fade,
+            key: UniqueKey(),
             child: BlocProvider<BaseRecipeInfoCubit>(
                 create: (context) => RecipeInfoCubit(
                     repository: GetIt.instance.get<BaseRecipeRepository>(),
