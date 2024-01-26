@@ -17,7 +17,7 @@ final Map<Transitions, Widget Function(Animation<double> animation, Widget child
 };
 
 class CustomPage extends Page {
-  const CustomPage({required this.child, required this.forward, required this.back});
+  const CustomPage({required this.child, required this.forward, required this.back, LocalKey? key}) : super(key: key);
 
   final Widget child;
   final Transitions forward;
