@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/constants/constants.dart';
+import 'package:receipts/common/widgets/back_navigation_arrow.dart';
 import 'package:receipts/navigation/controllers/base_navigation_cubit.dart';
 import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 import 'package:receipts/recipes_list/pages/recipes_list_page.dart';
@@ -30,7 +31,7 @@ class RecipesErrorPage extends HookWidget {
                         icon: const Icon(Icons.done, color: AppColors.accent),
                         onPressed: () {
                           BlocProvider.of<BaseAuthCubit>(context).logOut();
-                      navigation.toRecipeList();
+                          Navigator.of(context).pop();
                     },
                   ),
                 ],

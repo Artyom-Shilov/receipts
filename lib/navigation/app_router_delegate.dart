@@ -43,11 +43,7 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
             if (state.currentBranch == Branches.recipes)
               ...[
                 if (state.recipeBranchState.currentPage == Pages.recipeList ||
-                  state.recipeBranchState.currentPage == Pages.recipeInfo ||
-                  state.recipeBranchState.currentPage == Pages.camera ||
-                  state.recipeBranchState.currentPage == Pages.userPhotos ||
-                  state.recipeBranchState.currentPage == Pages.carousel ||
-                  state.recipeBranchState.currentPage == Pages.commenting_photo)
+                  state.recipeBranchState.currentPage == Pages.recipeInfo)
                 const MaterialPage(child: RecipesScreen()),
               ..._similarBranchPages(state.recipeBranchState)
             ] else if (state.currentBranch == Branches.login) ...[
@@ -55,11 +51,7 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
             ] else if (state.currentBranch == Branches.favourite)
               ...[
                 if (state.favouriteBranchState.currentPage == Pages.favouriteList ||
-                    state.favouriteBranchState.currentPage == Pages.recipeInfo ||
-                    state.favouriteBranchState.currentPage == Pages.camera ||
-                    state.favouriteBranchState.currentPage == Pages.userPhotos ||
-                    state.favouriteBranchState.currentPage == Pages.carousel ||
-                    state.favouriteBranchState.currentPage == Pages.commenting_photo)
+                    state.favouriteBranchState.currentPage == Pages.recipeInfo)
                   const MaterialPage(child: FavouriteScreen()),
                 ... _similarBranchPages(state.favouriteBranchState)
               ]
@@ -95,9 +87,7 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
     return [
       if ((branchState.currentPage == Pages.recipeInfo ||
           branchState.currentPage == Pages.camera ||
-          branchState.currentPage == Pages.userPhotos ||
-          branchState.currentPage == Pages.carousel ||
-          branchState.currentPage == Pages.commenting_photo) &&
+          branchState.currentPage == Pages.userPhotos) &&
           branchState.selectedRecipe != null)
         CustomPage(
             forward: Transitions.slide,
