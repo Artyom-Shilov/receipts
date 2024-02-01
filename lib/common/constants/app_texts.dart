@@ -68,6 +68,15 @@ abstract class PageNotFoundTexts {
   static const toMain = 'На главную';
 }
 
+abstract class BleScanningTexts {
+
+  static const noPermissions = 'Нет необходимых разрешений';
+  static const bluetoothDisabled = 'Bluetooth выключен';
+  static const startScan = 'Начать сканирование BLE';
+
+
+}
+
 abstract class ErrorMessages {
 
   static const common = 'Возникла непредвиденная ошибка';
@@ -88,6 +97,6 @@ abstract class ErrorMessages {
   static const noConnection = 'Нет соединения с сетью';
   
   static const photoProcessInitError = 'Ошибка инициализации процесса съёмки';
+
+  static const bleScanningError = 'Ошибка сканирования';
 }
-
-

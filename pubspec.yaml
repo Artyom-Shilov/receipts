@@ -55,6 +55,8 @@ dependencies:
   flutter_hooks: ^0.20.3
   carousel_slider: ^4.2.1
   flutter_image_compress: ^2.1.0
+  ble_info:
+    path: ble_info
 
 dev_dependencies:
   flutter_test:
