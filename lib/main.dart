@@ -10,9 +10,9 @@ import 'package:receipts/ble_scan/controllers/ble_cubit.dart';
 import 'package:receipts/ble_scan/services/base_ble_service.dart';
 import 'package:receipts/ble_scan/services/ble_service.dart';
 import 'package:receipts/camera/services/base_camera_service.dart';
-import 'package:receipts/camera/services/base_recognition_service.dart';
+import 'package:receipts/camera/services/base_detection_service.dart';
 import 'package:receipts/camera/services/camera_service.dart';
-import 'package:receipts/camera/services/recognition_service.dart';
+import 'package:receipts/camera/services/detection_service.dart';
 import 'package:receipts/common/local_storage/hive_recipe_client.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/network/dio_recipe_client.dart';
@@ -36,7 +36,7 @@ void main() async {
   await storageClient.init(directory.path);
   GetIt.I.registerSingleton<BaseNetworkRecipeClient>(DioRecipeClient());
   GetIt.I.registerSingleton<BaseCameraService>(CameraService());
-  GetIt.I.registerSingleton<BaseRecognitionService>(RecognitionService());
+  GetIt.I.registerSingleton<BaseDetectionService>(DetectionService());
   GetIt.I.registerSingleton<BaseRecipeRepository>(RecipeRepository(
       storageClient: storageClient,
       networkClient: GetIt.I.get<BaseNetworkRecipeClient>()));

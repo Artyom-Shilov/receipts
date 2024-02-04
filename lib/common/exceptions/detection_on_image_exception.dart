@@ -1,0 +1,1 @@
+class DetectionOnImageException implements Exception {}
