@@ -2,9 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
-import 'package:receipts/camera/controllers/base_camera_service.dart';
-import 'package:receipts/camera/controllers/base_recognition_service.dart';
+import 'package:receipts/camera/services/base_camera_service.dart';
 import 'package:receipts/camera/controllers/camera_state.dart';
+import 'package:receipts/camera/services/base_recognition_service.dart';
 import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/models/user_recipe_photo.dart';
@@ -32,6 +32,7 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
       await cameraService.initCamera();
       await _recognitionService.initRecognitionService();
     } catch (e) {
+      print(e);
       emit(state.copyWith(
           status: CameraStatus.error, message: ErrorMessages.photoProcessInitError));
       return;

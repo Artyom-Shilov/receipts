@@ -1,5 +1,5 @@
 import 'package:camera/camera.dart';
-import 'package:receipts/camera/controllers/base_camera_service.dart';
+import 'package:receipts/camera/services/base_camera_service.dart';
 
 class CameraService implements BaseCameraService {
 
