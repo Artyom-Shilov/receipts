@@ -97,6 +97,7 @@ abstract class ErrorMessages {
   static const noConnection = 'Нет соединения с сетью';
   
   static const photoProcessInitError = 'Ошибка инициализации процесса съёмки';
+  static const detectionError = 'Ошибка обработки кадра';
 
   static const bleScanningError = 'Ошибка сканирования';
 }

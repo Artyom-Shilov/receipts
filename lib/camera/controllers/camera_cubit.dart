@@ -22,9 +22,9 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
         _detectionService = detectionService,
         super(CameraState(status: CameraStatus.initializing, recipe: recipe)) {
     _detectionServiceErrorSubscription = detectionService.errorStream.listen((event) async {
-      print('!!!!!!!!!!!!');
       await cameraService.disposeCamera();
       await _detectionService.disposeRecognitionService();
+      emit(state.copyWith(status: CameraStatus.error, message: ErrorMessages.detectionError));
     });
   }
 

@@ -91,8 +91,7 @@ class DetectionService implements BaseDetectionService {
             jsonDetections.map((e) => Detection.fromJson(e)).toList();
         _frameDetectionCompleter.complete();
       }
-    }
-    );
+    });
   }
 
   Future<void> _spawnDetectionOnFrameIsolate() async {
@@ -109,13 +108,12 @@ class DetectionService implements BaseDetectionService {
         if (message is TransferableTypedData) {
           if (frame != null) {
             final messageList = jsonDecode(
-                    String.fromCharCodes(message.materialize().asUint32List()))
-                as List;
+                    String.fromCharCodes(message.materialize().asUint32List())) as List;
             final modelName = messageList[0] as String;
             final screenHeight = messageList[1] as double;
             final screenWidth = messageList[2] as double;
             final imageHeight = messageList[3] as int;
-            final imageWidth = messageList[5] as int;
+            final imageWidth = messageList[4] as int;
             List<Map<String, dynamic>> detections = [];
             await Tflite.detectObjectOnFrame(
               bytesList: frame!,
@@ -243,9 +241,12 @@ class DetectionService implements BaseDetectionService {
       height,
       width,
     ];
+    //wasn't able to find convenient way to send frame as TransferableTypedData,
+    // we need List<Uint8List> on the isolate's side
+    //but after materialization we get only flat Uint8List
+    _sendPortToFrameDetectionIsolate.send(frame);
     final transferableData = TransferableTypedData.fromList(
         [Int32List.fromList(jsonEncode(data).codeUnits)]);
-    _sendPortToFrameDetectionIsolate.send(frame);
     _sendPortToFrameDetectionIsolate.send(transferableData);
     await _frameDetectionCompleter.future;
     _frameDetectionCompleter = Completer.sync();
