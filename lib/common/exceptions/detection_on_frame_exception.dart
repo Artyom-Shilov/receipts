@@ -1,1 +1,0 @@
-class DetectionOnFrameException implements Exception {}

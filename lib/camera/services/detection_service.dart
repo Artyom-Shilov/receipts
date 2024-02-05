@@ -49,21 +49,25 @@ class DetectionService implements BaseDetectionService {
   final ReceivePort _frameDetectionReceivePort = ReceivePort();
   List<Detection> _lastDetectionsOnFrame = [];
   final ReceivePort _errorReceivePort = ReceivePort();
+  final StreamController _errorStreamController = StreamController.broadcast();
 
   late Completer<void> _imageDetectionInitCompleter;
   late Completer<void> _imageDetectionCompleter;
   late Completer<void> _frameDetectionInitCompleter;
   late Completer<void> _frameDetectionCompleter;
-  late StreamSubscription? _frameDetectionSubscription;
-  late StreamSubscription? _imageDetectionSubscription;
+  StreamSubscription? _frameDetectionSubscription;
+  StreamSubscription? _imageDetectionSubscription;
   late SendPort _sendPortToImageDetectionIsolate;
   late SendPort _sendPortToFrameDetectionIsolate;
-  late Isolate? _imageDetectionIsolate;
-  late Isolate? _frameDetectionIsolate;
+  Isolate? _imageDetectionIsolate;
+  Isolate? _frameDetectionIsolate;
 
   final model = RecognitionConstants.modelName;
 
   DetectionService() {
+    _errorReceivePort.listen((message) {
+      _errorStreamController.add(message);
+    });
     _imageDetectionSubscription = _imageDetectionReceivePort.listen((message) {
       if (message is SendPort) {
         _sendPortToImageDetectionIsolate = message;
@@ -203,9 +207,9 @@ class DetectionService implements BaseDetectionService {
   @override
   Future<void> disposeRecognitionService() async {
     await Tflite.close();
-    _imageDetectionSubscription?.cancel();
+    await _imageDetectionSubscription?.cancel();
     _imageDetectionIsolate?.kill();
-    _frameDetectionSubscription?.cancel();
+    await _frameDetectionSubscription?.cancel();
     _frameDetectionIsolate?.kill();
   }
 
@@ -242,7 +246,7 @@ class DetectionService implements BaseDetectionService {
       width,
     ];
     //wasn't able to find convenient way to send frame as TransferableTypedData,
-    // we need List<Uint8List> on the isolate's side
+    //we need List<Uint8List> on the isolate's side
     //but after materialization we get only flat Uint8List
     _sendPortToFrameDetectionIsolate.send(frame);
     final transferableData = TransferableTypedData.fromList(
@@ -254,5 +258,5 @@ class DetectionService implements BaseDetectionService {
   }
 
   @override
-  Stream get errorStream => _errorReceivePort.asBroadcastStream();
+  Stream get errorStream => _errorStreamController.stream;
 }

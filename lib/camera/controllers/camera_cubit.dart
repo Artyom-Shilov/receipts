@@ -21,16 +21,20 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
       : _repository = repository,
         _detectionService = detectionService,
         super(CameraState(status: CameraStatus.initializing, recipe: recipe)) {
-    _detectionServiceErrorSubscription = detectionService.errorStream.listen((event) async {
+    errorStreamController.addStream(detectionService.errorStream);
+    _detectionServiceErrorSubscription =
+        detectionService.errorStream.listen((event) async {
+      emit(state.copyWith(
+          status: CameraStatus.error, message: ErrorMessages.detectionError));
       await cameraService.disposeCamera();
       await _detectionService.disposeRecognitionService();
-      emit(state.copyWith(status: CameraStatus.error, message: ErrorMessages.detectionError));
     });
   }
 
   final BaseRecipeRepository _repository;
   final BaseDetectionService _detectionService;
-  late final StreamSubscription? _detectionServiceErrorSubscription;
+  StreamSubscription? _detectionServiceErrorSubscription;
+  final  errorStreamController = StreamController();
   @override
   final BaseCameraService cameraService;
 
@@ -149,9 +153,9 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
 
   @override
   Future<void> close() async {
+    await _detectionServiceErrorSubscription?.cancel();
     await cameraService.disposeCamera();
     await _detectionService.disposeRecognitionService();
-    _detectionServiceErrorSubscription?.cancel();
     return super.close();
   }
 }
