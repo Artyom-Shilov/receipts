@@ -41,6 +41,7 @@ void main() async {
       storageClient: storageClient,
       networkClient: GetIt.I.get<BaseNetworkRecipeClient>()));
   GetIt.I.registerSingleton<BaseBleService>(BleService());
+
   runApp(MultiBlocProvider(providers: [
     BlocProvider<BaseAuthCubit>(
         create: (context) => AuthCubit(
@@ -53,8 +54,8 @@ void main() async {
     BlocProvider<BaseFavouriteRecipesCubit>(
         create: (context) =>
             FavouriteRecipesCubit(GetIt.instance.get<BaseRecipeRepository>())),
-    BlocProvider<BaseBleCubit>(create: (context) =>
-        BleCubit(GetIt.instance.get<BaseBleService>()))
+    BlocProvider<BaseBleCubit>(
+        create: (context) => BleCubit(GetIt.instance.get<BaseBleService>()))
   ], child: const MyApp()));
 }
 

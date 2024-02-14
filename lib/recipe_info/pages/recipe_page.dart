@@ -40,11 +40,11 @@ class RecipePage extends StatelessWidget {
               child: RecipeInfoSectionTitle(
                   text: RecipeInfoTexts.stepsSectionTitle)),
           SliverList.separated(
+              key: const ValueKey(#cooking_steps_list),
               itemBuilder: (context, index) =>
                    CookingStepRow(
                       step: recipe.steps[index],
-                      index: index + 1,
-                    ),
+                      index: index + 1),
               separatorBuilder: (context, index) => const SizedBox(height: 16),
               itemCount: recipe.steps.length),
           SliverToBoxAdapter(

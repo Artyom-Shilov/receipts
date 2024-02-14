@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:receipts/common/local_storage/hive_recipe_client.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/network/dio_recipe_client.dart';
-import 'model_converter_for_tests.dart';
+import 'recipe_info_test/model_converter_for_test.dart';
 
 
 void main() async {
