@@ -1,3 +1,2 @@
 # receipts
-
-Receipts app for OTUS
+Recipes app
