@@ -1,12 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:receipts/common/models/comment.dart';
 import 'package:receipts/common/models/cooking_step.dart';
 import 'package:receipts/common/models/favourite_status.dart';
 import 'package:receipts/common/models/ingredient.dart';
 import 'package:receipts/common/models/user_recipe_photo.dart';
-
-import 'comment.dart';
 
 part 'recipe.freezed.dart';
 

@@ -32,7 +32,6 @@ class RecipeInfoScreen extends StatelessWidget {
                 ],
               ),
               body: BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
-                buildWhen: (prev, next) => prev.status != next.status,
                 builder: (context, state) {
                   return switch (state.status) {
                     RecipeInfoStatus.success || RecipeInfoStatus.commentProgress

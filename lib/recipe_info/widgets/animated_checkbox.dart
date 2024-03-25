@@ -26,6 +26,7 @@ class AnimatedCheckbox extends HookWidget {
       builder: (context, _) => Transform.scale(
         scale: sequence.animate(controller).value,
         child: Checkbox(
+            key: ValueKey('stepCheckBox_$stepIndex'),
             activeColor: AppColors.main,
             side: const BorderSide(width: 2, color: AppColors.greyFont),
             value: recipeCubit.recipe.steps[stepIndex - 1].isDone,

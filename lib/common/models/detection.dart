@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'detection.freezed.dart';
+part 'detection.g.dart';
+
 
 @freezed
 class Detection with _$Detection {
@@ -12,4 +14,7 @@ class Detection with _$Detection {
     required String detectedClass,
     required String confidence,
   }) = _Detection;
+
+  factory Detection.fromJson(Map<String, dynamic> json) =>
+      _$DetectionFromJson(json);
 }
