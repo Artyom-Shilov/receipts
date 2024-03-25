@@ -8,4 +8,5 @@ abstract interface class BaseStorageRecipeClient {
   Future<List<LocalRecipe>> readRecipes();
   Future<void> updateRecipe(LocalRecipe recipe);
   Future<List<LocalUserRecipePhoto>> getLocalUserRecipePhotosByRecipeId(int id);
+  Future<List<bool>> getDoneStatusesByRecipeId(int id);
 }

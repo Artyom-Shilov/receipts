@@ -21,9 +21,7 @@ class RecipeStepLink with _$RecipeStepLink {
 @freezed
 class LinkedToStepRecipe with _$LinkedToStepRecipe {
   const factory LinkedToStepRecipe(
-  {
-    required int id}
-      ) = _LinkedToStepRecipe;
+  {required int id}) = _LinkedToStepRecipe;
 
   factory LinkedToStepRecipe.fromJson(Map<String, dynamic> json) =>
       _$LinkedToStepRecipeFromJson(json);

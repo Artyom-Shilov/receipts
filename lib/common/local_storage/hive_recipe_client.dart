@@ -12,7 +12,6 @@ class HiveRecipeClient implements BaseStorageRecipeClient {
     Hive.registerAdapter<LocalIngredient>(LocalIngredientAdapter());
     Hive.registerAdapter<LocalUserRecipePhoto>(LocalUserRecipePhotoAdapter());
     Hive.registerAdapter<LocalDetection>(LocalDetectionAdapter());
-    Hive.registerAdapter<LocalComment>(LocalCommentAdapter());
     Hive.registerAdapter<LocalUser>(LocalUserAdapter());
   }
 
@@ -46,5 +45,12 @@ class HiveRecipeClient implements BaseStorageRecipeClient {
     final photos = recipeBox.get(id)?.userPhotos ?? [];
     await recipeBox.close();
     return photos;
+  }
+
+  @override
+  Future<List<bool>> getDoneStatusesByRecipeId(int id) async {
+    final recipeBox = await Hive.openBox<LocalRecipe>('recipes');
+    final recipe = recipeBox.get(id);
+    return recipe?.steps.map((e) => e.isDone).toList() ?? [];
   }
 }

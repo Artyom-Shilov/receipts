@@ -10,7 +10,7 @@ class LocalUser with _$LocalUser {
   const factory LocalUser(
   {
     @HiveField(0) required String login,
-    @HiveField(1) required String avatar,
-    @HiveField(2) required String id,
+    @HiveField(1) required String? avatar,
+    @HiveField(2) required int id,
   }) = _LocalUser;
 }

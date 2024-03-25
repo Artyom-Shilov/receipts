@@ -5,6 +5,7 @@ part 'recipe_info_state.freezed.dart';
 
 enum RecipeInfoStatus {
   success,
+  commentProgress,
   error,
 }
 

@@ -10,11 +10,14 @@ class DetectionStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        for (final detection in detections)
-          DetectedBox(detection: detection)
-      ]
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width, maxHeight: MediaQuery.sizeOf(context).height),
+      child: Stack(
+        children: [
+          for (final detection in detections)
+            DetectedBox(detection: detection)
+        ]
+      ),
     );
   }
 }

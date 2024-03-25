@@ -1,65 +1,62 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:receipts/authentication/controllers/base_auth_cubit.dart';
 import 'package:receipts/common/constants/constants.dart';
-import 'package:receipts/common/models/comment.dart';
 import 'package:receipts/common/models/recipe.dart';
-import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
+import 'package:receipts/navigation/controllers/base_navigation_cubit.dart';
+import 'package:receipts/recipe_info/controllers/controllers.dart';
 
-class CommentInputField extends StatefulWidget {
+class CommentInputField extends HookWidget {
   final Recipe recipe;
 
   const CommentInputField({Key? key, required this.recipe}) : super(key: key);
 
   @override
-  State<CommentInputField> createState() => _CommentInputFieldState();
-}
-
-class _CommentInputFieldState extends State<CommentInputField> {
-  late final TextEditingController _textController;
-
-  @override
-  void initState() {
-    super.initState();
-    _textController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    late final TextEditingController textController;
+    useEffect(() {
+      textController = TextEditingController();
+      return () => textController.dispose();
+    });
     return TextField(
-      controller: _textController,
+      controller: textController,
       maxLines: 2,
       textInputAction: kIsWeb ? TextInputAction.search : TextInputAction.done,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         hintText: RecipeInfoTexts.commentInputHint,
-        hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
-        enabledBorder:
-            OutlineInputBorder(borderSide: BorderSide(color: AppColors.main)),
-        focusedBorder:
-            OutlineInputBorder(borderSide: BorderSide(color: AppColors.main)),
-        suffixIcon: Padding(
-            padding: EdgeInsets.only(bottom: 15),
-            child: Icon(Icons.photo, color: AppColors.main,)),
+        hintStyle: const TextStyle(color: Colors.grey, fontSize: 16),
+        enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.main)),
+        focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.main)),
+        suffixIcon: BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
+          buildWhen: (prev, next) =>
+              prev.recipe.userPhotos.length != next.recipe.userPhotos.length,
+          builder: (context, state) => GestureDetector(
+            onTap: () {
+              BlocProvider.of<BaseNavigationCubit>(context).toUserPhotoGrid(
+                  state.recipe, RecipePhotoViewStatus.commenting);
+            },
+            child: const Padding(
+                padding: EdgeInsets.only(bottom: 15),
+                child: Icon(
+                  Icons.photo,
+                  color: AppColors.main,
+                )),
+          ),
+        ),
       ),
-      onSubmitted: (text) {
+      onSubmitted: (text) async {
         final user = BlocProvider.of<BaseAuthCubit>(context).state.user!;
-        BlocProvider.of<BaseRecipeInfoCubit>(context).saveComment(
-          Comment(
-              text: text,
-              user: user,
-              photo: 'assets/sample_data/comment_sample_photo.png',
-              datetime:
-                  DateFormat('dd.MM.yyyy').format(DateTime.now()).toString()),
-        );
-        _textController.clear();
+        final recipe = BlocProvider.of<BaseRecipeInfoCubit>(context).recipe;
+        textController.clear();
+        await BlocProvider.of<BaseRecipeInfoCubit>(context).saveComment(
+            user: user,
+            recipe: recipe,
+            text: text,
+            photo: recipe.photoToSendComment);
       },
     );
   }

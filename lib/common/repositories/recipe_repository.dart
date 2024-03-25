@@ -23,10 +23,14 @@ class RecipeRepository implements BaseRecipeRepository {
 
   final _recipeListStreamController = BehaviorSubject<List<Recipe>>();
 
-  StreamSink<List<Recipe>> get _recipeListSink => _recipeListStreamController.sink;
+  StreamSink<List<Recipe>> get _recipeListSink =>
+      _recipeListStreamController.sink;
 
   @override
-  Stream<List<Recipe>> get recipes => _recipeListStreamController.stream;
+  Stream<List<Recipe>> get recipesStream => _recipeListStreamController.stream;
+
+  @override
+  List<Recipe> get currentRecipes => _recipeListStreamController.value;
 
   @override
   Future<void> loadRecipes() async {
@@ -68,8 +72,9 @@ class RecipeRepository implements BaseRecipeRepository {
   Future<void> saveRecipeInfo(Recipe recipe) async {
     List<Recipe> recipeList;
     try {
-      await _storageClient.updateRecipe(_converter.appRecipeToLocalRecipe(recipe));
-      recipeList = [..._recipeListStreamController.value];
+      await _storageClient
+          .updateRecipe(_converter.appRecipeToLocalRecipe(recipe));
+      recipeList = [...currentRecipes];
       int index = recipeList.indexWhere((element) => element.id == recipe.id);
       recipeList[index] = recipe;
     } catch (e) {
@@ -77,5 +82,53 @@ class RecipeRepository implements BaseRecipeRepository {
       return;
     }
     _recipeListSink.add(recipeList);
+  }
+
+  @override
+  Future<void> setLoggedUserFavouriteRecipes(User user) async {
+    List<Recipe> actualRecipes;
+    try {
+      final userFavourites = (await _networkClient.getFavourites())
+          .where((element) => element.user.id == user.id);
+      final favouritesMap = {
+        for (final favourite in userFavourites)
+          favourite.recipe.id: favourite.id
+      };
+      actualRecipes = [...currentRecipes];
+      for (int i = 0; i < actualRecipes.length; i++) {
+        if (favouritesMap.keys.contains(actualRecipes[i].id)) {
+          actualRecipes[i] = actualRecipes[i].copyWith(
+              favouriteStatus: FavouriteStatus(
+                  isFavourite: true,
+                  favouriteId: favouritesMap[actualRecipes[i].id]));
+        }
+      }
+    } catch (e) {
+      _recipeListSink.addError(FetchFavouriteInfoException(e));
+      return;
+    }
+    _recipeListSink.add(actualRecipes);
+  }
+
+  @override
+  Future<void> loadComments() async {
+    List<Recipe> actualRecipes;
+    try {
+      final netComments = await _networkClient.getComments();
+      actualRecipes = [...currentRecipes];
+      for (int i = 0; i < actualRecipes.length; i++) {
+        final comments = <Comment>[];
+        final filteredNetComments = netComments.where((element) =>
+        element.recipe.id == actualRecipes[i].id);
+        for (final netComment in filteredNetComments) {
+          comments.add(await _converter.netCommentToAppComment(netComment));
+        }
+        actualRecipes[i] = actualRecipes[i].copyWith(comments: comments);
+      }
+    } catch (e) {
+      _recipeListSink.addError(FetchCommentsException(e));
+      return;
+    }
+    _recipeListSink.add(actualRecipes);
   }
 }

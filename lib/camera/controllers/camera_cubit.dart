@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
-import 'package:receipts/camera/controllers/base_camera_service.dart';
-import 'package:receipts/camera/controllers/base_recognition_service.dart';
+import 'package:receipts/camera/services/base_camera_service.dart';
 import 'package:receipts/camera/controllers/camera_state.dart';
+import 'package:receipts/camera/services/base_detection_service.dart';
 import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/models/recipe.dart';
 import 'package:receipts/common/models/user_recipe_photo.dart';
@@ -14,14 +16,25 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
   CameraCubit(
       {required BaseRecipeRepository repository,
       required Recipe recipe,
-      required BaseRecognitionService recognitionService,
+      required BaseDetectionService detectionService,
       required this.cameraService})
       : _repository = repository,
-        _recognitionService = recognitionService,
-        super(CameraState(status: CameraStatus.initializing, recipe: recipe));
+        _detectionService = detectionService,
+        super(CameraState(status: CameraStatus.initializing, recipe: recipe)) {
+    errorStreamController.addStream(detectionService.errorStream);
+    _detectionServiceErrorSubscription =
+        detectionService.errorStream.listen((event) async {
+      emit(state.copyWith(
+          status: CameraStatus.error, message: ErrorMessages.detectionError));
+      await cameraService.disposeCamera();
+      await _detectionService.disposeRecognitionService();
+    });
+  }
 
   final BaseRecipeRepository _repository;
-  final BaseRecognitionService _recognitionService;
+  final BaseDetectionService _detectionService;
+  StreamSubscription? _detectionServiceErrorSubscription;
+  final  errorStreamController = StreamController();
   @override
   final BaseCameraService cameraService;
 
@@ -30,7 +43,7 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
     emit(state.copyWith(status: CameraStatus.initializing));
     try {
       await cameraService.initCamera();
-      await _recognitionService.initRecognitionService();
+      await _detectionService.initRecognitionService();
     } catch (e) {
       emit(state.copyWith(
           status: CameraStatus.error, message: ErrorMessages.photoProcessInitError));
@@ -46,7 +59,7 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
     }
     emit(state.copyWith(status: CameraStatus.initializing));
     await cameraService.disposeCamera();
-    await _recognitionService.disposeRecognitionService();
+    await _detectionService.disposeRecognitionService();
   }
 
   @override
@@ -60,6 +73,7 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
     Recipe changedInfo;
     try {
       UserRecipePhoto photo = UserRecipePhoto(
+          index: state.recipe.userPhotos.length + 1,
           photoBites: state.viewingPhoto!, detections: state.detections);
       List<UserRecipePhoto> userPhotoList = [...state.recipe.userPhotos];
       userPhotoList.add(photo);
@@ -81,7 +95,7 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
 
   @override
   Future<void> findDetectionsOnPhoto(XFile photo, Size screenSize) async {
-    final detections = await _recognitionService.findDetectionsOnPhoto(photo, screenSize);
+    final detections = await _detectionService.findDetectionsOnPhoto(photo, screenSize);
     emit(state.copyWith(detections: detections));
   }
 
@@ -90,6 +104,7 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
     final photo = await cameraService.takePicture();
     await findDetectionsOnPhoto(photo, screenSize);
     emit(state.copyWith(viewingPhoto: await photo.readAsBytes()));
+
   }
 
   @override
@@ -100,8 +115,7 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
             (image) async {
               if (!isDetecting) {
                 isDetecting = true;
-                final detections = await _recognitionService
-                    .findDetectionsOnFrame(
+                final detections = await _detectionService.findDetectionsOnFrame(
                     frame: image.planes.map((plane) {
                       return plane.bytes;
                     }).toList(),
@@ -120,7 +134,6 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
     );
   }
 
-
   @override
   void declinePhoto() {
     emit(state.copyWith(
@@ -137,10 +150,12 @@ class CameraCubit extends Cubit<CameraState> implements BaseCameraCubit {
     emit(state.copyWith(status: CameraStatus.viewing));
   }
 
+
   @override
   Future<void> close() async {
-    cameraService.disposeCamera();
-    _recognitionService.disposeRecognitionService();
+    await _detectionServiceErrorSubscription?.cancel();
+    await cameraService.disposeCamera();
+    await _detectionService.disposeRecognitionService();
     return super.close();
   }
 }

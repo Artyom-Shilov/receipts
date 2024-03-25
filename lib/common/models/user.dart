@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user.freezed.dart';
@@ -6,10 +8,10 @@ part 'user.freezed.dart';
 class User with _$User {
   const factory User(
   {
-    required String id,
+    required int id,
     required String login,
-    @Default('') String password,
-    @Default('') String token,
-    required String avatar,
+    String? password,
+    String? token,
+    Uint8List? avatar,
 }) = _User;
 }

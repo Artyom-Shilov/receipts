@@ -6,7 +6,7 @@ import 'package:receipts/recipe_info/controllers/heart_animation_state.dart';
 import 'package:rive/rive.dart';
 
 class HeartAnimationCubit extends Cubit<HeartAnimationState> implements BaseHeartAnimationCubit {
-  HeartAnimationCubit() : super(const HeartAnimationState(transitionDirection: null));
+  HeartAnimationCubit() : super(const HeartAnimationState(transitionDirection: null, isCompleted: true));
 
   @override
   void startTransition() {
@@ -24,4 +24,12 @@ class HeartAnimationCubit extends Cubit<HeartAnimationState> implements BaseHear
   void initTransitionDirection(SMIInput<bool>? transitionDirection) {
     emit(state.copyWith(transitionDirection: transitionDirection));
   }
+
+  @override
+  void setIsCompleted(bool isCompleted) {
+    emit(state.copyWith(isCompleted: isCompleted));
+  }
+
+  @override
+  bool isCompleted() => state.isCompleted;
 }

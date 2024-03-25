@@ -13,7 +13,8 @@ class LocalUserRecipePhoto with _$LocalUserRecipePhoto {
   const factory LocalUserRecipePhoto(
       {
         @HiveField(0) required Uint8List photoBites,
-        @HiveField(1, defaultValue: []) @Default([]) List<LocalDetection> detections
+        @HiveField(1, defaultValue: []) @Default([]) List<LocalDetection> detections,
+        @HiveField(2) required int index,
       }
       ) =_LocalUserRecipePhoto;
 }
