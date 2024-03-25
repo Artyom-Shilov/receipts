@@ -1,0 +1,1 @@
+class ObjectNotFoundException implements Exception {}

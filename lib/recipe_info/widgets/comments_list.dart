@@ -10,13 +10,20 @@ class CommentsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
-      builder: (context, state) =>  SliverList.builder(
-          itemCount: state.recipe.comments.length,
-          itemBuilder: (context, index) {
-            return CommentRow(
-              comment: state.recipe.comments[index],
-            );
-          }),
-    );
+        buildWhen: (prev, next) =>
+            prev.recipe.comments.length != next.recipe.comments.length ||
+            prev.status != next.status,
+        builder: (context, state) {
+          return state.status == RecipeInfoStatus.commentProgress
+              ? const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator()))
+              : SliverList.builder(
+                  itemCount: state.recipe.comments.length,
+                  itemBuilder: (context, index) {
+                    return CommentRow(
+                      comment: state.recipe.comments[index],
+                    );
+                  });
+        });
   }
 }

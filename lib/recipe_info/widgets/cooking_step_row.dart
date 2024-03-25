@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/common/constants/constants.dart';
 import 'package:receipts/common/models/cooking_step.dart';
-import 'package:receipts/recipe_info/controllers/base_recipe_info_cubit.dart';
-import 'package:receipts/recipe_info/controllers/recipe_info_state.dart';
+import 'package:receipts/recipe_info/widgets/animated_checkbox.dart';
 
 class CookingStepRow extends StatelessWidget {
   const CookingStepRow({Key? key, required this.step, required this.index})
@@ -49,17 +47,7 @@ class CookingStepRow extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  BlocBuilder<BaseRecipeInfoCubit, RecipeInfoState>(
-                    builder: (context, state) => Checkbox(
-                        activeColor: AppColors.main,
-                        side: const BorderSide(
-                            width: 2, color: AppColors.greyFont),
-                        value: state.recipe.steps[index - 1].isDone,
-                        onChanged: (value) {
-                          BlocProvider.of<BaseRecipeInfoCubit>(context)
-                              .changeCookingStepStatus(index - 1);
-                        }),
-                  ),
+                  AnimatedCheckbox(stepIndex: index),
                   Text(
                     step.duration,
                     style: const TextStyle(

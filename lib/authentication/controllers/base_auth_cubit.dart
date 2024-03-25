@@ -10,6 +10,4 @@ abstract interface class BaseAuthCubit extends Cubit<AuthState> {
   bool get isLoggedIn;
   AuthStatus get status;
   User? get currentUser;
-  String? Function(String? login) get loginValidation;
-  String? Function(String? passowrd) get passwordValidation;
 }
