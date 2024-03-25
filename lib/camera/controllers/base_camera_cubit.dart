@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:receipts/camera/controllers/base_camera_service.dart';
+import 'package:receipts/camera/services/base_camera_service.dart';
 import 'package:receipts/camera/controllers/camera_state.dart';
 
 abstract interface class BaseCameraCubit extends Cubit<CameraState> {

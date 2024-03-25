@@ -23,11 +23,9 @@ class ProcessSwitchButton extends StatelessWidget {
       onPressed: () {
         if (authProcessCubit.state.process == ProcessStatus.login) {
           formKey.currentState!.reset();
-          //authProcessCubit.removeFieldValidationErrorFlag();
           authProcessCubit.startRegistration();
         } else {
           formKey.currentState!.reset();
-          //authProcessCubit.removeFieldValidationErrorFlag();
           authProcessCubit.startLogin();
         }
       },

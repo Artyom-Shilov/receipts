@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:receipts/authentication/pages/auth_screen.dart';
-import 'package:receipts/camera/controllers/base_camera_service.dart';
-import 'package:receipts/camera/controllers/base_recognition_service.dart';
+import 'package:receipts/camera/services/base_camera_service.dart';
+import 'package:receipts/camera/services/base_detection_service.dart';
 import 'package:receipts/common/network/base_network_recipe_client.dart';
 import 'package:receipts/common/pages/page_not_found_screen.dart';
 import 'package:receipts/navigation/controllers/nested_branch_state.dart';
@@ -159,7 +159,7 @@ class AppRouterDelegate extends RouterDelegate<AppNavigationState>
             child: BlocProvider<BaseCameraCubit>(
                 create: (context) => CameraCubit(
                     cameraService: GetIt.I.get<BaseCameraService>(),
-                    recognitionService: GetIt.I.get<BaseRecognitionService>(),
+                    detectionService: GetIt.I.get<BaseDetectionService>(),
                     recipe: branchState.selectedRecipe!,
                     repository: GetIt.instance.get<BaseRecipeRepository>()),
                 child: const CameraGlobalScreen())),
