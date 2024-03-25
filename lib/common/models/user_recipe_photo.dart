@@ -9,7 +9,6 @@ part 'user_recipe_photo.freezed.dart';
 class UserRecipePhoto with _$UserRecipePhoto {
   const factory UserRecipePhoto(
       {required Uint8List photoBites,
-        @Default([]) List<Detection> detections
-      }
-      ) =_UserRecipePhoto;
+      required int index,
+      @Default([]) List<Detection> detections}) = _UserRecipePhoto;
 }

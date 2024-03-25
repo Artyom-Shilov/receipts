@@ -36,4 +36,8 @@ abstract interface class BaseNetworkRecipeClient {
   Future<List<NetworkComment>> getComments();
 
   Future<NetworkUser> getUserById(int id);
+
+  Future<String> registerUser({required String login, required String password});
+
+  Future<String> loginUser({required String login, required String password});
 }

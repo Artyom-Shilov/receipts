@@ -6,7 +6,11 @@ part 'recipe_photo_view_state.freezed.dart';
 enum RecipePhotoViewStatus {
   viewing,
   viewingWithDetections,
-  choosingCommentPhoto
+  commenting;
+
+  static RecipePhotoViewStatus fromString(string) =>
+      RecipePhotoViewStatus.values
+          .firstWhere((element) => element.name == string);
 }
 
 @freezed

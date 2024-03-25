@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/common/constants/app_colors.dart';
 import 'package:receipts/common/constants/insets.dart';
 import 'package:receipts/common/widgets/common_persistent_header.dart';
-import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
-import 'package:receipts/recipes_list/widgets/recipe_sliver_list.dart';
 
 class RecipesListPage extends StatelessWidget {
-  const RecipesListPage({Key? key}) : super(key: key);
+  const RecipesListPage({Key? key, required this.sliverList}) : super(key: key);
+
+  final Widget sliverList;
 
   @override
   Widget build(BuildContext context) {
-    final recipesListCubit = BlocProvider.of<BaseRecipeListCubit>(context);
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -24,7 +22,7 @@ class RecipesListPage extends StatelessWidget {
               backgroundColor: AppColors.greyBackground,
               toolbarHeight: MediaQuery.of(context).size.height * 0.05,
             ),
-            RecipeSliverList(recipes: recipesListCubit.recipes),
+            sliverList,
             const CommonPersistentHeader(
               maxExtent: 20,
               color: AppColors.greyBackground,

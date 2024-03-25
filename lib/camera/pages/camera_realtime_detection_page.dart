@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:receipts/camera/controllers/base_camera_cubit.dart';
-import 'package:receipts/camera/controllers/camera_service.dart';
+import 'package:receipts/camera/services/camera_service.dart';
 import 'package:receipts/camera/controllers/camera_state.dart';
 import 'package:receipts/camera/widgets/detections_stack.dart';
 import 'package:receipts/common/constants/constants.dart';

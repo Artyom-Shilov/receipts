@@ -4,6 +4,7 @@ import 'package:receipts/recipes_list/controllers/base_recipe_list_cubit.dart';
 import 'package:receipts/recipes_list/controllers/recipe_list_state.dart';
 import 'package:receipts/recipes_list/pages/recipes_error_page.dart';
 import 'package:receipts/recipes_list/pages/recipes_list_page.dart';
+import 'package:receipts/recipes_list/widgets/recipe_sliver_list.dart';
 
 class RecipesScreen extends StatelessWidget {
   const RecipesScreen({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class RecipesScreen extends StatelessWidget {
           RecipeListStatus.inProgress =>
             const Center(child: CircularProgressIndicator()),
           RecipeListStatus.error => const RecipesErrorPage(),
-          RecipeListStatus.success => const RecipesListPage()
+          RecipeListStatus.success => RecipesListPage(sliverList: RecipeSliverList(recipes: state.recipes))
         };
       },
     );

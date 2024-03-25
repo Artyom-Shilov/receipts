@@ -11,11 +11,11 @@ import 'package:receipts/common/util/util_logic.dart';
 class ModelsConverter {
   const ModelsConverter(BaseStorageRecipeClient storageRecipeClient,
       BaseNetworkRecipeClient networkRecipeClient)
-      : _storageClient = storageRecipeClient,
-        _networkClient = networkRecipeClient;
+      : storageClient = storageRecipeClient,
+        networkClient = networkRecipeClient;
 
-  final BaseStorageRecipeClient _storageClient;
-  final BaseNetworkRecipeClient _networkClient;
+  final BaseStorageRecipeClient storageClient;
+  final BaseNetworkRecipeClient networkClient;
 
   Ingredient localIngredientToAppIngredient(LocalIngredient localIngredient) {
     return Ingredient(
@@ -78,6 +78,7 @@ class ModelsConverter {
         .toList();
     return UserRecipePhoto(
       photoBites: localPhoto.photoBites,
+      index: localPhoto.index,
       detections: appDetections,
     );
   }
@@ -88,7 +89,7 @@ class ModelsConverter {
         .map((e) => appDetectionToLocalDetection(e))
         .toList();
     return LocalUserRecipePhoto(
-        photoBites: appPhoto.photoBites, detections: localDetections);
+        photoBites: appPhoto.photoBites, detections: localDetections, index: appPhoto.index);
   }
 
   Recipe localRecipeToAppRecipe(LocalRecipe localRecipe) {
@@ -132,9 +133,9 @@ class ModelsConverter {
     );
   }
 
-  Future<CookingStep> _netCookingStepToAppCookingStep(
+  Future<CookingStep> netCookingStepToAppCookingStep(
       RecipeStepLink stepLink) async {
-    final loadedStep = await _networkClient.getRecipeStepById(stepLink.step.id);
+    final loadedStep = await networkClient.getRecipeStepById(stepLink.step.id);
     final formattedDuration = DateFormat('mm:ss').format(
         DateTime.fromMillisecondsSinceEpoch(
             Duration(minutes: loadedStep.duration).inMilliseconds));
@@ -145,21 +146,21 @@ class ModelsConverter {
         duration: formattedDuration);
   }
 
-  Future<Ingredient> _netIngredientToAppIngredient(
+  Future<Ingredient> netIngredientToAppIngredient(
       RecipeIngredientLink ingredientLink) async {
     final loadedIngredient =
-        await _networkClient.getIngredientById(ingredientLink.ingredient.id);
-    final loadedMeasureUnit = await _networkClient
+        await networkClient.getIngredientById(ingredientLink.ingredient.id);
+    final loadedMeasureUnit = await networkClient
         .getMeasureUnitById(loadedIngredient.measureUnit.id);
     return Ingredient(
         id: loadedIngredient.id,
         count: ingredientLink.count.toString(),
         name: loadedIngredient.name,
-        measureUnit: _calcMeasureUnit(ingredientLink.count, loadedMeasureUnit));
+        measureUnit: calcMeasureUnit(ingredientLink.count, loadedMeasureUnit));
   }
 
   Future<Comment> netCommentToAppComment(NetworkComment networkComment) async {
-    final networkUser = await _networkClient.getUserById(networkComment.user.id);
+    final networkUser = await networkClient.getUserById(networkComment.user.id);
     return Comment(
         text: networkComment.text,
         photo: UtilLogic.stringToUInt8List(networkComment.photo),
@@ -179,7 +180,7 @@ class ModelsConverter {
     );
   }
 
-  String _calcMeasureUnit(int count, NetworkMeasureUnit unit) {
+  String calcMeasureUnit(int count, NetworkMeasureUnit unit) {
     final countEnding = count % 10;
     if (countEnding == 1) {
       return unit.one;
@@ -193,7 +194,7 @@ class ModelsConverter {
     return unit.many;
   }
 
-  String _calcRecipeDurationForm(int duration) {
+  String calcRecipeDurationForm(int duration) {
     final durationEnding = duration % 10;
     if (durationEnding == 1) {
       return TimeUnits.minutesOne;
@@ -207,12 +208,11 @@ class ModelsConverter {
     return TimeUnits.minutesMany;
   }
 
-  Future<List<Recipe>> netRecipesToAppRecipes(
-      List<NetworkRecipe> networkRecipes) async {
+  Future<List<Recipe>> netRecipesToAppRecipes(List<NetworkRecipe> networkRecipes) async {
     List<Recipe> recipes = [];
-    final netIngredientsLinks = await _networkClient.getRecipeIngredientsLinks();
-    final netStepLinks = await _networkClient.getRecipeStepLinks();
-    final netFavourites = await _networkClient.getFavourites();
+    final netIngredientsLinks = await networkClient.getRecipeIngredientsLinks();
+    final netStepLinks = await networkClient.getRecipeStepLinks();
+    final netFavourites = await networkClient.getFavourites();
     for (final networkRecipe in networkRecipes) {
       final steps = <CookingStep>[];
       final ingredients = <Ingredient>[];
@@ -222,17 +222,17 @@ class ModelsConverter {
       final filteredNetStepLinks =
           netStepLinks.where((element) => element.recipe.id == networkRecipe.id);
       for (final netStepLink in filteredNetStepLinks) {
-        steps.add(await _netCookingStepToAppCookingStep(netStepLink));
+        steps.add(await netCookingStepToAppCookingStep(netStepLink));
       }
       for (final netIngredientLink in filteredNetIngredientsLinks) {
-        ingredients.add(await _netIngredientToAppIngredient(netIngredientLink));
+        ingredients.add(await netIngredientToAppIngredient(netIngredientLink));
       }
-      final photoBytes = await _networkClient.getImage(networkRecipe.photo);
-      final userPhotos = (await _storageClient
+      final photoBytes = await networkClient.getImage(networkRecipe.photo);
+      final userPhotos = (await storageClient
               .getLocalUserRecipePhotosByRecipeId(networkRecipe.id))
           .map((e) => localRecipePhotoToAppRecipePhoto(e))
           .toList();
-      final localDoneStatuses = await _storageClient.getDoneStatusesByRecipeId(networkRecipe.id);
+      final localDoneStatuses = await storageClient.getDoneStatusesByRecipeId(networkRecipe.id);
       if (localDoneStatuses.length == steps.length && steps.isNotEmpty) {
         for (int i = 0; i < localDoneStatuses.length; i++) {
           steps[i] = steps[i].copyWith(isDone: localDoneStatuses[i]);
@@ -242,7 +242,7 @@ class ModelsConverter {
           id: networkRecipe.id,
           name: networkRecipe.name,
           duration:
-              '${networkRecipe.duration} ${_calcRecipeDurationForm(networkRecipe.duration)}',
+              '${networkRecipe.duration} ${calcRecipeDurationForm(networkRecipe.duration)}',
           steps: steps,
           ingredients: ingredients,
           photoBytes: photoBytes,

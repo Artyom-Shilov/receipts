@@ -15,6 +15,6 @@ class AuthState with _$AuthState {
   const factory AuthState({
     required AuthStatus status,
     User? user,
-    @Default('') String message
+    @Default('') String message,
   }) = _AuthState;
 }

@@ -7,6 +7,8 @@ class InputField extends StatelessWidget {
   final String hintText;
   final bool isObscured;
   final String? Function(String?)? validator;
+  final bool readOnly;
+  final void Function(String)? onChanged;
 
   const InputField(
       {Key? key,
@@ -14,12 +16,16 @@ class InputField extends StatelessWidget {
       required this.textController,
       required this.hintText,
       required this.isObscured,
-      required this.validator})
+      required this.validator,
+      required this.readOnly,
+      this.onChanged})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: onChanged,
+      readOnly: readOnly,
       validator: validator,
       controller: textController,
       obscureText: isObscured,

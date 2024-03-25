@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class ControlButton extends StatelessWidget {
   const ControlButton(
       {Key? key,
-      required this.text,
+      required this.child,
       required this.backgroundColor,
       required this.borderColor,
       required this.onPressed})
       : super(key: key);
 
-  final Text text;
+  final Widget child;
   final void Function()? onPressed;
   final Color backgroundColor;
   final Color borderColor;
@@ -25,7 +25,7 @@ class ControlButton extends StatelessWidget {
             side: BorderSide(color: borderColor, width: 3),
             borderRadius: BorderRadius.circular(25.0)),
         color: backgroundColor,
-        child: text,
+        child: child,
       ),
     );
   }
